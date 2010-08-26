@@ -55,6 +55,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.help.HelpSet;
+import javax.swing.ButtonGroup;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
@@ -65,6 +66,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
@@ -110,6 +112,7 @@ import org.pushingpixels.flamingo.api.common.CommandButtonDisplayState;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.JCommandButtonPanel;
 import org.pushingpixels.flamingo.api.common.JCommandMenuButton;
+import org.pushingpixels.flamingo.api.common.JCommandToggleButton;
 import org.pushingpixels.flamingo.api.common.RichTooltip;
 import org.pushingpixels.flamingo.api.common.JCommandButton.CommandButtonKind;
 import org.pushingpixels.flamingo.api.common.icon.ImageWrapperResizableIcon;
@@ -120,6 +123,7 @@ import org.pushingpixels.flamingo.api.common.popup.PopupPanelCallback;
 import org.pushingpixels.flamingo.api.ribbon.AbstractRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 
+import org.pushingpixels.flamingo.api.ribbon.JFlowRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenu;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenuEntryPrimary;
@@ -342,6 +346,12 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		canvasPanel.add(toolBarPanel,BorderLayout.NORTH);
 		canvasPanel.add(theCanvas, BorderLayout.CENTER);
 		
+		JPanel toolBarPanelLinkage=new JPanel();
+		toolBarPanelLinkage.setLayout(new BorderLayout());
+		toolBarPanelLinkage.add(theCanvas.getToolBarProperties(),BorderLayout.CENTER);
+		
+		canvasPanel.add(toolBarPanelLinkage,BorderLayout.SOUTH);
+		
 		theTopSplitPane.setRightComponent(canvasPanel);
 
 		// set the plugin panels
@@ -355,13 +365,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		theSplitPane.setRightComponent(thePluginManager.getRightComponent());
 		hideRightPanels();
 		
-		JPanel panelTest=new JPanel();
 		
-		//JLabel testLabel=new JLabel("Test panel");
-		//panelTest.add(theCanvas.getToolBarStructure(),BorderLayout.EAST);
-		//c2Panel.add(panelTest, BorderLayout.NORTH);
-		
-		//		
 		// // add listeners
 		theDoc.addDocumentChangeListener(this);
 		theCanvas.addSelectionChangeListener(this);
@@ -632,7 +636,15 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	public void initSaveMenu() {
 		RibbonApplicationMenuEntryPrimary saveItem = new RibbonApplicationMenuEntryPrimary(
 				theActionManager2.get("save").getResizableIcon(ICON_SIZE.L4),
-				"Save", null, CommandButtonKind.ACTION_ONLY);
+				"Save", new ActionListener(){
+
+					@Override
+					public void actionPerformed(ActionEvent arg0) {
+						// TODO Auto-generated method stub
+						onSave(theWorkspace, true);
+					}
+					
+				}, CommandButtonKind.ACTION_ONLY);
 
 		saveItem
 				.setRolloverCallback(new RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {
@@ -713,6 +725,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 				CommandButtonKind.ACTION_ONLY);
 
 		final GlycoWorkbench self = this;
+		
 
 		saveItem
 				.setRolloverCallback(new RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {

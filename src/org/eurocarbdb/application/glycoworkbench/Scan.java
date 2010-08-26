@@ -428,6 +428,10 @@ public class Scan implements BaseDocument.DocumentChangeListener {
 	}
 
 	public void write(TransformerHandler th) throws SAXException {
+		write(th,false);
+	}
+	
+	public void write(TransformerHandler th,boolean includeSpectra) throws SAXException {
 
 		AttributesImpl atts = new AttributesImpl();
 		if (name != null)
@@ -442,7 +446,11 @@ public class Scan implements BaseDocument.DocumentChangeListener {
 		// add documents
 		theStructures.write(th);
 		theFragments.write(th);
-		theSpectra.write(th);
+	
+		if(includeSpectra){
+			theSpectra.write(th);
+		}
+	
 		thePeakList.write(th);
 		theAnnotatedPeakList.write(th);
 		theNotes.write(th);
@@ -451,7 +459,7 @@ public class Scan implements BaseDocument.DocumentChangeListener {
 
 		// add children
 		for (Scan c : children)
-			c.write(th);
+			c.write(th,includeSpectra);
 
 		th.endElement("", "", "Scan");
 	}
