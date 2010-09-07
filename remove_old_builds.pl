@@ -1,5 +1,7 @@
 #!/usr/bin/perl -w
 
+use strict;
+
 if(@ARGV == 0){
 	die "Usage\t[keep:1..2]|[remove:2..3]\n";
 }
@@ -14,10 +16,10 @@ foreach my $arg(@ARGV){
 		my $from=$2;
 		my $to=$3;
 		for(my $i=$from;$i<=$to;$i++){
-			$request{$key}->{$i}=1;
+			$requests{$key}->{$i}=1;
 		}
 	}elsif($arg=~/\[((?:keep)|(?:remove)):([0-9]+)/){
-		$request{$1}->{$2}=1;
+		$requests{$1}->{$2}=1;
 	}
 }
 
@@ -30,7 +32,7 @@ foreach my $removeItem(keys %{$requests{'remove'}}){
 print "Builds that are not removed or kept explicitly are not deleted\n";
 foreach my $key(keys %requests){
 	my @items=keys %{$requests{$key}};
-	print "$key\[";
+	print "$key\[ @items";
 
 	if(@items>1){
 		print join(",",@items);
