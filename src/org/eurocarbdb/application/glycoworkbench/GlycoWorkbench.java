@@ -18,13 +18,15 @@
  *   Last commit: $Rev$ by $Author$ on $Date::             $  
  */
 /**
- @author Alessio Ceroni (a.ceroni@imperial.ac.uk)
+ @author Alessio Ceroni (a.ceroni@imperial.ac.uk), David Damerell (d.damerell@imperial.ac.uk)
  */
 
 package org.eurocarbdb.application.glycoworkbench;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -40,6 +42,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.print.PrinterJob;
 import java.io.File;
 import java.io.IOException;
@@ -55,7 +58,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.help.HelpSet;
+import javax.swing.AbstractButton;
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
@@ -67,6 +73,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
@@ -75,6 +82,8 @@ import javax.swing.LookAndFeel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+
+import jxl.format.Border;
 
 import net.sf.hibernate.collection.Set;
 
@@ -104,6 +113,7 @@ import org.eurocarbdb.application.glycanbuilder.NotationChangeListener;
 import org.eurocarbdb.application.glycanbuilder.STOCK_ICON;
 import org.eurocarbdb.application.glycanbuilder.SVGUtils;
 import org.eurocarbdb.application.glycanbuilder.ThemeManager;
+import org.eurocarbdb.application.glycanbuilder.UIActionListener;
 import org.eurocarbdb.application.glycoworkbench.plugin.Plugin;
 import org.eurocarbdb.application.glycoworkbench.plugin.PluginManager;
 import org.eurocarbdb.application.glycoworkbench.plugin.ReportingPlugin;
@@ -141,7 +151,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		BaseDocument.DocumentChangeListener,
 		GlycanCanvas.SelectionChangeListener, FileHistory.Listener,
 		MouseListener, GlycanWorkspace.Listener, ContextAwareContainer,
-		NotationChangeListener {
+		NotationChangeListener,UIActionListener {
 
 	private static final long serialVersionUID = 0L;
 	private static ICON_SIZE defaultMenuIconSize = ICON_SIZE.TINY;
@@ -188,6 +198,9 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	protected String last_exported_file = null;
 
 	private Monitor halt_interactions = null;
+	private DockableEvent leftPanelDockableEvent;
+	private DockableEvent bottomPanelDockableEvent;
+	private DockableEvent rightPanelDockableEvent;
 
 	public static File getConfigurationFile() throws IOException {
 		String userHomeDirectory = System.getProperty("user.home");
@@ -290,6 +303,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		halt_interactions = new Monitor(this);
 
 		theCanvas = new GlycanCanvas(this, theWorkspace, themeManager,true);
+		theCanvas.registerUIListener(this);
 		initNewMenu();
 		initOpenMenu();
 		initOpenRecent();
@@ -329,40 +343,136 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		theTopSplitPane.setOneTouchExpandable(true);
 		theLeftSplitPane.setTopComponent(theTopSplitPane);
 
-		JSplitPane canvasPanel=new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+		canvasPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		canvasPanel.setLayout(new BorderLayout());
 		
-		JScrollPane sp = new JScrollPane(theCanvas);
-		theCanvas.setScrollPane(sp);
+		canvasScrollPane = new JScrollPane(theCanvas);
+		theCanvas.setScrollPane(canvasScrollPane);
 		
-		//JPanel spPanel=new JPanel();
-		//spPanel.setLayout(new BorderLayout());
-		//spPanel.add(theCanvas,BorderLayout.CENTER);
-		
-		JPanel toolBarPanel=new JPanel();
+		toolBarPanel = new JPanel();
 		toolBarPanel.setLayout(new BorderLayout());
 		toolBarPanel.add(theCanvas.getToolBarStructure(),BorderLayout.CENTER);
 		
-		canvasPanel.add(toolBarPanel,BorderLayout.NORTH);
-		canvasPanel.add(theCanvas, BorderLayout.CENTER);
-		
-		JPanel toolBarPanelLinkage=new JPanel();
+		toolBarPanelLinkage = new JPanel();
 		toolBarPanelLinkage.setLayout(new BorderLayout());
 		toolBarPanelLinkage.add(theCanvas.getToolBarProperties(),BorderLayout.CENTER);
 		
-		canvasPanel.add(toolBarPanelLinkage,BorderLayout.SOUTH);
+		glycanCanvasDockableEvent = new DockableEvent(this,canvasPanel){
+			protected void initialise(Container moveToContainer,Container currentDockedContainer) {
+				if(currentDockedContainer!=null){
+					currentDockedContainer.remove(canvasScrollPane);
+					currentDockedContainer.remove(toolBarPanel);
+					currentDockedContainer.remove(toolBarPanelLinkage);
+				}
+				
+				if(canvasPanel!=moveToContainer){
+					detachedSplitPaneCount++;
+				}else{
+					detachedSplitPaneCount--;
+				}
+				
+				moveToContainer.add(canvasScrollPane,BorderLayout.CENTER);
+				moveToContainer.add(toolBarPanel,BorderLayout.NORTH);
+				moveToContainer.add(toolBarPanelLinkage,BorderLayout.SOUTH);
+				
+				hideAll();
+			}
+		};
+		
+		glycanCanvasDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
 		
 		theTopSplitPane.setRightComponent(canvasPanel);
+		
+		final JPanel leftPanel=new JPanel();
+		leftPanel.setLayout(new BorderLayout());
+		leftPanel.add(thePluginManager.getLeftComponent());
+		
+		leftPanelDockableEvent = new DockableEvent(this,leftPanel){
+			protected void initialise(Container moveToContainer,Container currentDockedContainer) {
+				if(currentDockedContainer!=null){
+					
+					currentDockedContainer.remove(thePluginManager.getLeftComponent());
+					if(currentDockedContainer instanceof JPanel){
+						((JPanel)currentDockedContainer).revalidate();
+					}
+				}
+				
+				if(moveToContainer!=leftPanel){
+					hideLeftPanels();
+					detachedSplitPaneCount++;
+				}else{
+					showLeftPanels();
+					detachedSplitPaneCount--;
+				}
+				
+				moveToContainer.add(thePluginManager.getLeftComponent());
+				
+				hideAll();
+			}
+		};
+		
+		leftPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
 
-		// set the plugin panels
-		theTopSplitPane.setLeftComponent(thePluginManager.getLeftComponent());
+		theTopSplitPane.setLeftComponent(leftPanel);
 		hideBottomPanels();
 
-		theLeftSplitPane.setBottomComponent(thePluginManager
-				.getBottomComponent());
-		hideBottomPanels();
+		final JPanel bottomPanel=new JPanel();
+		bottomPanel.setLayout(new BorderLayout());
+		bottomPanel.add(thePluginManager.getBottomComponent());
+		
+		bottomPanelDockableEvent = new DockableEvent(this,bottomPanel){
+			protected void initialise(Container moveToContainer,Container currentDockedContainer) {
+				if(currentDockedContainer!=null){
+					currentDockedContainer.remove(thePluginManager.getBottomComponent());
+				}
+				
+				if(bottomPanel!=moveToContainer){
+					hideBottomPanels();
+					detachedSplitPaneCount++;
+				}else{
+					showBottomPanels();
+					detachedSplitPaneCount--;
+				}
+				
+				moveToContainer.add(thePluginManager.getBottomComponent());
+				
+				hideAll();
+			}
+		};
+		
+		bottomPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
+		
+		theLeftSplitPane.setBottomComponent(bottomPanel);
 
-		theSplitPane.setRightComponent(thePluginManager.getRightComponent());
+		final JPanel rightPanel=new JPanel();
+		rightPanel.setLayout(new BorderLayout());
+		rightPanel.add(thePluginManager.getRightComponent());
+		
+		rightPanelDockableEvent = new DockableEvent(this,rightPanel){
+			protected void initialise(Container moveToContainer,Container currentDockedContainer) {
+				if(currentDockedContainer!=null){
+					currentDockedContainer.remove(thePluginManager.getRightComponent());
+				}
+				
+				if(moveToContainer!=rightPanel){
+					hideRightPanels();
+					detachedSplitPaneCount++;
+				}else{
+					showRightPanels();
+					
+					detachedSplitPaneCount--;
+				}
+				
+				moveToContainer.add(thePluginManager.getRightComponent());
+				
+				hideAll();
+			}
+		};
+		
+		rightPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
+		
+		
+		theSplitPane.setRightComponent(rightPanel);
 		hideRightPanels();
 		
 		
@@ -411,6 +521,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 	public Dimension largeIcon = new Dimension(30, 30);
 	protected RibbonApplicationMenu applicationMenu;
+	private int detachedSplitPaneCount=4;
 
 	public void initOpenMenu() {
 		RibbonApplicationMenuEntryPrimary menuPrimary = new RibbonApplicationMenuEntryPrimary(
@@ -474,6 +585,16 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 				});
 
 		applicationMenu.addMenuEntry(menuPrimary);
+	}
+	
+	public void hideAll(){
+		System.err.println("Detached split pane count: "+detachedSplitPaneCount);
+		if(detachedSplitPaneCount==4){
+			theSplitPane.setVisible(false);
+		}else{
+			theSplitPane.setVisible(true);
+		}
+		this.pack();
 	}
 
 	public void initAboutAppMenuItem() {
@@ -1936,6 +2057,12 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	boolean restart = false;
 	String skin;
 	protected static Object lock = new Object();
+	private JSplitPane canvasPanel;
+	private JScrollPane canvasScrollPane;
+	private JPanel panelghg;
+	private JPanel toolBarPanel;
+	private JPanel toolBarPanelLinkage;
+	private DockableEvent glycanCanvasDockableEvent;
 
 	public void restart(String themeManager) {
 		// if(JOptionPane.showConfirmDialog(this,
@@ -2242,7 +2369,6 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 	@Override
 	public void fireUndoContextChanged(Context context) {
-		// TODO Auto-generated method stub
 		if (Context.GLYCAN_CANVAS_ITEM == context) {
 			this.ribbonManager.undoContextChange(context);
 		}
@@ -2252,5 +2378,24 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	public void notationChanged(String notation) {
 		createPopupMenu();
 	}
-
+	
+	/**
+	 * Panel container enums
+	 */
+	public enum CONTAINER{
+		FRAME,
+		NODEC_DIALOG, //Dialog without window decoration, with custom move and resize code.
+		DOCKED
+	}
+	
+	/**
+	 * Detach all detachable panels from the main GWB frame.
+	 */
+	@Override
+	public void explode() {
+		glycanCanvasDockableEvent.changeCanvasPaneContainer(CONTAINER.FRAME);
+		leftPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.FRAME);
+		rightPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.FRAME);
+		bottomPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.FRAME);
+	}
 }
