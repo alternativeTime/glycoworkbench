@@ -25,6 +25,8 @@ package org.eurocarbdb.application.glycoworkbench;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -46,6 +48,8 @@ public class DockableEvent {
 	private Container defaultDockedContainer;
 	private Container currentDockedWindow;
 	private Container currentDockedContainer;
+	private Point lastDetachedPosition;
+	private Dimension lastSize;
 	
 	private static List<JFrame> detachedFrames=new ArrayList<JFrame>();
 	private static List<AbstractAction> globalActions=new ArrayList<AbstractAction>();
@@ -69,6 +73,10 @@ public class DockableEvent {
 	
 	public static void addGlobalAction(AbstractAction globalAction){
 		DockableEvent.globalActions.add(globalAction);
+	}
+	
+	public Container getCurrentDockedWindow() {
+		return currentDockedWindow;
 	}
 	
 	protected void changeCanvasPaneContainer(CONTAINER container){
@@ -159,6 +167,11 @@ public class DockableEvent {
 			currentDockedContainer=frame;
 			frame.pack();
 			
+			if(lastDetachedPosition!=null){
+				currentDockedWindow.setLocation(lastDetachedPosition);
+				currentDockedWindow.setSize(lastSize);
+			}
+			
 			frame.setVisible(true);
 			
 			detachedFrames.add(frame);
@@ -166,6 +179,8 @@ public class DockableEvent {
 		}else if(container==CONTAINER.DOCKED){
 			initialise(defaultDockedContainer,currentDockedContainer);
 			if(defaultDockedWindow!=currentDockedWindow &&  currentDockedWindow instanceof JFrame){
+				lastDetachedPosition=currentDockedWindow.getLocation();
+				lastSize=currentDockedWindow.getSize();
 				currentDockedWindow.setVisible(false);
 				((JFrame)currentDockedWindow).dispose();
 			}
@@ -179,7 +194,7 @@ public class DockableEvent {
 		
 	}
 	
-	private static void initiliseGlobalKeyBindings(JFrame frame){
+	public static void initiliseGlobalKeyBindings(JFrame frame){
 		JComponent component=(JComponent) frame.getContentPane();
 		for(AbstractAction action:globalActions){
 			component.registerKeyboardAction(action, (String) action.getValue(Action.ACTION_COMMAND_KEY), (KeyStroke) action.getValue(Action.ACCELERATOR_KEY),

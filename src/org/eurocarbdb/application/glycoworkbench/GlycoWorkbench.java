@@ -306,6 +306,10 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		theCanvas.registerUIListener(this);
 		
 		DockableEvent.addGlobalAction(theCanvas.getActionManager().get("implode"));
+		DockableEvent.addGlobalAction(theCanvas.getActionManager().get("explode"));
+		DockableEvent.addGlobalAction(this.theActionManager2.get("saveall"));
+		
+		DockableEvent.initiliseGlobalKeyBindings(this);
 		
 		initNewMenu();
 		initOpenMenu();
@@ -372,6 +376,12 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 					detachedSplitPaneCount++;
 				}else{
 					detachedSplitPaneCount--;
+					
+					if(detachedSplitPaneCount==3){
+						theSplitPane.setDividerLocation(1.);
+						theTopSplitPane.setDividerLocation(0.);
+						theLeftSplitPane.setDividerLocation(1.);
+					}
 				}
 				
 				moveToContainer.add(canvasScrollPane,BorderLayout.CENTER);
@@ -405,8 +415,17 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 					detachedSplitPaneCount++;
 				}else{
 					showLeftPanels();
+					
 					detachedSplitPaneCount--;
+					
+					if(detachedSplitPaneCount==3){
+						theSplitPane.setDividerLocation(1.);
+						theTopSplitPane.setDividerLocation(1.);
+						theLeftSplitPane.setDividerLocation(1.);
+					}
 				}
+				
+				
 				
 				moveToContainer.add(thePluginManager.getLeftComponent());
 				
@@ -435,6 +454,10 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 				}else{
 					showBottomPanels();
 					detachedSplitPaneCount--;
+					
+					if(detachedSplitPaneCount==3){
+						theSplitPane.setDividerLocation(1.);
+					}
 				}
 				
 				moveToContainer.add(thePluginManager.getBottomComponent());
@@ -519,7 +542,11 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 		theCanvas.addNotationChangeListener(this);
 		this.createPopupMenu();
-
+		
+		Dimension size=this.getSize();
+		
+		this.pack();
+		this.setSize(size);
 	}
 
 	public Dimension largeIcon = new Dimension(30, 30);
@@ -590,14 +617,17 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		applicationMenu.addMenuEntry(menuPrimary);
 	}
 	
+	
 	public void hideAll(){
 		System.err.println("Detached split pane count: "+detachedSplitPaneCount);
 		if(detachedSplitPaneCount==4){
 			theSplitPane.setVisible(false);
-		}else{
+		}else if(detachedSplitPaneCount!=0){
 			theSplitPane.setVisible(true);
+			int jy=theSplitPane.getHeight();
+			
+			this.setSize(new Dimension(this.getWidth(),jy));
 		}
-		this.pack();
 	}
 
 	public void initAboutAppMenuItem() {
@@ -1084,6 +1114,10 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	public GlycanCanvas getCanvas() {
 		return theCanvas;
 	}
+	
+	public void hideTopPanels(){
+		theLeftSplitPane.setDividerLocation(0.);
+	}
 
 	public void hideLeftPanels() {
 		theTopSplitPane.setDividerLocation(0.);
@@ -1136,6 +1170,10 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 			theSplitPane.setDividerLocation(0.6);
 		else
 			theSplitPane.setDividerLocation(1.);
+	}
+	
+	public void hideAllLeftPanels(){
+		theSplitPane.setDividerLocation(0.);
 	}
 
 	public void haltInteractions() {
@@ -2068,6 +2106,9 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	private JPanel toolBarPanel;
 	private JPanel toolBarPanelLinkage;
 	private DockableEvent glycanCanvasDockableEvent;
+	private int theLastSplitPaneDividerLocation;
+	private int theLastTopSplitPaneDividerLocation;
+	private int theLastLeftSplitPaneDividerLocation;
 
 	public void restart(String themeManager) {
 		// if(JOptionPane.showConfirmDialog(this,
@@ -2393,15 +2434,34 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		DOCKED
 	}
 	
+	private Dimension lastSize;
+	
 	/**
 	 * Detach all detachable panels from the main GWB frame.
 	 */
 	@Override
 	public void explode() {
-		glycanCanvasDockableEvent.changeCanvasPaneContainer(CONTAINER.FRAME);
-		leftPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.FRAME);
-		rightPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.FRAME);
-		bottomPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.FRAME);
+		if(detachedSplitPaneCount<4){
+			lastSize=this.getSize();
+			int jy=theSplitPane.getHeight();
+			int ix=this.getWidth();
+			int iy=this.getHeight();
+
+			theLastSplitPaneDividerLocation=theSplitPane.getDividerLocation();
+			theLastTopSplitPaneDividerLocation=theTopSplitPane.getDividerLocation();
+			theLastLeftSplitPaneDividerLocation=theLeftSplitPane.getDividerLocation();
+
+			glycanCanvasDockableEvent.changeCanvasPaneContainer(CONTAINER.FRAME);
+			glycanCanvasDockableEvent.getCurrentDockedWindow().setSize(400, 400);
+			leftPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.FRAME);
+			rightPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.FRAME);
+			bottomPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.FRAME);
+
+			hideTopPanels();
+			hideAllLeftPanels();
+
+			this.setSize(new Dimension(ix,iy-jy));
+		}
 	}
 	
 	/**
@@ -2409,11 +2469,17 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	 */
 	@Override
 	public void implode() {
-		glycanCanvasDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
-		leftPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
-		rightPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
-		bottomPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
-		
-		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		if(detachedSplitPaneCount>0){
+			glycanCanvasDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
+			leftPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
+			rightPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
+			bottomPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
+			
+			theSplitPane.setDividerLocation(theLastSplitPaneDividerLocation);
+			theLeftSplitPane.setDividerLocation(theLastLeftSplitPaneDividerLocation);
+			theTopSplitPane.setDividerLocation(theLastTopSplitPaneDividerLocation);
+			
+			this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+		}
 	}
 }
