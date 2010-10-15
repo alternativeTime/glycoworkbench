@@ -28,8 +28,14 @@ import java.awt.Container;
 import java.awt.Window;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.KeyStroke;
 
 import org.eurocarbdb.application.glycoworkbench.GlycoWorkbench.CONTAINER;
 //import org.eurocarbdb.application.glycoworkbench.test.BasicDraggableResizableWindow;
@@ -41,9 +47,28 @@ public class DockableEvent {
 	private Container currentDockedWindow;
 	private Container currentDockedContainer;
 	
+	private static List<JFrame> detachedFrames=new ArrayList<JFrame>();
+	private static List<AbstractAction> globalActions=new ArrayList<AbstractAction>();
+
 	public DockableEvent(Window _defaultDockedWindow,Container _defaultDockedContainer){
 		defaultDockedWindow=_defaultDockedWindow;
 		defaultDockedContainer=_defaultDockedContainer;
+	}
+	
+	public static List<JFrame> getDetachedFrames() {
+		return detachedFrames;
+	}
+	
+	public static List<AbstractAction> getGlobalActions() {
+		return globalActions;
+	}
+
+	public static void setGlobalActions(List<AbstractAction> globalActions) {
+		DockableEvent.globalActions = globalActions;
+	}
+	
+	public static void addGlobalAction(AbstractAction globalAction){
+		DockableEvent.globalActions.add(globalAction);
 	}
 	
 	protected void changeCanvasPaneContainer(CONTAINER container){
@@ -97,8 +122,9 @@ public class DockableEvent {
 				@Override
 				public void windowClosing(WindowEvent arg0) {
 					changeCanvasPaneContainer(CONTAINER.DOCKED);
-					frame.setVisible(false);
-					frame.dispose();
+					//frame.setVisible(false);
+					//frame.dispose();
+					detachedFrames.remove(frame);
 				}
 
 				@Override
@@ -135,11 +161,13 @@ public class DockableEvent {
 			
 			frame.setVisible(true);
 			
+			detachedFrames.add(frame);
+			DockableEvent.initiliseGlobalKeyBindings(frame);
 		}else if(container==CONTAINER.DOCKED){
 			initialise(defaultDockedContainer,currentDockedContainer);
-			if(currentDockedWindow instanceof JFrame){
-				//currentDockedWindow.setVisible(false);
-				//((JFrame)currentDockedWindow).dispose();
+			if(defaultDockedWindow!=currentDockedWindow &&  currentDockedWindow instanceof JFrame){
+				currentDockedWindow.setVisible(false);
+				((JFrame)currentDockedWindow).dispose();
 			}
 			
 			currentDockedContainer=defaultDockedContainer;
@@ -149,5 +177,13 @@ public class DockableEvent {
 
 	protected void initialise(Container moveToContainer,Container currentDockedContainer) {
 		
+	}
+	
+	private static void initiliseGlobalKeyBindings(JFrame frame){
+		JComponent component=(JComponent) frame.getContentPane();
+		for(AbstractAction action:globalActions){
+			component.registerKeyboardAction(action, (String) action.getValue(Action.ACTION_COMMAND_KEY), (KeyStroke) action.getValue(Action.ACCELERATOR_KEY),
+                JComponent.WHEN_IN_FOCUSED_WINDOW);
+		}
 	}
 }
