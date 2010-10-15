@@ -96,8 +96,6 @@ public class DockableEvent {
 
 				@Override
 				public void windowClosing(WindowEvent arg0) {
-					// TODO Auto-generated method stub
-					System.err.println("here");
 					changeCanvasPaneContainer(CONTAINER.DOCKED);
 					frame.setVisible(false);
 					frame.dispose();
@@ -139,6 +137,11 @@ public class DockableEvent {
 			
 		}else if(container==CONTAINER.DOCKED){
 			initialise(defaultDockedContainer,currentDockedContainer);
+			if(currentDockedWindow instanceof JFrame){
+				//currentDockedWindow.setVisible(false);
+				//((JFrame)currentDockedWindow).dispose();
+			}
+			
 			currentDockedContainer=defaultDockedContainer;
 			currentDockedWindow=defaultDockedWindow;
 		}

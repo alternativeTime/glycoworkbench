@@ -1174,9 +1174,11 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 				STOCK_ICON.DOCUMENT_OPEN, defaultMenuIconSize),
 				"Open a workspace", KeyEvent.VK_P, "", this); // done,ribbon app
 		// bar
+		//System.err.println("saveall");
 		theActionManager2.add("saveall", themeManager.getResizableIcon(
 				STOCK_ICON.DOCUMENT_SAVE, defaultMenuIconSize),
-				"Save the workspace", KeyEvent.VK_V, "", this); // done,ribbon
+				"Save the workspace", KeyEvent.VK_S, "ctrl S", this); // done,ribbon
+		//System.exit(0);
 		// app bar
 		theActionManager2.add("saveallas", themeManager.getResizableIcon(
 				STOCK_ICON.DOCUMENT_SAVE_AS, defaultMenuIconSize),
@@ -2397,5 +2399,16 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		leftPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.FRAME);
 		rightPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.FRAME);
 		bottomPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.FRAME);
+	}
+	
+	/**
+	 * Attach all detachable panels to the main GWB frame.
+	 */
+	@Override
+	public void implode() {
+		glycanCanvasDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
+		leftPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
+		rightPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
+		bottomPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
 	}
 }
