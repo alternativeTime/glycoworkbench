@@ -35,6 +35,7 @@ if(!-e $buildDir){
 }
 
 my $currentReleaseLink="$serverDir/current_version";
+my $currentReleaseLinkInfo="$serverDir/latest_version";
 
 my $buildNo=0;
 
@@ -50,7 +51,7 @@ if(-f $lastBuildNo){
 $buildNo++;
 
 #Replace all macros with their corresponding values within the given list of files. (restored after build)
-my @replaceInFiles=('winInstaller.nsi','src/html/about_gwb.html','README.txt');
+my @replaceInFiles=('winInstaller.nsi','src/html/about_gwb.html','README.txt','application/GlycoWorkbench/src/org/eurocarbdb/application/glycoworkbench/GlycoWorkbench.java');
 foreach my $file(@replaceInFiles){
 	`sed 's/GWB_MAJOR/$majorVersion/g;s/GWB_MINOR/$minorVersion/g;s/GWB_STATE/$state/g;s/GWB_BUILD/$buildNo/g' $file > tmp.out`;
 	 copy($file,"$file.bak") || onDie("Error copying file\n");
@@ -95,6 +96,7 @@ system("cp -r $packagesDir/* $buildPublishDir");
 
 
 `echo "$buildNo" > $lastBuildNo`;
+
 if(!-e $versionLink){
 	system("ln -s $buildPublishDir $versionLink");
 }
@@ -106,7 +108,7 @@ if(-e $currentReleaseLink){
    unlink($currentReleaseLink);
  }
  system("ln -s $buildPublishDir $currentReleaseLink");
- 
+ `echo "$majorVersion $minorVersion $state $buildNo" > $currentReleaseLinkInfo`;
 }
 
 onExit();
