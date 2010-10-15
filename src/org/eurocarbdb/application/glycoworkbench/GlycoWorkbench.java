@@ -56,6 +56,7 @@ import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
@@ -98,6 +99,8 @@ import org.eurocarbdb.application.glycoworkbench.plugin.Plugin;
 import org.eurocarbdb.application.glycoworkbench.plugin.PluginManager;
 import org.eurocarbdb.application.glycoworkbench.plugin.ReportingPlugin;
 import org.eurocarbdb.application.glycoworkbench.plugin.reporting.AnnotationReportDocument;
+import org.eurocarbdb.application.glycoworkbench.updater.Updatable;
+import org.eurocarbdb.application.glycoworkbench.updater.Updater;
 import org.pushingpixels.flamingo.api.common.CommandButtonDisplayState;
 import org.pushingpixels.flamingo.api.common.JCommandButton;
 import org.pushingpixels.flamingo.api.common.JCommandButton.CommandButtonKind;
@@ -110,6 +113,7 @@ import org.pushingpixels.flamingo.api.common.popup.JCommandPopupMenu;
 import org.pushingpixels.flamingo.api.common.popup.JPopupPanel;
 import org.pushingpixels.flamingo.api.common.popup.PopupPanelCallback;
 import org.pushingpixels.flamingo.api.ribbon.AbstractRibbonBand;
+import org.pushingpixels.flamingo.api.ribbon.JFlowRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonFrame;
 import org.pushingpixels.flamingo.api.ribbon.RibbonApplicationMenu;
@@ -128,11 +132,21 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		BaseDocument.DocumentChangeListener,
 		GlycanCanvas.SelectionChangeListener, FileHistory.Listener,
 		MouseListener, GlycanWorkspace.Listener, ContextAwareContainer,
-		NotationChangeListener,UIActionListener {
+		NotationChangeListener,UIActionListener,Updatable {
 
 	private static final long serialVersionUID = 0L;
 	private static ICON_SIZE defaultMenuIconSize = ICON_SIZE.TINY;
 	private static ICON_SIZE barIconSize = ICON_SIZE.SMALL;
+	
+	private static String MAJOR_VERSION="GWB_MAJOR";
+	private static String MINOR_VERSION="GWB_MINOR";
+	private static String BUILD_NUMBER="GWB_BUILD";
+	private static String BUILD_STATE="GWB_STATE";
+	
+//	private static String MAJOR_VERSION="2";
+//	private static String MINOR_VERSION="0";
+//	private static String BUILD_NUMBER="50";
+//	private static String BUILD_STATE="ALPHA";
 
 	// singletons
 	protected GlycanWorkspace theWorkspace;
@@ -212,7 +226,17 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		return configurationFile;
 	}
 
+	private Updater updater;
+	
 	public GlycoWorkbench() throws IOException {
+		try {
+			updater=new Updater("http://download.glycoworkbench.org");
+			checkForUpdates();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		initGwb();
 	}
 
@@ -1544,7 +1568,31 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 						new RichTooltip("Save structures as", " ")),
 				RibbonElementPriority.TOP);
 
-		RibbonTask task = new RibbonTask("Home", band, band2);
+		JFlowRibbonBand band3 = new JFlowRibbonBand("Information",
+				new org.pushingpixels.flamingo.api.common.icon.EmptyResizableIcon(
+						10));
+		
+		String upToDate;
+		if(this.updater.isUptoDate(this)){
+			upToDate="latest";
+		}else{
+			upToDate="update available";
+		}
+		
+		band3.addFlowComponent(new JLabel("Version: "+GlycoWorkbench.MAJOR_VERSION+"."+GlycoWorkbench.MINOR_VERSION+
+				" "+GlycoWorkbench.BUILD_STATE+" ("+GlycoWorkbench.BUILD_NUMBER+")"+ "("+upToDate+")"));
+		band3.addFlowComponent(new JLabel("OS: "+System.getProperty("os.name")));
+		
+		//band3.addFlowComponent(new JLabel(upToDate));
+		
+		ArrayList<RibbonBandResizePolicy> resizePolicies1 = new ArrayList<RibbonBandResizePolicy>();
+		resizePolicies1.add(new CoreRibbonResizePolicies.FlowTwoRows(band3
+				.getControlPanel()));
+		resizePolicies1.add(new IconRibbonBandResizePolicy(band3
+				.getControlPanel()));
+		band3.setResizePolicies(resizePolicies1);
+		
+		RibbonTask task = new RibbonTask("Home", band, band2,band3);
 
 		this.getRibbon().addTask(task);
 	}
@@ -2538,5 +2586,39 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 				
 			});
 		}
+	}
+	
+	
+	public void checkForUpdates(){
+		if(updater.isUptoDate(this)){
+			System.err.println("GlycoWorkbench is up to date");
+		}else{
+			System.err.println("An update is available");
+		}
+		
+	}
+
+	@Override
+	public String getMajorVersion() {
+		// TODO Auto-generated method stub
+		return GlycoWorkbench.MAJOR_VERSION;
+	}
+
+	@Override
+	public String getMinorVersion() {
+		// TODO Auto-generated method stub
+		return GlycoWorkbench.MINOR_VERSION;
+	}
+
+	@Override
+	public String getBuildState() {
+		// TODO Auto-generated method stub
+		return GlycoWorkbench.BUILD_STATE;
+	}
+
+	@Override
+	public String getBuildNo() {
+		// TODO Auto-generated method stub
+		return GlycoWorkbench.BUILD_NUMBER;
 	}
 }
