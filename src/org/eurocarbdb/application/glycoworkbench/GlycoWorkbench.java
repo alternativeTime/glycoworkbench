@@ -304,6 +304,9 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 		theCanvas = new GlycanCanvas(this, theWorkspace, themeManager,true);
 		theCanvas.registerUIListener(this);
+		
+		DockableEvent.addGlobalAction(theCanvas.getActionManager().get("implode"));
+		
 		initNewMenu();
 		initOpenMenu();
 		initOpenRecent();
@@ -2410,5 +2413,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		leftPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
 		rightPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
 		bottomPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
+		
+		this.setExtendedState(JFrame.MAXIMIZED_BOTH);
 	}
 }
