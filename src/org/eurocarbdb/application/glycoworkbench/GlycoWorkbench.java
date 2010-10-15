@@ -256,7 +256,12 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		
 		if(!glycanCanvasDetached && !leftPanelDetached){
 			theTopSplitPane.setDividerLocation(theLastTopSplitPaneDividerLocation);
+		}else if(!glycanCanvasDetached){
+			theTopSplitPane.setDividerLocation(.0);
+		}else if(!leftPanelDetached){
+			theTopSplitPane.setDividerLocation(1.);
 		}
+		
 		
 		if(detachedSplitPaneCount==3){
 			if(!glycanCanvasDetached){
