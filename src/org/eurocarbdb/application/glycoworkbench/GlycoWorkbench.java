@@ -139,15 +139,15 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	private static ICON_SIZE defaultMenuIconSize = ICON_SIZE.TINY;
 	private static ICON_SIZE barIconSize = ICON_SIZE.SMALL;
 	
-	private static String MAJOR_VERSION="GWB_MAJOR";
-	private static String MINOR_VERSION="GWB_MINOR";
-	private static String BUILD_NUMBER="GWB_BUILD";
-	private static String BUILD_STATE="GWB_STATE";
+//	private static String MAJOR_VERSION="GWB_MAJOR";
+//	private static String MINOR_VERSION="GWB_MINOR";
+//	private static String BUILD_NUMBER="GWB_BUILD";
+//	private static String BUILD_STATE="GWB_STATE";
 	
-//	private static String MAJOR_VERSION="2";
-//	private static String MINOR_VERSION="0";
-//	private static String BUILD_NUMBER="50";
-//	private static String BUILD_STATE="ALPHA";
+	private static String MAJOR_VERSION="2";
+	private static String MINOR_VERSION="0";
+	private static String BUILD_NUMBER="50";
+	private static String BUILD_STATE="ALPHA";
 
 	// singletons
 	protected GlycanWorkspace theWorkspace;
@@ -260,6 +260,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		}else if(!glycanCanvasDetached){
 			theTopSplitPane.setDividerLocation(.0);
 		}else if(!leftPanelDetached){
+			System.err.println("Setting divider location to 1");
 			theTopSplitPane.setDividerLocation(1.);
 		}
 		
@@ -424,8 +425,6 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 					topHeightRequired=true;
 					
 					glycanCanvasDetached=false;
-					
-					updateDividerLocations();
 				}
 				
 				moveToContainer.add(canvasScrollPane,BorderLayout.CENTER);
@@ -435,6 +434,20 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 				
 				
 				hideAll();
+			}
+			
+			protected void finaliseAttachment(){
+				SwingUtilities.invokeLater(new Runnable(){
+					@Override
+					public void run() {
+						while(true){
+							if(theSplitPane.isVisible()){
+								updateDividerLocations();
+								break;
+							}
+						}
+					}
+				});
 			}
 		};
 		
@@ -465,13 +478,25 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 					
 					topHeightRequired=true;
 					leftPanelDetached=false;
-					
-					updateDividerLocations();
 				}
 				
 				moveToContainer.add(thePluginManager.getLeftComponent());
 				
 				hideAll();
+			}
+			
+			protected void finaliseAttachment(){
+				SwingUtilities.invokeLater(new Runnable(){
+					@Override
+					public void run() {
+						while(true){
+							if(theSplitPane.isVisible()){
+								updateDividerLocations();
+								break;
+							}
+						}
+					}
+				});
 			}
 		};
 		
@@ -500,13 +525,25 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 					
 					bottomHeightRequired=true;
 					spectrumPanelDetached=false;
-					
-					updateDividerLocations();
 				}
 				
 				moveToContainer.add(thePluginManager.getBottomComponent());
 				
 				hideAll();
+			}
+			
+			protected void finaliseAttachment(){
+				SwingUtilities.invokeLater(new Runnable(){
+					@Override
+					public void run() {
+						while(true){
+							if(theSplitPane.isVisible()){
+								updateDividerLocations();
+								break;
+							}
+						}
+					}
+				});
 			}
 		};
 		
@@ -535,13 +572,25 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 					bottomHeightRequired=true;
 					
 					rightPanelDetached=false;
-					
-					updateDividerLocations();
 				}
 				
 				moveToContainer.add(thePluginManager.getRightComponent());
 				
 				hideAll();
+			}
+			
+			protected void finaliseAttachment(){
+				SwingUtilities.invokeLater(new Runnable(){
+					@Override
+					public void run() {
+						while(true){
+							if(theSplitPane.isVisible()){
+								updateDividerLocations();
+								break;
+							}
+						}
+					}
+				});
 			}
 		};
 		

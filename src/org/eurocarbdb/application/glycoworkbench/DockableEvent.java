@@ -206,10 +206,18 @@ public class DockableEvent {
 			
 			currentDockedContainer=defaultDockedContainer;
 			currentDockedWindow=defaultDockedWindow;
+			
+			finaliseAttachment();
 		}
+		
+		
 	}
 
 	protected void initialise(Container moveToContainer,Container currentDockedContainer) {
+		
+	}
+	
+	protected void finaliseAttachment(){
 		
 	}
 	
