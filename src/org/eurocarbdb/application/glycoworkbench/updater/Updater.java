@@ -27,16 +27,21 @@ public class Updater {
 	}
 	
 	public boolean isUptoDate(Updatable updatable){
-		int majorVersion=Integer.parseInt(updatable.getMajorVersion());
-		int minorVersion=Integer.parseInt(updatable.getMinorVersion());
-		int buildNo=Integer.parseInt(updatable.getBuildNo());
-		
-		if(majorVersion < MAJOR_VERSION || 
-				(majorVersion==MAJOR_VERSION && minorVersion < MINOR_VERSION) ||
-				(majorVersion==MAJOR_VERSION && minorVersion== MINOR_VERSION && buildNo < BUILD_NUMBER)
-			){
-			return false;
-		}else{
+		try{
+			int majorVersion=Integer.parseInt(updatable.getMajorVersion());
+			int minorVersion=Integer.parseInt(updatable.getMinorVersion());
+			int buildNo=Integer.parseInt(updatable.getBuildNo());
+			
+			if(majorVersion < MAJOR_VERSION || 
+					(majorVersion==MAJOR_VERSION && minorVersion < MINOR_VERSION) ||
+					(majorVersion==MAJOR_VERSION && minorVersion== MINOR_VERSION && buildNo < BUILD_NUMBER)
+				){
+				return false;
+			}else{
+				return true;
+			}
+		}catch(Exception ex){
+			ex.printStackTrace();
 			return true;
 		}
 	}
