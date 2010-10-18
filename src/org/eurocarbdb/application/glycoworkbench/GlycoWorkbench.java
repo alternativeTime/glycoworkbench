@@ -29,6 +29,7 @@ import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -405,9 +406,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		toolBarPanelLinkage.setLayout(new BorderLayout());
 		toolBarPanelLinkage.add(theCanvas.getToolBarProperties(),BorderLayout.CENTER);
 		
-		glycanCanvasDockableEvent = new DockableEvent(this,canvasPanel){
-			
-
+		glycanCanvasDockableEvent = new DockableEvent(this,canvasPanel,"Glycan canvas"){
 			protected void initialise(Container moveToContainer,Container currentDockedContainer) {
 				if(currentDockedContainer!=null){
 					currentDockedContainer.remove(canvasScrollPane);
@@ -447,7 +446,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		leftPanel.setLayout(new BorderLayout());
 		leftPanel.add(thePluginManager.getLeftComponent());
 		
-		leftPanelDockableEvent = new DockableEvent(this,leftPanel){
+		leftPanelDockableEvent = new DockableEvent(this,leftPanel,"Project explorer"){
 			protected void initialise(Container moveToContainer,Container currentDockedContainer) {
 				if(currentDockedContainer!=null){
 					
@@ -485,7 +484,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		bottomPanel.setLayout(new BorderLayout());
 		bottomPanel.add(thePluginManager.getBottomComponent());
 		
-		bottomPanelDockableEvent = new DockableEvent(this,bottomPanel){
+		bottomPanelDockableEvent = new DockableEvent(this,bottomPanel,"Spectrum viewer"){
 			protected void initialise(Container moveToContainer,Container currentDockedContainer) {
 				if(currentDockedContainer!=null){
 					currentDockedContainer.remove(thePluginManager.getBottomComponent());
@@ -519,7 +518,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		rightPanel.setLayout(new BorderLayout());
 		rightPanel.add(thePluginManager.getRightComponent());
 		
-		rightPanelDockableEvent = new DockableEvent(this,rightPanel){
+		rightPanelDockableEvent = new DockableEvent(this,rightPanel,"Annotation tools"){
 			protected void initialise(Container moveToContainer,Container currentDockedContainer) {
 				if(currentDockedContainer!=null){
 					currentDockedContainer.remove(thePluginManager.getRightComponent());
@@ -1578,7 +1577,9 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 						10));
 		
 		String upToDate;
-		if(this.updater.isUptoDate(this)){
+		if(this.updater==null){
+			upToDate="";
+		}else if(this.updater.isUptoDate(this)){
 			upToDate="latest";
 		}else{
 			upToDate="update available";
@@ -2590,6 +2591,8 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 				}
 				
 			});
+			
+			DockableEvent.setLastPlacedWindowPosition(new Point(0,0));
 		}
 	}
 	

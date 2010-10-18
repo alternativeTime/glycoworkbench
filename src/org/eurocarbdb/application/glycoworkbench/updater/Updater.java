@@ -20,7 +20,7 @@ public class Updater {
 		updateSite=_updateSite;
 		
 		if(!checkSiteExists(new URL(updateSite))){
-				throw new Exception("Update couldn't be conntacted");
+				throw new Exception("Update site couldn't be contacted");
 		}
 		
 		getLatestVersionInfo();
