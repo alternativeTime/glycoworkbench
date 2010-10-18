@@ -50,13 +50,24 @@ public class DockableEvent {
 	private Container currentDockedContainer;
 	private Point lastDetachedPosition;
 	private Dimension lastSize;
+	private String title;
+	private static Point lastPlacedWindowPosition;
 	
+	public static Point getLastPlacedWindowPosition() {
+		return lastPlacedWindowPosition;
+	}
+
+	public static void setLastPlacedWindowPosition(Point lastPlacedWindowPosition) {
+		DockableEvent.lastPlacedWindowPosition = lastPlacedWindowPosition;
+	}
+
 	private static List<JFrame> detachedFrames=new ArrayList<JFrame>();
 	private static List<AbstractAction> globalActions=new ArrayList<AbstractAction>();
 
-	public DockableEvent(Window _defaultDockedWindow,Container _defaultDockedContainer){
+	public DockableEvent(Window _defaultDockedWindow,Container _defaultDockedContainer,String _title){
 		defaultDockedWindow=_defaultDockedWindow;
 		defaultDockedContainer=_defaultDockedContainer;
+		title=_title;
 	}
 	
 	public static List<JFrame> getDetachedFrames() {
@@ -170,8 +181,16 @@ public class DockableEvent {
 			if(lastDetachedPosition!=null){
 				currentDockedWindow.setLocation(lastDetachedPosition);
 				currentDockedWindow.setSize(lastSize);
+			}else{
+				if(lastPlacedWindowPosition==null){
+					lastPlacedWindowPosition=new Point(0,0);
+					currentDockedWindow.setLocation(lastPlacedWindowPosition);
+				}else{
+					lastPlacedWindowPosition=new Point((int)lastPlacedWindowPosition.getX()+20,(int)lastPlacedWindowPosition.getY()+30);
+					currentDockedWindow.setLocation(lastPlacedWindowPosition);
+				}
 			}
-			
+			frame.setTitle(title);
 			frame.setVisible(true);
 			
 			detachedFrames.add(frame);
