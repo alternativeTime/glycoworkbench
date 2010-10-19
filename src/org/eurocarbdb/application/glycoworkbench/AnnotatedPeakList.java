@@ -20,10 +20,15 @@
 
 package org.eurocarbdb.application.glycoworkbench;
 
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFPicture;
 import org.eurocarbdb.application.glycanbuilder.*;
 
 import java.util.*;
 import java.io.*;
+
 import org.jfree.data.Range;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -129,14 +134,16 @@ public class AnnotatedPeakList extends BaseDocument implements
 				"Cartoonist annotated peaklist file"));
 		filters.add(new ExtensionFileFilter("gwa",
 				"GlycoWorkbench annotated peaklist file"));
-		filters.add(new ExtensionFileFilter(new String[] { "gwa", "msa" },
+		filters.add(new ExtensionFileFilter("xls",
+			"GlycoWorkbench annotated peaklist excel file"));
+		filters.add(new ExtensionFileFilter(new String[] { "gwa", "msa","xls" },
 				"All annotated peaklist files"));
 
 		return filters;
 	}
 
 	public javax.swing.filechooser.FileFilter getAllFileFormats() {
-		return new ExtensionFileFilter(new String[] { "gwa", "msa" },
+		return new ExtensionFileFilter(new String[] { "gwa", "msa","xls" },
 				"Annotated peaklist files");
 	}
 
@@ -1538,7 +1545,48 @@ public class AnnotatedPeakList extends BaseDocument implements
 		 * 
 		 * document.appendChild(apl_node); XMLUtils.write(bos,document);
 		 */
-		SAXUtils.write(os, this);
+		System.err.println("Writing: "+filename);
+		if(filename.endsWith(".xls")){
+			System.err.println("Writing to excel?");
+			toExcel(os);
+		}else{
+			SAXUtils.write(os, this);
+		}
+	}
+	
+	public void toExcel(OutputStream os) throws IOException{
+		HSSFWorkbook wb=new HSSFWorkbook();
+		HSSFSheet sheet=wb.createSheet();
+		int currentRow=0;
+	    short currentCell=0;
+	    
+	    HSSFRow row=sheet.createRow(currentRow++);
+	    row.createCell(currentCell++).setCellValue("Peak");
+
+		for(Glycan glycan:this.structures){
+			row.createCell(currentCell++).setCellValue(glycan.toString());
+		}
+		
+		for(PeakAnnotationMultiple annotatedPeak:this.peak_annotations_multiple){
+			currentCell=0;
+			row=sheet.createRow(currentRow++);
+			row.createCell(currentCell++).setCellValue(annotatedPeak.peak.getMZ());
+			Vector<Vector<Annotation>> annotations=annotatedPeak.getAnnotations();
+			for(Vector<Annotation> glycanAnnotations:annotations){
+				StringBuffer buffer=new StringBuffer();
+				for(Annotation annotation:glycanAnnotations){
+					buffer.append(annotation.toString());
+				}
+				row.createCell(currentCell++).setCellValue(buffer.toString());
+			}
+		}
+		
+		for(int i=0;i<this.structures.size()+1;i++){
+			//where has the auto size method gone?
+		}
+		
+		wb.write(os);
+		os.flush();
 	}
 
 	/**
