@@ -53,6 +53,11 @@ public class DockableEvent {
 	private String title;
 	private static Point lastPlacedWindowPosition;
 	
+	public void reset(){
+		currentDockedWindow=null;
+		currentDockedContainer=null;
+	}
+	
 	public static Point getLastPlacedWindowPosition() {
 		return lastPlacedWindowPosition;
 	}

@@ -51,6 +51,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.help.HelpSet;
 import javax.swing.JDialog;
@@ -88,6 +89,7 @@ import org.eurocarbdb.application.glycanbuilder.GlycanDocument;
 import org.eurocarbdb.application.glycanbuilder.GraphicOptions;
 import org.eurocarbdb.application.glycanbuilder.ICON_SIZE;
 import org.eurocarbdb.application.glycanbuilder.JCommandButtonAction;
+import org.eurocarbdb.application.glycanbuilder.LAFListener;
 import org.eurocarbdb.application.glycanbuilder.LogUtils;
 import org.eurocarbdb.application.glycanbuilder.Monitor;
 import org.eurocarbdb.application.glycanbuilder.MouseUtils;
@@ -99,6 +101,8 @@ import org.eurocarbdb.application.glycanbuilder.UIActionListener;
 import org.eurocarbdb.application.glycoworkbench.plugin.Plugin;
 import org.eurocarbdb.application.glycoworkbench.plugin.PluginManager;
 import org.eurocarbdb.application.glycoworkbench.plugin.ReportingPlugin;
+import org.eurocarbdb.application.glycoworkbench.plugin.WorkspacePanel;
+import org.eurocarbdb.application.glycoworkbench.plugin.WorkspacePlugin;
 import org.eurocarbdb.application.glycoworkbench.plugin.reporting.AnnotationReportDocument;
 import org.eurocarbdb.application.glycoworkbench.updater.Updatable;
 import org.eurocarbdb.application.glycoworkbench.updater.Updater;
@@ -133,21 +137,21 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		BaseDocument.DocumentChangeListener,
 		GlycanCanvas.SelectionChangeListener, FileHistory.Listener,
 		MouseListener, GlycanWorkspace.Listener, ContextAwareContainer,
-		NotationChangeListener,UIActionListener,Updatable {
+		NotationChangeListener, UIActionListener, Updatable, LAFListener {
 
 	private static final long serialVersionUID = 0L;
 	private static ICON_SIZE defaultMenuIconSize = ICON_SIZE.TINY;
 	private static ICON_SIZE barIconSize = ICON_SIZE.SMALL;
-	
-	private static String MAJOR_VERSION="GWB_MAJOR";
-	private static String MINOR_VERSION="GWB_MINOR";
-	private static String BUILD_NUMBER="GWB_BUILD";
-	private static String BUILD_STATE="GWB_STATE";
-	
-//	private static String MAJOR_VERSION="2";
-//	private static String MINOR_VERSION="0";
-//	private static String BUILD_NUMBER="50";
-//	private static String BUILD_STATE="ALPHA";
+
+	private static String MAJOR_VERSION = "GWB_MAJOR";
+	private static String MINOR_VERSION = "GWB_MINOR";
+	private static String BUILD_NUMBER = "GWB_BUILD";
+	private static String BUILD_STATE = "GWB_STATE";
+
+	// private static String MAJOR_VERSION="2";
+	// private static String MINOR_VERSION="0";
+	// private static String BUILD_NUMBER="50";
+	// private static String BUILD_STATE="ALPHA";
 
 	// singletons
 	protected GlycanWorkspace theWorkspace;
@@ -203,21 +207,25 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 			configurationFile = new File(userHomeDirectory
 					+ "/.glycoworkbench.xml");
 		} else if (osName.startsWith("Windows")) {
-			String applicationDataDirectory=System.getenv("APPDATA");
-			if(applicationDataDirectory==null){
-				applicationDataDirectory=userHomeDirectory+File.separator+"Application Data";
+			String applicationDataDirectory = System.getenv("APPDATA");
+			if (applicationDataDirectory == null) {
+				applicationDataDirectory = userHomeDirectory + File.separator
+						+ "Application Data";
 			}
-			
-			File glycoworkBenchProfilesDirectory = new File(applicationDataDirectory+File.separator+"GlycoWorkBench");
-			
+
+			File glycoworkBenchProfilesDirectory = new File(
+					applicationDataDirectory + File.separator
+							+ "GlycoWorkBench");
+
 			if (!glycoworkBenchProfilesDirectory.exists()) {
 				if (!glycoworkBenchProfilesDirectory.mkdir()) {
 					throw new IOException("Could not create directory: "
 							+ glycoworkBenchProfilesDirectory.toString());
 				}
 			}
-			
-			configurationFile = new File(glycoworkBenchProfilesDirectory+File.separator+"glycoworkbench.xml");
+
+			configurationFile = new File(glycoworkBenchProfilesDirectory
+					+ File.separator + "glycoworkbench.xml");
 		} else {
 			configurationFile = new File(userHomeDirectory
 					+ "/glycoworkbench.xml");
@@ -228,60 +236,63 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	}
 
 	private Updater updater;
-	
+
 	public GlycoWorkbench() throws IOException {
 		try {
-			updater=new Updater("http://download.glycoworkbench.org");
+			updater = new Updater("http://download.glycoworkbench.org");
 			checkForUpdates();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		initGwb();
 	}
 
-	private boolean glycanCanvasDetached=false;
-	private boolean spectrumPanelDetached=false;
-	private boolean leftPanelDetached=false;
-	private boolean rightPanelDetached=false;
-	
-	private void updateDividerLocations(){
-		if((!glycanCanvasDetached || !spectrumPanelDetached || !leftPanelDetached) && !rightPanelDetached){
+	private boolean glycanCanvasDetached = false;
+	private boolean spectrumPanelDetached = false;
+	private boolean leftPanelDetached = false;
+	private boolean rightPanelDetached = false;
+
+	private void updateDividerLocations() {
+		if ((!glycanCanvasDetached || !spectrumPanelDetached || !leftPanelDetached)
+				&& !rightPanelDetached) {
 			theSplitPane.setDividerLocation(theLastSplitPaneDividerLocation);
 		}
-		
-		if(!spectrumPanelDetached && (!glycanCanvasDetached || !leftPanelDetached)){
-			theLeftSplitPane.setDividerLocation(theLastLeftSplitPaneDividerLocation);
+
+		if (!spectrumPanelDetached
+				&& (!glycanCanvasDetached || !leftPanelDetached)) {
+			theLeftSplitPane
+					.setDividerLocation(theLastLeftSplitPaneDividerLocation);
 		}
-		
-		if(!glycanCanvasDetached && !leftPanelDetached){
-			theTopSplitPane.setDividerLocation(theLastTopSplitPaneDividerLocation);
-		}else if(!glycanCanvasDetached){
+
+		if (!glycanCanvasDetached && !leftPanelDetached) {
+			theTopSplitPane
+					.setDividerLocation(theLastTopSplitPaneDividerLocation);
+		} else if (!glycanCanvasDetached) {
 			theTopSplitPane.setDividerLocation(.0);
-		}else if(!leftPanelDetached){
+		} else if (!leftPanelDetached) {
 			System.err.println("Setting divider location to 1");
 			theTopSplitPane.setDividerLocation(1.);
 		}
-		
-		
-		if(detachedSplitPaneCount==3){
-			if(!glycanCanvasDetached){
+
+		if (detachedSplitPaneCount == 3) {
+			if (!glycanCanvasDetached) {
 				theSplitPane.setDividerLocation(1.);
 				theTopSplitPane.setDividerLocation(0.);
 				theLeftSplitPane.setDividerLocation(1.);
-			}else if(!spectrumPanelDetached){
+			} else if (!spectrumPanelDetached) {
 				theSplitPane.setDividerLocation(1.);
-			}else if(!leftPanelDetached){
+			} else if (!leftPanelDetached) {
 				theSplitPane.setDividerLocation(1.);
 				theTopSplitPane.setDividerLocation(1.);
 				theLeftSplitPane.setDividerLocation(1.);
-			}else if(!rightPanelDetached){
+			} else if (!rightPanelDetached) {
 				theSplitPane.setDividerLocation(0.);
 			}
 		}
 	}
-	
+
 	public void initGwb() throws IOException {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -290,14 +301,16 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		try {
 			themeManager = new ThemeManager(null, this.getClass());
 			try {
-				themeManager.addIconPath("/icons/glycan_builder", this.getClass());
+				themeManager.addIconPath("/icons/glycan_builder",
+						this.getClass());
 				themeManager.addIconPath("/gwb/icons", GlycoWorkbench.class);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			try {
-				themeManager.addIconPath("/icons/crystal_project", this.getClass());
+				themeManager.addIconPath("/icons/crystal_project",
+						this.getClass());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -307,7 +320,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 		ThemeManager.lookupNoneCached = false;
 
 		FileUtils.setThemeManager(themeManager);
@@ -343,17 +356,22 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		theDoc = theWorkspace.getStructures();
 		theActionManager = new ActionManager();
 		thePluginManager = new PluginManager(this, theWorkspace);
+		plugins = thePluginManager.getPlugins();
+
 		halt_interactions = new Monitor(this);
 
-		theCanvas = new GlycanCanvas(this, theWorkspace, themeManager,true);
+		theCanvas = new GlycanCanvas(this, theWorkspace, themeManager, true);
 		theCanvas.registerUIListener(this);
-		
-		DockableEvent.addGlobalAction(theCanvas.getActionManager().get("implode"));
-		DockableEvent.addGlobalAction(theCanvas.getActionManager().get("explode"));
+		theCanvas.registerLAFListener(this);
+
+		DockableEvent.addGlobalAction(theCanvas.getActionManager().get(
+				"implode"));
+		DockableEvent.addGlobalAction(theCanvas.getActionManager().get(
+				"explode"));
 		DockableEvent.addGlobalAction(this.theActionManager2.get("saveall"));
-		
+
 		DockableEvent.initiliseGlobalKeyBindings(this);
-		
+
 		initNewMenu();
 		initOpenMenu();
 		initOpenRecent();
@@ -374,233 +392,14 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 		UIManager.getDefaults().put("ToolTip.hideAccelerator", Boolean.TRUE);
 
-		JPanel c2Panel=new JPanel();
+		c2Panel = new JPanel();
 		c2Panel.setLayout(new BorderLayout());
 		getContentPane().add(c2Panel, BorderLayout.CENTER);
-		
-		theSplitPane = new JSplitPane();
-		theSplitPane.setResizeWeight(1.);
-		theSplitPane.setOneTouchExpandable(true);
+		initSplitPane();
 		c2Panel.add(theSplitPane, BorderLayout.CENTER);
 
-		theLeftSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-		theLeftSplitPane.setResizeWeight(1.);
-		theLeftSplitPane.setOneTouchExpandable(true);
-		theSplitPane.setLeftComponent(theLeftSplitPane);
+		// hideRightPanels();
 
-		theTopSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-		theTopSplitPane.setResizeWeight(0.);
-		theTopSplitPane.setOneTouchExpandable(true);
-		theLeftSplitPane.setTopComponent(theTopSplitPane);
-
-		canvasPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-		canvasPanel.setLayout(new BorderLayout());
-		
-		canvasScrollPane = new JScrollPane(theCanvas);
-		theCanvas.setScrollPane(canvasScrollPane);
-		
-		toolBarPanel = new JPanel();
-		toolBarPanel.setLayout(new BorderLayout());
-		toolBarPanel.add(theCanvas.getToolBarStructure(),BorderLayout.CENTER);
-		
-		toolBarPanelLinkage = new JPanel();
-		toolBarPanelLinkage.setLayout(new BorderLayout());
-		toolBarPanelLinkage.add(theCanvas.getToolBarProperties(),BorderLayout.CENTER);
-		
-		glycanCanvasDockableEvent = new DockableEvent(this,canvasPanel,"Glycan canvas"){
-			protected void initialise(Container moveToContainer,Container currentDockedContainer) {
-				if(currentDockedContainer!=null){
-					currentDockedContainer.remove(canvasScrollPane);
-					currentDockedContainer.remove(toolBarPanel);
-					currentDockedContainer.remove(toolBarPanelLinkage);
-				}
-				
-				if(canvasPanel!=moveToContainer){
-					detachedSplitPaneCount++;
-					glycanCanvasDetached=true;
-				}else{
-					detachedSplitPaneCount--;
-					
-					
-					topHeightRequired=true;
-					
-					glycanCanvasDetached=false;
-				}
-				
-				moveToContainer.add(canvasScrollPane,BorderLayout.CENTER);
-				moveToContainer.add(toolBarPanel,BorderLayout.NORTH);
-				moveToContainer.add(toolBarPanelLinkage,BorderLayout.SOUTH);
-				
-				
-				
-				hideAll();
-			}
-			
-			protected void finaliseAttachment(){
-				SwingUtilities.invokeLater(new Runnable(){
-					@Override
-					public void run() {
-						while(true){
-							if(theSplitPane.isVisible()){
-								updateDividerLocations();
-								break;
-							}
-						}
-					}
-				});
-			}
-		};
-		
-		glycanCanvasDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
-		
-		theTopSplitPane.setRightComponent(canvasPanel);
-		
-		final JPanel leftPanel=new JPanel();
-		leftPanel.setLayout(new BorderLayout());
-		leftPanel.add(thePluginManager.getLeftComponent());
-		
-		leftPanelDockableEvent = new DockableEvent(this,leftPanel,"Project explorer"){
-			protected void initialise(Container moveToContainer,Container currentDockedContainer) {
-				if(currentDockedContainer!=null){
-					
-					currentDockedContainer.remove(thePluginManager.getLeftComponent());
-					if(currentDockedContainer instanceof JPanel){
-						((JPanel)currentDockedContainer).revalidate();
-					}
-				}
-				
-				if(moveToContainer!=leftPanel){
-					hideLeftPanels();
-					detachedSplitPaneCount++;
-					leftPanelDetached=true;
-				}else{
-					detachedSplitPaneCount--;
-					
-					topHeightRequired=true;
-					leftPanelDetached=false;
-				}
-				
-				moveToContainer.add(thePluginManager.getLeftComponent());
-				
-				hideAll();
-			}
-			
-			protected void finaliseAttachment(){
-				SwingUtilities.invokeLater(new Runnable(){
-					@Override
-					public void run() {
-						while(true){
-							if(theSplitPane.isVisible()){
-								updateDividerLocations();
-								break;
-							}
-						}
-					}
-				});
-			}
-		};
-		
-		leftPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
-
-		theTopSplitPane.setLeftComponent(leftPanel);
-		//hideBottomPanels();
-
-		final JPanel bottomPanel=new JPanel();
-		bottomPanel.setLayout(new BorderLayout());
-		bottomPanel.add(thePluginManager.getBottomComponent());
-		
-		bottomPanelDockableEvent = new DockableEvent(this,bottomPanel,"Spectrum viewer"){
-			protected void initialise(Container moveToContainer,Container currentDockedContainer) {
-				if(currentDockedContainer!=null){
-					currentDockedContainer.remove(thePluginManager.getBottomComponent());
-				}
-				
-				if(bottomPanel!=moveToContainer){
-					hideBottomPanels();
-					detachedSplitPaneCount++;
-					spectrumPanelDetached=true;
-				}else{
-					showBottomPanels();
-					detachedSplitPaneCount--;
-					
-					bottomHeightRequired=true;
-					spectrumPanelDetached=false;
-				}
-				
-				moveToContainer.add(thePluginManager.getBottomComponent());
-				
-				hideAll();
-			}
-			
-			protected void finaliseAttachment(){
-				SwingUtilities.invokeLater(new Runnable(){
-					@Override
-					public void run() {
-						while(true){
-							if(theSplitPane.isVisible()){
-								updateDividerLocations();
-								break;
-							}
-						}
-					}
-				});
-			}
-		};
-		
-		bottomPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
-		
-		theLeftSplitPane.setBottomComponent(bottomPanel);
-
-		final JPanel rightPanel=new JPanel();
-		rightPanel.setLayout(new BorderLayout());
-		rightPanel.add(thePluginManager.getRightComponent());
-		
-		rightPanelDockableEvent = new DockableEvent(this,rightPanel,"Annotation tools"){
-			protected void initialise(Container moveToContainer,Container currentDockedContainer) {
-				if(currentDockedContainer!=null){
-					currentDockedContainer.remove(thePluginManager.getRightComponent());
-				}
-				
-				if(moveToContainer!=rightPanel){
-					hideRightPanels();
-					detachedSplitPaneCount++;
-					rightPanelDetached=true;
-				}else{
-					detachedSplitPaneCount--;
-					
-					topHeightRequired=true;
-					bottomHeightRequired=true;
-					
-					rightPanelDetached=false;
-				}
-				
-				moveToContainer.add(thePluginManager.getRightComponent());
-				
-				hideAll();
-			}
-			
-			protected void finaliseAttachment(){
-				SwingUtilities.invokeLater(new Runnable(){
-					@Override
-					public void run() {
-						while(true){
-							if(theSplitPane.isVisible()){
-								updateDividerLocations();
-								break;
-							}
-						}
-					}
-				});
-			}
-		};
-		
-		rightPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
-		
-		
-		theSplitPane.setRightComponent(rightPanel);
-		//hideRightPanels();
-		
-		
 		// // add listeners
 		theDoc.addDocumentChangeListener(this);
 		theCanvas.addSelectionChangeListener(this);
@@ -611,7 +410,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		theWorkspace.addDocumentChangeListener(this);
 		theWorkspace.addWorkspaceListener(this);
 		theWorkspace.getFileHistory().addHistoryChangedListener(this);
-		//		
+		//
 		// setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		this.addWindowListener(new WindowAdapter() {
 
@@ -636,18 +435,16 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		setLocationRelativeTo(null);
 		onNew(theWorkspace);
 		theWorkspace.setChanged(false);
-		
+
 		updateActions();
 
 		theCanvas.addNotationChangeListener(this);
 		this.createPopupMenu();
 	}
-	
-	
 
 	public Dimension largeIcon = new Dimension(30, 30);
 	protected RibbonApplicationMenu applicationMenu;
-	private int detachedSplitPaneCount=4;
+	private int detachedSplitPaneCount = 4;
 
 	public void initOpenMenu() {
 		RibbonApplicationMenuEntryPrimary menuPrimary = new RibbonApplicationMenuEntryPrimary(
@@ -684,12 +481,14 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 									JCommandButton button = (JCommandButton) source;
 									String type = button.getText();
 									if (type.equals("Workspace")) {
-										onOpenDocument(theWorkspace
-												.getAllDocuments(), false);
+										onOpenDocument(
+												theWorkspace.getAllDocuments(),
+												false);
 									} else if (type
 											.equals("Open into workspce")) {
-										onOpenDocument(theWorkspace
-												.getAllDocuments(), true);
+										onOpenDocument(
+												theWorkspace.getAllDocuments(),
+												true);
 									}
 								}
 							}
@@ -712,26 +511,27 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 		applicationMenu.addMenuEntry(menuPrimary);
 	}
-	private boolean topHeightRequired=false;
-	private boolean bottomHeightRequired=false;
-	
-	public void hideAll(){
-		if(detachedSplitPaneCount==4){
+
+	private boolean topHeightRequired = false;
+	private boolean bottomHeightRequired = false;
+
+	public void hideAll() {
+		if (detachedSplitPaneCount == 4) {
 			theSplitPane.setVisible(false);
-		}else{
+		} else {
 			theSplitPane.setVisible(true);
-					
-			int height=lastHeight;
-			
-			if(topHeightRequired){
-				height+=beforeHeightTop;
+
+			int height = lastHeight;
+
+			if (topHeightRequired) {
+				height += beforeHeightTop;
 			}
-			
-			if(bottomHeightRequired){
-				height+=beforeHeightBottom;
+
+			if (bottomHeightRequired) {
+				height += beforeHeightBottom;
 			}
-			
-			setSize(new Dimension(getWidth(),height));
+
+			setSize(new Dimension(getWidth(), height));
 		}
 	}
 
@@ -895,84 +695,79 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	public void initSaveMenu() {
 		RibbonApplicationMenuEntryPrimary saveItem = new RibbonApplicationMenuEntryPrimary(
 				theActionManager2.get("save").getResizableIcon(ICON_SIZE.L4),
-				"Save", new ActionListener(){
+				"Save", new ActionListener() {
 
 					@Override
 					public void actionPerformed(ActionEvent arg0) {
 						// TODO Auto-generated method stub
 						onSave(theWorkspace, true);
 					}
-					
+
 				}, CommandButtonKind.ACTION_ONLY);
 
-		saveItem
-				.setRolloverCallback(new RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {
+		saveItem.setRolloverCallback(new RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {
+			@Override
+			public void menuEntryActivated(JPanel targetPanel) {
+				targetPanel.removeAll();
+
+				JCommandButtonPanel openTypes = new JCommandButtonPanel(
+						CommandButtonDisplayState.MEDIUM);
+
+				String groupName = "Workspace component";
+				openTypes.addButtonGroup(groupName);
+
+				JCommandButton saveAll = theActionManager2.get("saveall")
+						.getJCommandButton("Workspace");
+				JCommandButton saveAllAs = theActionManager2.get("saveallas")
+						.getJCommandButton("Workspace as...");
+				JCommandButton saveStructures = theActionManager2.get("save")
+						.getJCommandButton("Structures");
+				JCommandButton saveStructuresAs = theActionManager2.get(
+						"saveas").getJCommandButton("Structures as...");
+
+				saveAll.setHorizontalAlignment(SwingUtilities.LEFT);
+				saveAllAs.setHorizontalAlignment(SwingUtilities.LEFT);
+				saveStructures.setHorizontalAlignment(SwingUtilities.LEFT);
+				saveStructuresAs.setHorizontalAlignment(SwingUtilities.LEFT);
+
+				ActionListener typeListener = new ActionListener() {
 					@Override
-					public void menuEntryActivated(JPanel targetPanel) {
-						targetPanel.removeAll();
-
-						JCommandButtonPanel openTypes = new JCommandButtonPanel(
-								CommandButtonDisplayState.MEDIUM);
-
-						String groupName = "Workspace component";
-						openTypes.addButtonGroup(groupName);
-
-						JCommandButton saveAll = theActionManager2.get(
-								"saveall").getJCommandButton("Workspace");
-						JCommandButton saveAllAs = theActionManager2.get(
-								"saveallas").getJCommandButton(
-								"Workspace as...");
-						JCommandButton saveStructures = theActionManager2.get(
-								"save").getJCommandButton("Structures");
-						JCommandButton saveStructuresAs = theActionManager2
-								.get("saveas").getJCommandButton(
-										"Structures as...");
-
-						saveAll.setHorizontalAlignment(SwingUtilities.LEFT);
-						saveAllAs.setHorizontalAlignment(SwingUtilities.LEFT);
-						saveStructures
-								.setHorizontalAlignment(SwingUtilities.LEFT);
-						saveStructuresAs
-								.setHorizontalAlignment(SwingUtilities.LEFT);
-
-						ActionListener typeListener = new ActionListener() {
-							@Override
-							public void actionPerformed(ActionEvent e) {
-								Object source = e.getSource();
-								if (source instanceof JCommandButton) {
-									JCommandButton button = (JCommandButton) source;
-									String type = button.getText();
-									if (type.equals("Workspace")) {
-										onSave(theWorkspace, true);
-									} else if (type.equals("Workspace as...")) {
-										onSaveAs(theWorkspace);
-									} else if (type.equals("Structures")) {
-										onSave(theDoc, true);
-									} else if (type.equals("Structures as...")) {
-										onSaveAs(theDoc);
-									}
-								}
+					public void actionPerformed(ActionEvent e) {
+						Object source = e.getSource();
+						if (source instanceof JCommandButton) {
+							JCommandButton button = (JCommandButton) source;
+							String type = button.getText();
+							if (type.equals("Workspace")) {
+								onSave(theWorkspace, true);
+							} else if (type.equals("Workspace as...")) {
+								onSaveAs(theWorkspace);
+							} else if (type.equals("Structures")) {
+								onSave(theDoc, true);
+							} else if (type.equals("Structures as...")) {
+								onSaveAs(theDoc);
 							}
-						};
-
-						openTypes.setMaxButtonColumns(2);
-						openTypes.setMaxButtonRows(2);
-
-						saveAll.addActionListener(typeListener);
-						saveAllAs.addActionListener(typeListener);
-						saveStructures.addActionListener(typeListener);
-						saveStructuresAs.addActionListener(typeListener);
-
-						openTypes.addButtonToLastGroup(saveAll);
-						openTypes.addButtonToLastGroup(saveAllAs);
-						openTypes.addButtonToLastGroup(saveStructures);
-						openTypes.addButtonToLastGroup(saveStructuresAs);
-
-						targetPanel.setLayout(new BorderLayout());
-						targetPanel.add(openTypes, BorderLayout.CENTER);
-
+						}
 					}
-				});
+				};
+
+				openTypes.setMaxButtonColumns(2);
+				openTypes.setMaxButtonRows(2);
+
+				saveAll.addActionListener(typeListener);
+				saveAllAs.addActionListener(typeListener);
+				saveStructures.addActionListener(typeListener);
+				saveStructuresAs.addActionListener(typeListener);
+
+				openTypes.addButtonToLastGroup(saveAll);
+				openTypes.addButtonToLastGroup(saveAllAs);
+				openTypes.addButtonToLastGroup(saveStructures);
+				openTypes.addButtonToLastGroup(saveStructuresAs);
+
+				targetPanel.setLayout(new BorderLayout());
+				targetPanel.add(openTypes, BorderLayout.CENTER);
+
+			}
+		});
 
 		applicationMenu.addMenuEntry(saveItem);
 	}
@@ -984,63 +779,52 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 				CommandButtonKind.ACTION_ONLY);
 
 		final GlycoWorkbench self = this;
-		
 
-		saveItem
-				.setRolloverCallback(new RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {
-					@Override
-					public void menuEntryActivated(JPanel targetPanel) {
-						targetPanel.removeAll();
-						ICON_SIZE iconSize = ICON_SIZE.L3;
-						JCommandButtonPanel openTypes = new JCommandButtonPanel(
-								CommandButtonDisplayState.MEDIUM);
+		saveItem.setRolloverCallback(new RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {
+			@Override
+			public void menuEntryActivated(JPanel targetPanel) {
+				targetPanel.removeAll();
+				ICON_SIZE iconSize = ICON_SIZE.L3;
+				JCommandButtonPanel openTypes = new JCommandButtonPanel(
+						CommandButtonDisplayState.MEDIUM);
 
-						for (String superclass : CoreDictionary
-								.getSuperclasses()) {
-							Collection<CoreType> core_types = CoreDictionary
-									.getCores(superclass);
-							if (core_types.size() > 0) {
-								openTypes.addButtonGroup(superclass);
-								for (CoreType core_type : core_types) {
-									JCommandButtonAction button = new JCommandButtonAction(
-											core_type.getName(),
-											ImageWrapperResizableIcon
-													.getIcon(
-															theCanvas
-																	.getGlycanRenderer()
-																	.getImage(
-																			Glycan
-																					.fromString(core_type
-																							.getStructure()),
-																			false,
-																			false,
-																			false),
-															new Dimension(
-																	iconSize
-																			.getSize(),
-																	iconSize
-																			.getSize())));
-									button
-											.setHorizontalAlignment(SwingUtilities.LEFT);
-									button.setActionCommand("new="
-											+ core_type.getName());
-									button.addActionListener(self);
-									openTypes.addButtonToLastGroup(button);
-								}
-							}
+				for (String superclass : CoreDictionary.getSuperclasses()) {
+					Collection<CoreType> core_types = CoreDictionary
+							.getCores(superclass);
+					if (core_types.size() > 0) {
+						openTypes.addButtonGroup(superclass);
+						for (CoreType core_type : core_types) {
+							JCommandButtonAction button = new JCommandButtonAction(
+									core_type.getName(),
+									ImageWrapperResizableIcon.getIcon(
+											theCanvas
+													.getGlycanRenderer()
+													.getImage(
+															Glycan.fromString(core_type
+																	.getStructure()),
+															false, false, false),
+											new Dimension(iconSize.getSize(),
+													iconSize.getSize())));
+							button.setHorizontalAlignment(SwingUtilities.LEFT);
+							button.setActionCommand("new="
+									+ core_type.getName());
+							button.addActionListener(self);
+							openTypes.addButtonToLastGroup(button);
 						}
-
-						openTypes.setMaxButtonColumns(2);
-						openTypes.setMaxButtonRows(2);
-
-						JScrollPane scrollPane = new JScrollPane(openTypes);
-						scrollPane.setSize(targetPanel.getSize());
-
-						targetPanel.setLayout(new BorderLayout());
-						targetPanel.add(scrollPane, BorderLayout.CENTER);
-
 					}
-				});
+				}
+
+				openTypes.setMaxButtonColumns(2);
+				openTypes.setMaxButtonRows(2);
+
+				JScrollPane scrollPane = new JScrollPane(openTypes);
+				scrollPane.setSize(targetPanel.getSize());
+
+				targetPanel.setLayout(new BorderLayout());
+				targetPanel.add(scrollPane, BorderLayout.CENTER);
+
+			}
+		});
 
 		applicationMenu.addMenuEntry(saveItem);
 
@@ -1096,49 +880,48 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 		final GlycoWorkbench self = this;
 
-		saveItem
-				.setRolloverCallback(new RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {
-					@Override
-					public void menuEntryActivated(JPanel targetPanel) {
-						targetPanel.removeAll();
+		saveItem.setRolloverCallback(new RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {
+			@Override
+			public void menuEntryActivated(JPanel targetPanel) {
+				targetPanel.removeAll();
 
-						JCommandButtonPanel openTypes = new JCommandButtonPanel(
-								CommandButtonDisplayState.MEDIUM);
-						openTypes.addButtonGroup("Export to sequence formats");
+				JCommandButtonPanel openTypes = new JCommandButtonPanel(
+						CommandButtonDisplayState.MEDIUM);
+				openTypes.addButtonGroup("Export to sequence formats");
 
-						for (java.util.Map.Entry<String, String> e : GlycanDocument
-								.getExportFormats().entrySet()) {
-							JCommandButtonAction button = new JCommandButtonAction(
-									e.getKey(), null);
-							button.setActionCommand("export=" + e.getKey());
-							button.setHorizontalAlignment(SwingUtilities.LEFT);
-							button.addActionListener(self);
-							openTypes.addButtonToLastGroup(button);
-						}
+				for (java.util.Map.Entry<String, String> e : GlycanDocument
+						.getExportFormats().entrySet()) {
+					JCommandButtonAction button = new JCommandButtonAction(e
+							.getKey(), null);
+					button.setActionCommand("export=" + e.getKey());
+					button.setHorizontalAlignment(SwingUtilities.LEFT);
+					button.addActionListener(self);
+					openTypes.addButtonToLastGroup(button);
+				}
 
-						openTypes.addButtonGroup("Export to graphical formats");
+				openTypes.addButtonGroup("Export to graphical formats");
 
-						for (java.util.Map.Entry<String, String> e : SVGUtils
-								.getExportFormats().entrySet()) {
-							JCommandButtonAction button = new JCommandButtonAction(
-									e.getKey(), null);
-							button.setActionCommand("export=" + e.getKey());
-							button.setHorizontalAlignment(SwingUtilities.LEFT);
-							button.addActionListener(self);
-							openTypes.addButtonToLastGroup(button);
-						}
+				for (java.util.Map.Entry<String, String> e : SVGUtils
+						.getExportFormats().entrySet()) {
+					JCommandButtonAction button = new JCommandButtonAction(e
+							.getKey(), null);
+					button.setActionCommand("export=" + e.getKey());
+					button.setHorizontalAlignment(SwingUtilities.LEFT);
+					button.addActionListener(self);
+					openTypes.addButtonToLastGroup(button);
+				}
 
-						openTypes.setMaxButtonColumns(2);
-						openTypes.setMaxButtonRows(2);
+				openTypes.setMaxButtonColumns(2);
+				openTypes.setMaxButtonRows(2);
 
-						JScrollPane scrollPane = new JScrollPane(openTypes);
-						scrollPane.setSize(targetPanel.getSize());
+				JScrollPane scrollPane = new JScrollPane(openTypes);
+				scrollPane.setSize(targetPanel.getSize());
 
-						targetPanel.setLayout(new BorderLayout());
-						targetPanel.add(scrollPane, BorderLayout.CENTER);
+				targetPanel.setLayout(new BorderLayout());
+				targetPanel.add(scrollPane, BorderLayout.CENTER);
 
-					}
-				});
+			}
+		});
 
 		applicationMenu.addMenuEntry(saveItem);
 
@@ -1153,36 +936,35 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 		final GlycoWorkbench self = this;
 
-		saveItem
-				.setRolloverCallback(new RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {
-					@Override
-					public void menuEntryActivated(JPanel targetPanel) {
-						targetPanel.removeAll();
+		saveItem.setRolloverCallback(new RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {
+			@Override
+			public void menuEntryActivated(JPanel targetPanel) {
+				targetPanel.removeAll();
 
-						JCommandButtonPanel openTypes = new JCommandButtonPanel(
-								CommandButtonDisplayState.MEDIUM);
-						openTypes.addButtonGroup("Import from sequence format");
+				JCommandButtonPanel openTypes = new JCommandButtonPanel(
+						CommandButtonDisplayState.MEDIUM);
+				openTypes.addButtonGroup("Import from sequence format");
 
-						for (java.util.Map.Entry<String, String> e : GlycanDocument
-								.getImportFormats().entrySet()) {
-							JCommandButtonAction button = new JCommandButtonAction(
-									e.getKey(), null);
-							button.setActionCommand("import=" + e.getKey());
-							button.setHorizontalAlignment(SwingUtilities.LEFT);
-							button.addActionListener(self);
-							openTypes.addButtonToLastGroup(button);
-						}
+				for (java.util.Map.Entry<String, String> e : GlycanDocument
+						.getImportFormats().entrySet()) {
+					JCommandButtonAction button = new JCommandButtonAction(e
+							.getKey(), null);
+					button.setActionCommand("import=" + e.getKey());
+					button.setHorizontalAlignment(SwingUtilities.LEFT);
+					button.addActionListener(self);
+					openTypes.addButtonToLastGroup(button);
+				}
 
-						openTypes.setMaxButtonColumns(2);
-						openTypes.setMaxButtonRows(2);
+				openTypes.setMaxButtonColumns(2);
+				openTypes.setMaxButtonRows(2);
 
-						JScrollPane scrollPane = new JScrollPane(openTypes);
-						scrollPane.setSize(targetPanel.getSize());
+				JScrollPane scrollPane = new JScrollPane(openTypes);
+				scrollPane.setSize(targetPanel.getSize());
 
-						targetPanel.setLayout(new BorderLayout());
-						targetPanel.add(scrollPane, BorderLayout.CENTER);
-					}
-				});
+				targetPanel.setLayout(new BorderLayout());
+				targetPanel.add(scrollPane, BorderLayout.CENTER);
+			}
+		});
 
 		applicationMenu.addMenuEntry(saveItem);
 	}
@@ -1219,8 +1001,8 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	public GlycanCanvas getCanvas() {
 		return theCanvas;
 	}
-	
-	public void hideTopPanels(){
+
+	public void hideTopPanels() {
 		theLeftSplitPane.setDividerLocation(0.);
 	}
 
@@ -1276,8 +1058,8 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		else
 			theSplitPane.setDividerLocation(1.);
 	}
-	
-	public void hideAllLeftPanels(){
+
+	public void hideAllLeftPanels() {
 		theSplitPane.setDividerLocation(0.);
 	}
 
@@ -1305,12 +1087,13 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	private void createActions() {
 
 		// cores
-		theActionManager2.add("empty", ThemeManager
-				.getResizableEmptyIcon(ICON_SIZE.L3), "Empty", -1, "", this);
+		theActionManager2.add("empty",
+				ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3), "Empty", -1,
+				"", this);
 		for (CoreType t : CoreDictionary.getCores())
-			theActionManager2.add("new=" + t.getName(), ThemeManager
-					.getResizableEmptyIcon(ICON_SIZE.L3), t.getDescription(),
-					-1, "", this);
+			theActionManager2.add("new=" + t.getName(),
+					ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),
+					t.getDescription(), -1, "", this);
 
 		// workspace
 		theActionManager2.add("newall", themeManager.getResizableIcon(
@@ -1320,11 +1103,11 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 				STOCK_ICON.DOCUMENT_OPEN, defaultMenuIconSize),
 				"Open a workspace", KeyEvent.VK_P, "", this); // done,ribbon app
 		// bar
-		//System.err.println("saveall");
+		// System.err.println("saveall");
 		theActionManager2.add("saveall", themeManager.getResizableIcon(
 				STOCK_ICON.DOCUMENT_SAVE, defaultMenuIconSize),
 				"Save the workspace", KeyEvent.VK_S, "ctrl S", this); // done,ribbon
-		//System.exit(0);
+		// System.exit(0);
 		// app bar
 		theActionManager2.add("saveallas", themeManager.getResizableIcon(
 				STOCK_ICON.DOCUMENT_SAVE_AS, defaultMenuIconSize),
@@ -1366,19 +1149,19 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		// import/export
 		for (java.util.Map.Entry<String, String> e : GlycanDocument
 				.getImportFormats().entrySet())
-			theActionManager2.add("import=" + e.getKey(), ThemeManager
-					.getResizableEmptyIcon(ICON_SIZE.L4), "Import from "
-					+ e.getValue() + "...", -1, "", this);
+			theActionManager2.add("import=" + e.getKey(),
+					ThemeManager.getResizableEmptyIcon(ICON_SIZE.L4),
+					"Import from " + e.getValue() + "...", -1, "", this);
 		for (java.util.Map.Entry<String, String> e : GlycanDocument
 				.getExportFormats().entrySet())
-			theActionManager2.add("export=" + e.getKey(), ThemeManager
-					.getResizableEmptyIcon(ICON_SIZE.L4), "Export to "
-					+ e.getValue() + "...", -1, "", this);
+			theActionManager2.add("export=" + e.getKey(),
+					ThemeManager.getResizableEmptyIcon(ICON_SIZE.L4),
+					"Export to " + e.getValue() + "...", -1, "", this);
 		for (java.util.Map.Entry<String, String> e : SVGUtils
 				.getExportFormats().entrySet())
-			theActionManager2.add("export=" + e.getKey(), ThemeManager
-					.getResizableEmptyIcon(ICON_SIZE.L4), "Export to "
-					+ e.getValue() + "...", -1, "", this);
+			theActionManager2.add("export=" + e.getKey(),
+					ThemeManager.getResizableEmptyIcon(ICON_SIZE.L4),
+					"Export to " + e.getValue() + "...", -1, "", this);
 
 		// panes
 		// theActionManager2.add("toggleleft", FileUtils.getIcon("toggleleft"),
@@ -1569,25 +1352,28 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 				new org.pushingpixels.flamingo.api.common.icon.EmptyResizableIcon(
 						10));
 
-		band.addCommandButton(theActionManager2.get("newall")
-				.getJCommandButton(ICON_SIZE.L3, "Clear", this,
-						new RichTooltip("Clear", " ")),
+		band.addCommandButton(
+				theActionManager2.get("newall").getJCommandButton(ICON_SIZE.L3,
+						"Clear", this, new RichTooltip("Clear", " ")),
 				RibbonElementPriority.TOP);
-		band.addCommandButton(theActionManager2.get("openall")
-				.getJCommandButton(ICON_SIZE.L3, "Open", this,
+		band.addCommandButton(
+				theActionManager2.get("openall").getJCommandButton(
+						ICON_SIZE.L3, "Open", this,
 						new RichTooltip("Open workspace", " ")),
 				RibbonElementPriority.TOP);
-		band.addCommandButton(theActionManager2.get("saveall")
-				.getJCommandButton(ICON_SIZE.L3, "Save", this,
+		band.addCommandButton(
+				theActionManager2.get("saveall").getJCommandButton(
+						ICON_SIZE.L3, "Save", this,
 						new RichTooltip("Save workspace", " ")),
 				RibbonElementPriority.TOP);
-		band.addCommandButton(theActionManager2.get("saveallas")
-				.getJCommandButton(ICON_SIZE.L3, "Save as", this,
+		band.addCommandButton(
+				theActionManager2.get("saveallas").getJCommandButton(
+						ICON_SIZE.L3, "Save as", this,
 						new RichTooltip("Save workspace as", " ")),
 				RibbonElementPriority.TOP);
-		band.addCommandButton(theActionManager2.get("new").getJCommandButton(
-				ICON_SIZE.L3, "New", this,
-				new RichTooltip("New workspace", " ")),
+		band.addCommandButton(
+				theActionManager2.get("new").getJCommandButton(ICON_SIZE.L3,
+						"New", this, new RichTooltip("New workspace", " ")),
 				RibbonElementPriority.TOP);
 
 		JRibbonBand band2 = new JRibbonBand(
@@ -1605,49 +1391,57 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 		band2.setResizePolicies(resizePolicies);
 
-		band2.addCommandButton(theActionManager2.get("open").getJCommandButton(
-				ICON_SIZE.L3, "Open", this, new RichTooltip("Open", "")),
+		band2.addCommandButton(
+				theActionManager2.get("open").getJCommandButton(ICON_SIZE.L3,
+						"Open", this, new RichTooltip("Open", "")),
 				RibbonElementPriority.TOP);
-		band2.addCommandButton(theActionManager2.get("openinto")
-				.getJCommandButton(ICON_SIZE.L3, "Insert", this,
+		band2.addCommandButton(
+				theActionManager2.get("openinto").getJCommandButton(
+						ICON_SIZE.L3, "Insert", this,
 						new RichTooltip("Open into workspace", " ")),
 				RibbonElementPriority.TOP);
-		band2.addCommandButton(theActionManager2.get("save").getJCommandButton(
-				ICON_SIZE.L3, "Save", this,
-				new RichTooltip("Save structures", " ")),
+		band2.addCommandButton(
+				theActionManager2.get("save").getJCommandButton(ICON_SIZE.L3,
+						"Save", this, new RichTooltip("Save structures", " ")),
 				RibbonElementPriority.TOP);
-		band2.addCommandButton(theActionManager2.get("saveas")
-				.getJCommandButton(ICON_SIZE.L3, "Save as", this,
+		band2.addCommandButton(
+				theActionManager2.get("saveas").getJCommandButton(ICON_SIZE.L3,
+						"Save as", this,
 						new RichTooltip("Save structures as", " ")),
 				RibbonElementPriority.TOP);
 
-		JFlowRibbonBand band3 = new JFlowRibbonBand("Information",
+		JFlowRibbonBand band3 = new JFlowRibbonBand(
+				"Information",
 				new org.pushingpixels.flamingo.api.common.icon.EmptyResizableIcon(
 						10));
-		
+
 		String upToDate;
-		if(this.updater==null){
-			upToDate="";
-		}else if(this.updater.isUptoDate(this)){
-			upToDate="latest";
-		}else{
-			upToDate="update available";
+		if (this.updater == null) {
+			upToDate = "";
+		} else if (this.updater.isUptoDate(this)) {
+			upToDate = "latest";
+		} else {
+			upToDate = "update available";
 		}
-		
-		band3.addFlowComponent(new JLabel("Version: "+GlycoWorkbench.MAJOR_VERSION+"."+GlycoWorkbench.MINOR_VERSION+
-				" "+GlycoWorkbench.BUILD_STATE+" ("+GlycoWorkbench.BUILD_NUMBER+")"+ "("+upToDate+")"));
-		band3.addFlowComponent(new JLabel("OS: "+System.getProperty("os.name")));
-		
-		//band3.addFlowComponent(new JLabel(upToDate));
-		
+
+		band3.addFlowComponent(new JLabel("Version: "
+				+ GlycoWorkbench.MAJOR_VERSION + "."
+				+ GlycoWorkbench.MINOR_VERSION + " "
+				+ GlycoWorkbench.BUILD_STATE + " ("
+				+ GlycoWorkbench.BUILD_NUMBER + ")" + "(" + upToDate + ")"));
+		band3.addFlowComponent(new JLabel("OS: "
+				+ System.getProperty("os.name")));
+
+		// band3.addFlowComponent(new JLabel(upToDate));
+
 		ArrayList<RibbonBandResizePolicy> resizePolicies1 = new ArrayList<RibbonBandResizePolicy>();
 		resizePolicies1.add(new CoreRibbonResizePolicies.FlowTwoRows(band3
 				.getControlPanel()));
 		resizePolicies1.add(new IconRibbonBandResizePolicy(band3
 				.getControlPanel()));
 		band3.setResizePolicies(resizePolicies1);
-		
-		RibbonTask task = new RibbonTask("Home", band, band2,band3);
+
+		RibbonTask task = new RibbonTask("Home", band, band2, band3);
 
 		this.getRibbon().addTask(task);
 	}
@@ -1733,8 +1527,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 	public void updateTitle() {
 		String title = FileHistory.getAbbreviatedName(theWorkspace
-				.getFileName())
-				+ " - GlycoWorkbench";
+				.getFileName()) + " - GlycoWorkbench";
 		if (theWorkspace.hasChanged())
 			title = "* " + title;
 		setTitle(title);
@@ -2193,9 +1986,9 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 					setLastExportedFile(filename);
 				return true;
 			} else if (SVGUtils.export(theWorkspace.getGlycanRenderer(),
-					filename, theDoc.getStructures(), theWorkspace
-							.getGraphicOptions().SHOW_MASSES, theWorkspace
-							.getGraphicOptions().SHOW_REDEND, format)) {
+					filename, theDoc.getStructures(),
+					theWorkspace.getGraphicOptions().SHOW_MASSES,
+					theWorkspace.getGraphicOptions().SHOW_REDEND, format)) {
 				setLastExportedFile(filename);
 				return true;
 			}
@@ -2237,9 +2030,9 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	private JPanel toolBarPanel;
 	private JPanel toolBarPanelLinkage;
 	private DockableEvent glycanCanvasDockableEvent;
-	private double theLastSplitPaneDividerLocation=0.6;
-	private double theLastTopSplitPaneDividerLocation=0.4;
-	private double theLastLeftSplitPaneDividerLocation=0.5;
+	private double theLastSplitPaneDividerLocation = 0.6;
+	private double theLastTopSplitPaneDividerLocation = 0.4;
+	private double theLastLeftSplitPaneDividerLocation = 0.5;
 
 	public void restart(String themeManager) {
 		// if(JOptionPane.showConfirmDialog(this,
@@ -2300,17 +2093,16 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 					false);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			browser
-					.setHTMLContent("<html>"
-							+ "	<head>"
-							+ "		<title>Error reading manual</title>"
-							+ "	</head>"
-							+ "		<body>"
-							+ "			<h1>Unable to load local copy of the GWB manual</h1>"
-							+ "			<p>Please report this error to <mailto: info@glycoworkbench.org>info@glycoworkbench.org</mailto></p>"
-							+ "			<p>For further information, please see: <a href=\"www.glycoworkbench.org\">www.glycoworkbench.org</a>"
-							+ "			<p>Exception:" + e.getMessage() + "			</p>"
-							+ "		</body>" + "</html>");
+			browser.setHTMLContent("<html>"
+					+ "	<head>"
+					+ "		<title>Error reading manual</title>"
+					+ "	</head>"
+					+ "		<body>"
+					+ "			<h1>Unable to load local copy of the GWB manual</h1>"
+					+ "			<p>Please report this error to <mailto: info@glycoworkbench.org>info@glycoworkbench.org</mailto></p>"
+					+ "			<p>For further information, please see: <a href=\"www.glycoworkbench.org\">www.glycoworkbench.org</a>"
+					+ "			<p>Exception:" + e.getMessage() + "			</p>"
+					+ "		</body>" + "</html>");
 			e.printStackTrace();
 		}
 
@@ -2425,7 +2217,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
-		
+
 		String action = GlycanAction.getAction(e);
 		String param = GlycanAction.getParam(e);
 
@@ -2499,7 +2291,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 	public static void main(String[] args) throws IOException {
 		NativeInterface.open();
-		
+
 		JFrame.setDefaultLookAndFeelDecorated(true);
 
 		SwingUtilities.invokeLater(new Runnable() {
@@ -2515,22 +2307,22 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 					System.err.println(options.THEME);
 
 					SubstanceLookAndFeel.setSkin(options.THEME);
-					
 					final GlycoWorkbench gwb = new GlycoWorkbench();
 					gwb.setVisible(true);
-					
-					//Correct divider locations once the split pane has been painted
-					SwingUtilities.invokeLater(new Runnable(){
+
+					// Correct divider locations once the split pane has been
+					// painted
+					SwingUtilities.invokeLater(new Runnable() {
 						@Override
 						public void run() {
-							while(true){
-								if(gwb.theSplitPane.isVisible()){
+							while (true) {
+								if (gwb.theSplitPane.isVisible()) {
 									gwb.updateDividerLocations();
 									break;
 								}
 							}
 						}
-						
+
 					});
 				} catch (Exception e) {
 					LogUtils.setGraphicalReport(true);
@@ -2564,46 +2356,57 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	public void notationChanged(String notation) {
 		createPopupMenu();
 	}
-	
+
 	/**
 	 * Panel container enums
 	 */
-	public enum CONTAINER{
-		FRAME,
-		NODEC_DIALOG, //Dialog without window decoration, with custom move and resize code.
+	public enum CONTAINER {
+		FRAME, NODEC_DIALOG, // Dialog without window decoration, with custom
+								// move and resize code.
 		DOCKED
 	}
-	
+
 	private Dimension lastSize;
 	private int lastHeight;
 	private int beforeHeightTop;
 	private int beforeHeightBottom;
-	
+	public static Collection<Plugin> plugins;
+	private JPanel c2Panel;
+	private JPanel leftPanel;
+
 	/**
 	 * Detach all detachable panels from the main GWB frame.
 	 */
 	@Override
 	public void explode() {
-		if(detachedSplitPaneCount<4){
-			lastSize=this.getSize();
-			
-			beforeHeightTop=theLeftSplitPane.getTopComponent().getHeight();
-			beforeHeightBottom=theLeftSplitPane.getBottomComponent().getHeight();
-			
-			
-			int jy=theSplitPane.getHeight();
-			lastHeight=lastSize.height-jy;
-			int ix=this.getWidth();
-			int iy=this.getHeight();
+		if (detachedSplitPaneCount < 4) {
+			lastSize = this.getSize();
 
-			//setDividerLocation is called with the percentage (fraction) of width or height that the divider should be placed at
-			//getDividerLocation returns the dividers location by pixels and not as a fraction, so we have to convert
-			theLastSplitPaneDividerLocation=(double)theSplitPane.getDividerLocation()/(double)theSplitPane.getWidth();			
-			theLastTopSplitPaneDividerLocation=(double)theTopSplitPane.getDividerLocation()/(double)theTopSplitPane.getWidth();
-			theLastLeftSplitPaneDividerLocation=(double)theLeftSplitPane.getDividerLocation()/(double)theLeftSplitPane.getHeight();
-			
-			glycanCanvasDockableEvent.changeCanvasPaneContainer(CONTAINER.FRAME);
-			glycanCanvasDockableEvent.getCurrentDockedWindow().setSize(400, 400);
+			beforeHeightTop = theLeftSplitPane.getTopComponent().getHeight();
+			beforeHeightBottom = theLeftSplitPane.getBottomComponent()
+					.getHeight();
+
+			int jy = theSplitPane.getHeight();
+			lastHeight = lastSize.height - jy;
+			int ix = this.getWidth();
+			int iy = this.getHeight();
+
+			// setDividerLocation is called with the percentage (fraction) of
+			// width or height that the divider should be placed at
+			// getDividerLocation returns the dividers location by pixels and
+			// not as a fraction, so we have to convert
+			theLastSplitPaneDividerLocation = (double) theSplitPane
+					.getDividerLocation() / (double) theSplitPane.getWidth();
+			theLastTopSplitPaneDividerLocation = (double) theTopSplitPane
+					.getDividerLocation() / (double) theTopSplitPane.getWidth();
+			theLastLeftSplitPaneDividerLocation = (double) theLeftSplitPane
+					.getDividerLocation()
+					/ (double) theLeftSplitPane.getHeight();
+
+			glycanCanvasDockableEvent
+					.changeCanvasPaneContainer(CONTAINER.FRAME);
+			glycanCanvasDockableEvent.getCurrentDockedWindow()
+					.setSize(400, 400);
 			leftPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.FRAME);
 			rightPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.FRAME);
 			bottomPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.FRAME);
@@ -2611,48 +2414,51 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 			hideTopPanels();
 			hideAllLeftPanels();
 
-			this.setSize(new Dimension(ix,iy-jy+10));
+			this.setSize(new Dimension(ix, iy - jy + 10));
 		}
 	}
-	
+
 	/**
 	 * Attach all detachable panels to the main GWB frame.
 	 */
 	@Override
 	public void implode() {
-		if(detachedSplitPaneCount>0){
-			glycanCanvasDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
+		if (detachedSplitPaneCount > 0) {
+			glycanCanvasDockableEvent
+					.changeCanvasPaneContainer(CONTAINER.DOCKED);
 			leftPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
 			rightPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
-			bottomPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
-			
-			//The split pane is unlikely to be visible when all of the setDividerLocations are being set
-			//...So we must wait until it's been painted to set the divider locations
-			SwingUtilities.invokeLater(new Runnable(){
+			bottomPanelDockableEvent
+					.changeCanvasPaneContainer(CONTAINER.DOCKED);
+
+			// The split pane is unlikely to be visible when all of the
+			// setDividerLocations are being set
+			// ...So we must wait until it's been painted to set the divider
+			// locations
+			SwingUtilities.invokeLater(new Runnable() {
 				@Override
 				public void run() {
-					while(true){
-						if(theSplitPane.isVisible()){
+					while (true) {
+						if (theSplitPane.isVisible()) {
 							updateDividerLocations();
 							break;
 						}
 					}
 				}
-				
+
 			});
-			
-			DockableEvent.setLastPlacedWindowPosition(new Point(0,0));
+
+			DockableEvent.setLastPlacedWindowPosition(new Point(0, 0));
 		}
 	}
-	
-	
-	public void checkForUpdates(){
-		if(updater.isUptoDate(this)){
+
+	public void checkForUpdates() {
+		if (updater.isUptoDate(this)) {
 			System.err.println("GlycoWorkbench is up to date");
-		}else{
+		} else {
 			System.err.println("An update is available");
 		}
-		
+
 	}
 
 	@Override
@@ -2677,5 +2483,269 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	public String getBuildNo() {
 		// TODO Auto-generated method stub
 		return GlycoWorkbench.BUILD_NUMBER;
+	}
+
+	public void initSplitPane() {
+
+		theSplitPane = new JSplitPane();
+		theSplitPane.setResizeWeight(1.);
+		theSplitPane.setOneTouchExpandable(true);
+
+		theLeftSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+		theLeftSplitPane.setResizeWeight(1.);
+		theLeftSplitPane.setOneTouchExpandable(true);
+		theSplitPane.setLeftComponent(theLeftSplitPane);
+
+		theTopSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+		theTopSplitPane.setResizeWeight(0.);
+		theTopSplitPane.setOneTouchExpandable(true);
+		theLeftSplitPane.setTopComponent(theTopSplitPane);
+
+		canvasPanel = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
+		canvasPanel.setLayout(new BorderLayout());
+
+		canvasScrollPane = new JScrollPane(theCanvas);
+		theCanvas.setScrollPane(canvasScrollPane);
+
+		if (glycanCanvasDockableEvent == null) {
+			toolBarPanel = new JPanel();
+			toolBarPanel.setLayout(new BorderLayout());
+			toolBarPanel.add(theCanvas.getToolBarStructure(),
+					BorderLayout.CENTER);
+
+			toolBarPanelLinkage = new JPanel();
+			toolBarPanelLinkage.setLayout(new BorderLayout());
+			toolBarPanelLinkage.add(theCanvas.getToolBarProperties(),
+					BorderLayout.CENTER);
+
+			glycanCanvasDockableEvent = new DockableEvent(this, canvasPanel,
+					"Glycan canvas") {
+				protected void initialise(Container moveToContainer,
+						Container currentDockedContainer) {
+					if (currentDockedContainer != null) {
+						currentDockedContainer.remove(canvasScrollPane);
+						currentDockedContainer.remove(toolBarPanel);
+						currentDockedContainer.remove(toolBarPanelLinkage);
+					}
+
+					if (canvasPanel != moveToContainer) {
+						detachedSplitPaneCount++;
+						glycanCanvasDetached = true;
+					} else {
+						detachedSplitPaneCount--;
+
+						topHeightRequired = true;
+
+						glycanCanvasDetached = false;
+					}
+
+					moveToContainer.add(canvasScrollPane, BorderLayout.CENTER);
+					moveToContainer.add(toolBarPanel, BorderLayout.NORTH);
+					moveToContainer
+							.add(toolBarPanelLinkage, BorderLayout.SOUTH);
+
+					hideAll();
+				}
+
+				protected void finaliseAttachment() {
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							while (true) {
+								if (theSplitPane.isVisible()) {
+									updateDividerLocations();
+									break;
+								}
+							}
+						}
+					});
+				}
+			};
+		} else {
+
+		}
+
+		glycanCanvasDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
+
+		theTopSplitPane.setRightComponent(canvasPanel);
+		//
+
+		if (leftPanelDockableEvent == null) {
+			leftPanel = new JPanel();
+			leftPanel.setLayout(new BorderLayout());
+			leftPanel.add(thePluginManager.getLeftComponent());
+
+			leftPanelDockableEvent = new DockableEvent(this, leftPanel,
+					"Project explorer") {
+				protected void initialise(Container moveToContainer,
+						Container currentDockedContainer) {
+					if (currentDockedContainer != null) {
+
+						currentDockedContainer.remove(thePluginManager
+								.getLeftComponent());
+						if (currentDockedContainer instanceof JPanel) {
+							((JPanel) currentDockedContainer).revalidate();
+						}
+					}
+
+					if (moveToContainer != leftPanel) {
+						hideLeftPanels();
+						detachedSplitPaneCount++;
+						leftPanelDetached = true;
+					} else {
+						detachedSplitPaneCount--;
+
+						topHeightRequired = true;
+						leftPanelDetached = false;
+					}
+
+					moveToContainer.add(thePluginManager.getLeftComponent());
+
+					hideAll();
+				}
+
+				protected void finaliseAttachment() {
+					SwingUtilities.invokeLater(new Runnable() {
+						@Override
+						public void run() {
+							while (true) {
+								if (theSplitPane.isVisible()) {
+									updateDividerLocations();
+									break;
+								}
+							}
+						}
+					});
+				}
+			};
+		}
+
+		leftPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
+
+		theTopSplitPane.setLeftComponent(leftPanel);
+		// hideBottomPanels();
+
+		// final JPanel bottomPanel = new JPanel();
+		// bottomPanel.setLayout(new BorderLayout());
+		// bottomPanel.add(thePluginManager.getBottomComponent());
+		//
+		// bottomPanelDockableEvent = new DockableEvent(this, bottomPanel,
+		// "Spectrum viewer") {
+		// protected void initialise(Container moveToContainer,
+		// Container currentDockedContainer) {
+		// if (currentDockedContainer != null) {
+		// currentDockedContainer.remove(thePluginManager
+		// .getBottomComponent());
+		// }
+		//
+		// if (bottomPanel != moveToContainer) {
+		// hideBottomPanels();
+		// detachedSplitPaneCount++;
+		// spectrumPanelDetached = true;
+		// } else {
+		// showBottomPanels();
+		// detachedSplitPaneCount--;
+		//
+		// bottomHeightRequired = true;
+		// spectrumPanelDetached = false;
+		// }
+		//
+		// moveToContainer.add(thePluginManager.getBottomComponent());
+		//
+		// hideAll();
+		// }
+		//
+		// protected void finaliseAttachment() {
+		// SwingUtilities.invokeLater(new Runnable() {
+		// @Override
+		// public void run() {
+		// while (true) {
+		// if (theSplitPane.isVisible()) {
+		// updateDividerLocations();
+		// break;
+		// }
+		// }
+		// }
+		// });
+		// }
+		// };
+		//
+		// bottomPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
+		//
+		// theLeftSplitPane.setBottomComponent(bottomPanel);
+		//
+		// final JPanel rightPanel = new JPanel();
+		// rightPanel.setLayout(new BorderLayout());
+		// rightPanel.add(thePluginManager.getRightComponent());
+		//
+		// rightPanelDockableEvent = new DockableEvent(this, rightPanel,
+		// "Annotation tools") {
+		// protected void initialise(Container moveToContainer,
+		// Container currentDockedContainer) {
+		// if (currentDockedContainer != null) {
+		// currentDockedContainer.remove(thePluginManager
+		// .getRightComponent());
+		// }
+		//
+		// if (moveToContainer != rightPanel) {
+		// hideRightPanels();
+		// detachedSplitPaneCount++;
+		// rightPanelDetached = true;
+		// } else {
+		// detachedSplitPaneCount--;
+		//
+		// topHeightRequired = true;
+		// bottomHeightRequired = true;
+		//
+		// rightPanelDetached = false;
+		// }
+		//
+		// moveToContainer.add(thePluginManager.getRightComponent());
+		//
+		// hideAll();
+		// }
+		//
+		// protected void finaliseAttachment() {
+		// SwingUtilities.invokeLater(new Runnable() {
+		// @Override
+		// public void run() {
+		// while (true) {
+		// if (theSplitPane.isVisible()) {
+		// updateDividerLocations();
+		// break;
+		// }
+		// }
+		// }
+		// });
+		// }
+		// };
+		//
+		// rightPanelDockableEvent.changeCanvasPaneContainer(CONTAINER.DOCKED);
+		//
+		// theSplitPane.setRightComponent(rightPanel);
+	}
+
+	@Override
+	public void lafChanged() {
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				for (Plugin plugin : thePluginManager.getPlugins()) {
+					System.err.println("Updating LAF");
+					if (plugin.getLeftComponent() != null)
+						SwingUtilities.updateComponentTreeUI(plugin
+								.getLeftComponent());
+					if (plugin.getRightComponent() != null)
+						SwingUtilities.updateComponentTreeUI(plugin
+								.getRightComponent());
+					if (plugin.getBottomComponent() != null)
+						SwingUtilities.updateComponentTreeUI(plugin
+								.getBottomComponent());
+				}
+			}
+		});
+
+		initSplitPane();
+
 	}
 }
