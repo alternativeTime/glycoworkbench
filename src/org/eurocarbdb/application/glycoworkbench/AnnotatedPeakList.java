@@ -20,6 +20,8 @@
 
 package org.eurocarbdb.application.glycoworkbench;
 
+import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
+import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -27,6 +29,7 @@ import org.apache.poi.hssf.usermodel.HSSFPicture;
 import org.eurocarbdb.application.glycanbuilder.*;
 
 import java.util.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 
 import org.jfree.data.Range;
@@ -36,6 +39,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 import javax.xml.transform.sax.TransformerHandler;
 import org.xml.sax.helpers.AttributesImpl;
+import java.io.ByteArrayOutputStream;
 
 /**
  * Stores a complete annotated list of peaks labeled from an MS or MS/MS
@@ -1560,12 +1564,41 @@ public class AnnotatedPeakList extends BaseDocument implements
 		int currentRow=0;
 	    short currentCell=0;
 	    
-	    HSSFRow row=sheet.createRow(currentRow++);
+	    HSSFRow row=sheet.createRow(currentRow);
 	    row.createCell(currentCell++).setCellValue("Peak");
+	    
+	    row.setHeightInPoints(100);
 
+	    HSSFPatriarch patriarch=sheet.createDrawingPatriarch();
+	    
 		for(Glycan glycan:this.structures){
 			row.createCell(currentCell++).setCellValue(glycan.toString());
+//			ByteArrayOutputStream bos=new ByteArrayOutputStream();
+//			BufferedImage bufImage=GlycoWorkbench.gres.getImage(glycan,true,true,true,1);
+//			int height=bufImage.getHeight();
+//			int width=bufImage.getWidth();
+//			
+//			double ratio2=(double) width / 255;
+//			
+//			double ratio=(double) height / width;
+//			
+//			System.err.println(height+"|"+width+"|"+ratio);
+//			
+//			javax.imageio.ImageIO.write(bufImage,"png",bos);
+//			bos.flush();
+//			byte [] picData=bos.toByteArray();
+//            int index = wb.addPicture( picData,HSSFWorkbook.PICTURE_TYPE_PNG );
+//            
+//            System.err.println("width: "+(int) (100*ratio)+"|height: "+100);
+//            
+//            HSSFClientAnchor anchor = new HSSFClientAnchor(0,0,255,130,(short)currentCell,(currentRow),(short)currentCell,(currentRow));
+//            anchor.setAnchorType(1);
+//            HSSFPicture picture=patriarch.createPicture(anchor, index);
+//            anchor=picture.getPreferredSize();
+            
+            //currentCell++;
 		}
+		currentRow++;
 		
 		for(PeakAnnotationMultiple annotatedPeak:this.peak_annotations_multiple){
 			currentCell=0;
@@ -1575,7 +1608,7 @@ public class AnnotatedPeakList extends BaseDocument implements
 			for(Vector<Annotation> glycanAnnotations:annotations){
 				StringBuffer buffer=new StringBuffer();
 				for(Annotation annotation:glycanAnnotations){
-					buffer.append(annotation.toString());
+					buffer.append(annotation.getFragmentEntry().fragment.toString());
 				}
 				row.createCell(currentCell++).setCellValue(buffer.toString());
 			}
@@ -1583,6 +1616,7 @@ public class AnnotatedPeakList extends BaseDocument implements
 		
 		for(int i=0;i<this.structures.size()+1;i++){
 			//where has the auto size method gone?
+			sheet.autoSizeColumn(i);
 		}
 		
 		wb.write(os);

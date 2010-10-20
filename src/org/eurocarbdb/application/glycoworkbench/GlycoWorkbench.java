@@ -85,6 +85,7 @@ import org.eurocarbdb.application.glycanbuilder.Glycan;
 import org.eurocarbdb.application.glycanbuilder.GlycanAction;
 import org.eurocarbdb.application.glycanbuilder.GlycanCanvas;
 import org.eurocarbdb.application.glycanbuilder.GlycanDocument;
+import org.eurocarbdb.application.glycanbuilder.GlycanRenderer;
 import org.eurocarbdb.application.glycanbuilder.GraphicOptions;
 import org.eurocarbdb.application.glycanbuilder.ICON_SIZE;
 import org.eurocarbdb.application.glycanbuilder.JCommandButtonAction;
@@ -153,6 +154,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	protected GlycanWorkspace theWorkspace;
 
 	protected GlycanDocument theDoc;
+	public static GlycanRenderer gres;
 
 	public GlycanDocument getTheDoc() {
 		return theDoc;
@@ -341,6 +343,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		theWorkspace.setAutoSave(true);
 
 		theDoc = theWorkspace.getStructures();
+		gres=theWorkspace.getGlycanRenderer();
 		theActionManager = new ActionManager();
 		thePluginManager = new PluginManager(this, theWorkspace);
 		halt_interactions = new Monitor(this);
