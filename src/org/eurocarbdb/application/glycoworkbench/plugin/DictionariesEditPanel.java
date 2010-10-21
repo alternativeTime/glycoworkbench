@@ -168,11 +168,11 @@ public class DictionariesEditPanel extends TablePanel<ProfilerPlugin> implements
     theActionManager.add("last",FileUtils.defaultThemeManager.getImageIcon("last"),"Last page",-1, "",this);
 
 
-    theActionManager.add("print",FileUtils.defaultThemeManager.getImageIcon("print"),"Print...",KeyEvent.VK_P, "",this);
+    theActionManager.add("print",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_PRINT, ICON_SIZE.TINY),"Print...",KeyEvent.VK_P, "",this);
     
-    theActionManager.add("cut",FileUtils.defaultThemeManager.getImageIcon("cut"),"Cut",-1, "",this);
-    theActionManager.add("copy",FileUtils.defaultThemeManager.getImageIcon("copy"),"Copy",KeyEvent.VK_C, "",this);
-    theActionManager.add("paste",FileUtils.defaultThemeManager.getImageIcon("paste"),"Paste",KeyEvent.VK_C, "",this);
+    theActionManager.add("cut",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.CUT, ICON_SIZE.TINY),"Cut",-1, "",this);
+    theActionManager.add("copy",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.COPY, ICON_SIZE.TINY),"Copy",KeyEvent.VK_C, "",this);
+    theActionManager.add("paste",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.PASTE, ICON_SIZE.TINY),"Paste",KeyEvent.VK_C, "",this);
     theActionManager.add("delete",FileUtils.defaultThemeManager.getImageIcon("delete"),"Delete",-1, "",this);
     
     theActionManager.add("transfer",FileUtils.defaultThemeManager.getImageIcon("transfer"),"Copy structures to canvas",KeyEvent.VK_V, "",this);

@@ -240,3 +240,10 @@ DEFAULT~gif~zoomnone
 DEFAULT~png~zoomnone
 DEFAULT~gif~zoomout
 DEFAULT~png~zoomout
+DEFAULT~png~addscan
+DEFAULT~png~database_annotate
+DEFAULT~png~canvas_annotate
+DEFAULT~png~implode
+DEFAULT~png~fragmentation
+DEFAULT~png~deleteNew
+DEFAULT~png~massoptions

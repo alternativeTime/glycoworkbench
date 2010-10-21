@@ -82,6 +82,22 @@ public class AnnotationPlugin implements Plugin, ActionListener {
 		theAnnotationToolsPane.add("Summary", thePeakAnnotationSummaryPanel);
 		theAnnotationToolsPane.add("Calibration",
 				thePeakAnnotationCalibrationPanel);
+		
+		GlycanAction glycanAction = new GlycanAction("matchFragments",
+				GlycoWorkbench.getDefaultThemeManager().getResizableIcon("canvas_annotate", ICON_SIZE.L3),
+				"Annotate peaks with fragments from canvas",
+				KeyEvent.VK_N, "", this);
+		addActionToPublicMap(glycanAction);
+	}
+	
+	protected HashMap<String, GlycanAction> publicActionMap = new HashMap<String, GlycanAction>();
+
+	public GlycanAction getAction(String action) {
+		return publicActionMap.get(action);
+	}
+
+	private void addActionToPublicMap(GlycanAction glycanAction) {
+		publicActionMap.put(glycanAction.getActionCommand(), glycanAction);
 	}
 
 	public PeakAnnotationStatsPanel getPeakAnnotationStatsPanel() {
@@ -109,9 +125,11 @@ public class AnnotationPlugin implements Plugin, ActionListener {
 
 	public void exit() {
 	}
+	
+	public static String PLUGIN_NAME="Annotation";
 
 	public String getName() {
-		return "Annotation";
+		return PLUGIN_NAME;
 	}
 
 	public int getMnemonic() {
@@ -328,6 +346,16 @@ public class AnnotationPlugin implements Plugin, ActionListener {
 			}
 			return false;
 		}
+		
+		if (action.equals("matchFragments")) {
+			if(theApplication.getCanvas().getSelectedStructures().size()>0){
+				action="matchFragmentsSelected";
+			}else{
+				action="matchFragmentsAll";
+			}
+		}
+		
+		
 		if (action.equals("findFragmentsSelected")) {
 			annotate = false;
 			theApplication.getCanvas().enforceSelection();
@@ -351,6 +379,8 @@ public class AnnotationPlugin implements Plugin, ActionListener {
 			}
 			return false;
 		}
+		
+		
 
 		if (action.equals("matchFragmentsCurrent")) {
 			annotate = true;

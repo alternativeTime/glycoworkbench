@@ -77,7 +77,7 @@ public class Grammar implements StructureGenerator, StructureScorer {
     public Grammar() {
     }
 
-    public Grammar(String filename, boolean on_file_system) throws Exception {
+	public Grammar(String filename, boolean on_file_system) throws Exception {
     load(filename,on_file_system);
     }
     
