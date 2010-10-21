@@ -91,8 +91,8 @@ public class DictionariesManagerPanel extends SortingTablePanel<ProfilerPlugin> 
 
     protected void createActions() {
     theActionManager.add("add",FileUtils.defaultThemeManager.getImageIcon("add"),"Add new dictionary",KeyEvent.VK_N, "",this);
-    theActionManager.add("open",FileUtils.defaultThemeManager.getImageIcon("open"),"Open existing dictionary",KeyEvent.VK_O, "",this);
-    theActionManager.add("delete",FileUtils.defaultThemeManager.getImageIcon("delete"),"Delete selected dictionary",KeyEvent.VK_DELETE, "",this);
+    theActionManager.add("open",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_OPEN, ICON_SIZE.TINY),"Open existing dictionary",KeyEvent.VK_O, "",this);
+    theActionManager.add("delete",GlycoWorkbench.getDefaultThemeManager().getResizableIcon("deleteNew", ICON_SIZE.TINY),"Delete selected dictionary",KeyEvent.VK_DELETE, "",this);
     theActionManager.add("edit",FileUtils.defaultThemeManager.getImageIcon("edit"),"Edit selected dictionary",KeyEvent.VK_E, "",this);
     }
 

@@ -47,34 +47,100 @@ public class WorkspacePanel extends JPanel implements TreeModel,
 		BaseDocument.DocumentChangeListener, GlycanWorkspace.Listener,
 		MouseListener {
 
+	private static boolean PAINT_BOX_ON_NONROOT_ITEMS=false;
+	
 	class WorkspaceTreeCellRenderer extends DefaultTreeCellRenderer {
+		/**
+		 * We can't use the old code, as calling setIcon slows down the split pane resize
+		 * behaviour when substance is used for the LAF.  This slow resize behaviour was 
+		 * previously fixed by caching the JLabel so that setIcon wasn't called on repaint.
+		 * However when each cell is selected, the UI should show this with a coloured background,
+		 * the previous fix - knocked this behaviour out.
+		 * 
+		 * The code below can now show a coloured background for selected cells, either the whole JLabel
+		 * can have it's background color changed (PAINT_BOX_ON_NONROOT_ITEMS=false) or just the contents of
+		 * the label (PAINT_BOX_ON_NONROOT_ITEMS=true); the last mode represents the whole behaviour of 
+		 * plugin.  Note that PAINT_BOX_ON_NONROOT_ITEMS=false is the default.
+		 * 
+		 * @author David Damerell (david@nixbioinf.org)
+		 */
+		class CustomJLabel extends JLabel{
+			public void paint( Graphics g )
+			{	
+				if(PAINT_BOX_ON_NONROOT_ITEMS){
+					if(selected)
+						g.setColor( backgroundSelectionColor);
+					else{
+						g.setColor( backgroundNonSelectionColor);
+					}
+					g.fillRect(0,0,getWidth() - 1,getHeight() - 1);
+				}
+
+				super.paint(g);
+			}
+		}
+		
 
 		public Component getTreeCellRendererComponent(JTree tree, Object value,
 				boolean sel, boolean expanded, boolean leaf, int row,
 				boolean hasFocus) {
-			super.getTreeCellRendererComponent(tree, "", sel, expanded, leaf,
+			Component component=super.getTreeCellRendererComponent(tree, "", sel, expanded, leaf,
 					row, hasFocus);
-			
+
 			setFont(getFont().deriveFont(Font.PLAIN));
 
-			
-			
+			// if (value instanceof BaseDocument) {
+			// BaseDocument doc = (BaseDocument) value;
+			//
+			// // set text
+			// String text = doc.getName();
+			// if (doc.wasSaved())
+			// text += " - "
+			// + FileHistory.getAbbreviatedName(doc.getFileName());
+			// if (doc.hasChanged())
+			// text += "*";
+			// setText(text);
+			//
+			// // set icon
+			// if (leaf)
+			// setIcon(doc.getIcon());
+			// } else if (value instanceof Scan) {
+			// Scan scan = (Scan) value;
+			//
+			// String text = (scan.getName() != null && scan.getName()
+			// .length() > 0) ? scan.getName() : "Scan";
+			// if (scan.getPrecursorMZ() != null)
+			// text += " [precursor m/z= "
+			// + new DecimalFormat("0.0000").format(scan
+			// .getPrecursorMZ().doubleValue()) + " Da]";
+			// setText(text);
+			//
+			// if (theWorkspace.isCurrent(scan))
+			// setFont(getFont().deriveFont(Font.BOLD));
+			// }
+			//
+			// return this;
+			super.getTreeCellRendererComponent(tree, "", sel, expanded, leaf,
+					row, hasFocus);
+
+			setFont(getFont().deriveFont(Font.PLAIN));
+
 			if (value instanceof BaseDocument) {
-				JLabel master;
-				
+				CustomJLabel master;
+
 				BaseDocument doc = (BaseDocument) value;
-				if(doc.getRegisteredComponent("treeView")!=null){
-					master=(JLabel)doc.getRegisteredComponent("treeView");
-					master.setBackground(this.getBackground());
-					master.setForeground(this.getForeground());
-				}else{
-					master=new JLabel();
+				if (doc.getRegisteredComponent("treeView") != null) {
+					master = (CustomJLabel) doc.getRegisteredComponent("treeView");
+				} else {
+					master=new CustomJLabel();
+					master.setUI(getUI());
+					
 					// set icon
 					if (leaf)
 						master.setIcon(doc.getIcon());
+					
 				}
-				
-				
+
 				// set text
 				String text = doc.getName();
 				if (doc.wasSaved())
@@ -83,13 +149,23 @@ public class WorkspacePanel extends JPanel implements TreeModel,
 				if (doc.hasChanged())
 					text += "*";
 				master.setText(text);
+				
+				if(!PAINT_BOX_ON_NONROOT_ITEMS){
+					if(selected){
+						master.setBackground(backgroundSelectionColor);
+					}else{
+						master.setBackground(backgroundNonSelectionColor);
+					}
+				}
+				
+				//setText(text);
+				//setIcon(doc.getIcon());
+				
 
-				
-				doc.registerComponent("treeView",master);
-				
+				doc.registerComponent("treeView", master);
+
 				return master;
-				
-				
+
 			} else if (value instanceof Scan) {
 				Scan scan = (Scan) value;
 
@@ -105,10 +181,8 @@ public class WorkspacePanel extends JPanel implements TreeModel,
 					setFont(getFont().deriveFont(Font.BOLD));
 			}
 
-			
 			return this;
 		}
-
 	}
 
 	private static final long serialVersionUID = 0L;
@@ -135,14 +209,13 @@ public class WorkspacePanel extends JPanel implements TreeModel,
 	//
 
 	public WorkspacePanel(GlycoWorkbench application) {
-		
 
 		super(new BorderLayout());
-		
-		this.theApplication=application;
+
+		this.theApplication = application;
 
 		// init data
-		//theApplication = null;
+		// theApplication = null;
 		theWorkspace = new GlycanWorkspace();
 
 		// init actions
@@ -167,9 +240,9 @@ public class WorkspacePanel extends JPanel implements TreeModel,
 		// create toolbar
 		JPanel theToolBarPanel = new JPanel(new BorderLayout());
 		theToolBarDocument = createToolBarDocument();
-		theToolBarEdit = createToolBarEdit();
+		//theToolBarEdit = createToolBarEdit();
 		theToolBarPanel.add(theToolBarDocument, BorderLayout.NORTH);
-		theToolBarPanel.add(theToolBarEdit, BorderLayout.CENTER);
+		//theToolBarPanel.add(theToolBarEdit, BorderLayout.CENTER);
 		add(theToolBarPanel, BorderLayout.SOUTH);
 
 		// final settings
@@ -205,35 +278,53 @@ public class WorkspacePanel extends JPanel implements TreeModel,
 
 	private void createActions() {
 		// file
-		theActionManager.add("new", this.theApplication.getThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_NEW,ICON_SIZE.SMALL),
+		theActionManager.add("new", this.theApplication.getThemeManager()
+				.getResizableIcon(STOCK_ICON.REFRESH, ICON_SIZE.TINY),
 				"Clear selected document", KeyEvent.VK_N, "", this);
-		theActionManager.add("open",this.theApplication.getThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_OPEN,ICON_SIZE.SMALL),
+		theActionManager.add("open", this.theApplication.getThemeManager()
+				.getResizableIcon(STOCK_ICON.DOCUMENT_OPEN, ICON_SIZE.TINY),
 				"Open selected document", KeyEvent.VK_O, "", this);
-		theActionManager.add("save",this.theApplication.getThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_SAVE,ICON_SIZE.SMALL),
+		theActionManager.add("save", this.theApplication.getThemeManager()
+				.getResizableIcon(STOCK_ICON.DOCUMENT_SAVE, ICON_SIZE.TINY),
 				"Save selected document", KeyEvent.VK_S, "", this);
-		theActionManager.add("saveas", this.theApplication.getThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_SAVE_AS,ICON_SIZE.SMALL),
+		theActionManager.add(
+				"saveas",
+				this.theApplication.getThemeManager().getResizableIcon(
+						STOCK_ICON.DOCUMENT_SAVE_AS, ICON_SIZE.TINY),
 				"Save selected document as...", KeyEvent.VK_A, "", this);
 
-		theActionManager.add("newall", this.theApplication.getThemeManager().getResizableIcon("newall",ICON_SIZE.SMALL),
+		theActionManager.add("newall", this.theApplication.getThemeManager()
+				.getResizableIcon(STOCK_ICON.REFRESH, ICON_SIZE.TINY),
 				"Clear the workspace", -1, "", this);
-		theActionManager.add("openall", this.theApplication.getThemeManager().getResizableIcon("openall",ICON_SIZE.SMALL),
+		theActionManager.add("openall", this.theApplication.getThemeManager()
+				.getResizableIcon(STOCK_ICON.DOCUMENT_OPEN, ICON_SIZE.TINY),
 				"Open a workspace", -1, "", this);
-		theActionManager.add("saveall", this.theApplication.getThemeManager().getResizableIcon("saveall",ICON_SIZE.SMALL),
+		theActionManager.add("saveall", this.theApplication.getThemeManager()
+				.getResizableIcon(STOCK_ICON.DOCUMENT_SAVE, ICON_SIZE.TINY),
 				"Save the workspace", -1, "", this);
-		theActionManager.add("saveallas", this.theApplication.getThemeManager().getResizableIcon("saveallas",ICON_SIZE.SMALL),
+		theActionManager.add("saveallas", this.theApplication.getThemeManager()
+				.getResizableIcon(STOCK_ICON.DOCUMENT_SAVE_AS, ICON_SIZE.TINY),
 				"Save the workspace as...", -1, "", this);
 
-		theActionManager.add("add", this.theApplication.getThemeManager().getResizableIcon("add",ICON_SIZE.SMALL),
-				"Attach new scan", KeyEvent.VK_D, "", this);
-		theActionManager.add("delete", this.theApplication.getThemeManager().getResizableIcon("delete",ICON_SIZE.SMALL), "Delete",
+		theActionManager.add("add", this.theApplication.getThemeManager()
+				.getResizableIcon("addscan", ICON_SIZE.SMALL), "Attach new scan",
+				KeyEvent.VK_D, "", this);
+		theActionManager.add("delete", this.theApplication.getThemeManager()
+				.getResizableIcon("delete", ICON_SIZE.SMALL), "Delete",
 				KeyEvent.VK_E, "", this);
-		theActionManager.add("select", this.theApplication.getThemeManager().getResizableIcon("select",ICON_SIZE.SMALL), "Activate",
+		theActionManager.add("select", this.theApplication.getThemeManager()
+				.getResizableIcon("select", ICON_SIZE.SMALL), "Activate",
 				KeyEvent.VK_L, "", this);
 
-		theActionManager.add("sync",ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),"Sync",-1, "",this);
-		
-		theActionManager.add("properties",this.theApplication.getThemeManager().getResizableIcon("properties",ICON_SIZE.SMALL),
-				"Properties", KeyEvent.VK_P, "", this);
+		theActionManager.add("sync",
+				ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3), "Sync", -1,
+				"", this);
+
+		theActionManager.add(
+				"properties",
+				this.theApplication.getThemeManager().getResizableIcon(
+						"properties", ICON_SIZE.SMALL), "Properties",
+				KeyEvent.VK_P, "", this);
 	}
 
 	private void updateActions() {
@@ -260,19 +351,23 @@ public class WorkspacePanel extends JPanel implements TreeModel,
 		JToolBar toolbar = new JToolBar();
 		toolbar.setFloatable(false);
 
-		toolbar.add(theActionManager.get("newall"));
-		toolbar.add(theActionManager.get("openall"));
-		toolbar.add(theActionManager.get("saveall"));
-		toolbar.add(theActionManager.get("saveallas"));
+		//toolbar.add(theActionManager.get("newall"));
+		//toolbar.add(theActionManager.get("openall"));
+		//toolbar.add(theActionManager.get("saveall"));
+		//toolbar.add(theActionManager.get("saveallas"));
 
-		toolbar.addSeparator();
+		//toolbar.addSeparator();
 
 		toolbar.add(theActionManager.get("new"));
 		toolbar.add(theActionManager.get("open"));
 		toolbar.add(theActionManager.get("save"));
 		toolbar.add(theActionManager.get("saveas"));
 
-		// toolbar.addSeparator();
+		toolbar.addSeparator();
+		
+		toolbar.add(theActionManager.get("add"));
+		toolbar.add(theActionManager.get("delete"));
+		toolbar.add(theActionManager.get("properties"));
 
 		// toolbar.add(theActionManager.get("undo"));
 		// toolbar.add(theActionManager.get("redo"));
@@ -281,18 +376,19 @@ public class WorkspacePanel extends JPanel implements TreeModel,
 	}
 
 	private JToolBar createToolBarEdit() {
-		JToolBar toolbar = new JToolBar();
-		toolbar.setFloatable(false);
-
-		toolbar.add(theActionManager.get("add"));
-		toolbar.add(theActionManager.get("delete"));
-		toolbar.add(theActionManager.get("select"));
-
-		toolbar.addSeparator();
-
-		toolbar.add(theActionManager.get("properties"));
-
-		return toolbar;
+//		JToolBar toolbar = new JToolBar();
+//		toolbar.setFloatable(false);
+//
+//		toolbar.add(theActionManager.get("add"));
+//		toolbar.add(theActionManager.get("delete"));
+//		//toolbar.add(theActionManager.get("select"));
+//
+//		toolbar.addSeparator();
+//
+//		toolbar.add(theActionManager.get("properties"));
+//
+//		return toolbar;
+		return null;
 	}
 
 	private JPopupMenu createPopupMenu() {
@@ -307,7 +403,7 @@ public class WorkspacePanel extends JPanel implements TreeModel,
 
 		menu.add(theActionManager.get("add"));
 		menu.add(theActionManager.get("delete"));
-		menu.add(theActionManager.get("select"));
+		//menu.add(theActionManager.get("select"));
 
 		menu.addSeparator();
 
@@ -318,8 +414,8 @@ public class WorkspacePanel extends JPanel implements TreeModel,
 	}
 
 	private void showPopup(MouseEvent e) {
-		theTree.setSelectionPath(theTree.getClosestPathForLocation(e.getX(), e
-				.getY()));
+		theTree.setSelectionPath(theTree.getClosestPathForLocation(e.getX(),
+				e.getY()));
 		createPopupMenu().show(this, e.getX(), e.getY());
 	}
 
@@ -380,9 +476,7 @@ public class WorkspacePanel extends JPanel implements TreeModel,
 
 	public Scan getSelectedObjectOrParentScan() {
 		TreePath sel = theTree.getSelectionPath();
-		
-		
-		
+
 		if (sel != null) {
 			Object node = sel.getLastPathComponent();
 			if (node instanceof Scan)
@@ -587,16 +681,16 @@ public class WorkspacePanel extends JPanel implements TreeModel,
 
 	public void paste() {
 	}
-	
-	public boolean sync(){
+
+	public boolean sync() {
 		System.err.println("Sync has been called");
-		if(hasSelectedScan()){
-			Scan scan=getSelectedScan();
-			if(scan!=null){
+		if (hasSelectedScan()) {
+			Scan scan = getSelectedScan();
+			if (scan != null) {
 				return theWorkspace.syncScan(scan);
 			}
 		}
-		
+
 		return false;
 	}
 

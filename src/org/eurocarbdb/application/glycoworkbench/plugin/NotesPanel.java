@@ -93,23 +93,23 @@ public class NotesPanel extends DocumentPanel<NotesDocument> implements ActionLi
     protected void createActions() {
 
     // file
-    theActionManager.add("new",FileUtils.defaultThemeManager.getImageIcon("new"),"New",KeyEvent.VK_N, "",this);
-    theActionManager.add("open",FileUtils.defaultThemeManager.getImageIcon("open"),"Open",KeyEvent.VK_O, "",this);
-    theActionManager.add("save",FileUtils.defaultThemeManager.getImageIcon("save"),"Save",KeyEvent.VK_S, "",this);
-    theActionManager.add("saveas",FileUtils.defaultThemeManager.getImageIcon("saveas"),"Save as...",KeyEvent.VK_A, "",this);
+    theActionManager.add("new",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.REFRESH, ICON_SIZE.TINY),"Clear",KeyEvent.VK_N, "",this);
+    theActionManager.add("open",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_OPEN, ICON_SIZE.TINY),"Open",KeyEvent.VK_O, "",this);
+    theActionManager.add("save",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_SAVE, ICON_SIZE.TINY),"Save",KeyEvent.VK_S, "",this);
+    theActionManager.add("saveas",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_SAVE_AS, ICON_SIZE.TINY),"Save as...",KeyEvent.VK_A, "",this);
 
     // print
-    theActionManager.add("print",FileUtils.defaultThemeManager.getImageIcon("print"),"Print...",KeyEvent.VK_P, "",this);
+    theActionManager.add("print",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_PRINT, ICON_SIZE.TINY),"Print...",KeyEvent.VK_P, "",this);
 
     // edit
-    theActionManager.add("undo",FileUtils.defaultThemeManager.getImageIcon("undo"),"Undo",KeyEvent.VK_U, "",this);
-    theActionManager.add("redo",FileUtils.defaultThemeManager.getImageIcon("redo"),"Redo", KeyEvent.VK_R, "",this);
+    theActionManager.add("undo",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.UNDO, ICON_SIZE.TINY),"Undo",KeyEvent.VK_U, "",this);
+    theActionManager.add("redo",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.REDO, ICON_SIZE.TINY),"Redo", KeyEvent.VK_R, "",this);
 
     theActionManager.add("add",FileUtils.defaultThemeManager.getImageIcon("add"),"Add peak",KeyEvent.VK_D, "",this);
-    theActionManager.add("cut",FileUtils.defaultThemeManager.getImageIcon("cut"),"Cut",KeyEvent.VK_T, "",this);
-    theActionManager.add("copy",FileUtils.defaultThemeManager.getImageIcon("copy"),"Copy",KeyEvent.VK_C, "",this);
-    theActionManager.add("paste",FileUtils.defaultThemeManager.getImageIcon("paste"),"Paste", KeyEvent.VK_P, "",this);
-    theActionManager.add("delete",FileUtils.defaultThemeManager.getImageIcon("delete"),"Delete",KeyEvent.VK_DELETE, "",this);
+    theActionManager.add("cut",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.CUT, ICON_SIZE.TINY),"Cut",KeyEvent.VK_T, "",this);
+    theActionManager.add("copy",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.COPY, ICON_SIZE.TINY),"Copy",KeyEvent.VK_C, "",this);
+    theActionManager.add("paste",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.PASTE, ICON_SIZE.TINY),"Paste", KeyEvent.VK_P, "",this);
+    theActionManager.add("delete",GlycoWorkbench.getDefaultThemeManager().getResizableIcon("deleteNew", ICON_SIZE.TINY),"Delete",KeyEvent.VK_DELETE, "",this);
     theActionManager.add("selectall",FileUtils.defaultThemeManager.getImageIcon("selectall"),"Select all",KeyEvent.VK_A, "",this);
 
     }
