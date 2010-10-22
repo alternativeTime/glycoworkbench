@@ -370,6 +370,9 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		
 		DockableEvent.initiliseGlobalKeyBindings(this);
 		
+		setIconImage(themeManager.getImageIcon("gwb_logo", ICON_SIZE.L4)
+				.getImage());
+		
 		initNewMenu();
 		initOpenMenu();
 		initOpenRecent();
@@ -655,8 +658,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 			}
 		});
 
-		setIconImage(themeManager.getImageIcon("gwb_logo", ICON_SIZE.L4)
-				.getImage());
+		
 		setSize(880, 660);
 		setLocationRelativeTo(null);
 		onNew(theWorkspace);
@@ -1753,8 +1755,6 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 			upToDate="update available";
 		}
 		
-		
-		
 		final JLabel status=new JLabel("Version: "+GlycoWorkbench.MAJOR_VERSION+"."+GlycoWorkbench.MINOR_VERSION+
 				" "+GlycoWorkbench.BUILD_STATE+" ("+GlycoWorkbench.BUILD_NUMBER+")"+ "("+upToDate+")");
 		if(upToDate.equals("update available")){
@@ -2522,8 +2522,9 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 		frame.setIconImages(getIconImages());
 		frame.add(browser);
-		frame.setVisible(true);
 		frame.setSize(500, 500);
+		frame.setTitle("Manual");
+		frame.setVisible(true);
 	}
 
 	public void onAbout() {
