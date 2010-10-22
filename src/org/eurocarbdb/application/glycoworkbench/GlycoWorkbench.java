@@ -2777,7 +2777,6 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 			Thread thread=new Thread(){
 				public void run(){
 					while(true){
-						System.err.println("painted: "+JSplitPaneCustom.painted.size());
 						if(JSplitPaneCustom.painted.size()==3){
 							updateDividerLocations();
 							break;
