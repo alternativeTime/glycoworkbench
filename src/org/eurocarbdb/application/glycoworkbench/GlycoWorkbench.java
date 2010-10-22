@@ -24,10 +24,12 @@
 package org.eurocarbdb.application.glycoworkbench;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -43,6 +45,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -145,15 +149,15 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	private static ICON_SIZE defaultMenuIconSize = ICON_SIZE.TINY;
 	private static ICON_SIZE barIconSize = ICON_SIZE.SMALL;
 	
-	private static String MAJOR_VERSION="GWB_MAJOR";
-	private static String MINOR_VERSION="GWB_MINOR";
-	private static String BUILD_NUMBER="GWB_BUILD";
-	private static String BUILD_STATE="GWB_STATE";
+//	private static String MAJOR_VERSION="GWB_MAJOR";
+//	private static String MINOR_VERSION="GWB_MINOR";
+//	private static String BUILD_NUMBER="GWB_BUILD";
+//	private static String BUILD_STATE="GWB_STATE";
 	
-//	private static String MAJOR_VERSION="2";
-//	private static String MINOR_VERSION="0";
-//	private static String BUILD_NUMBER="50";
-//	private static String BUILD_STATE="ALPHA";
+	private static String MAJOR_VERSION="2";
+	private static String MINOR_VERSION="0";
+	private static String BUILD_NUMBER="50";
+	private static String BUILD_STATE="ALPHA";
 
 	// singletons
 	protected GlycanWorkspace theWorkspace;
@@ -1742,15 +1746,74 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		
 		String upToDate;
 		if(this.updater==null){
-			upToDate="";
+			upToDate="unable to contact update site";
 		}else if(this.updater.isUptoDate(this)){
 			upToDate="latest";
 		}else{
 			upToDate="update available";
 		}
 		
-		band3.addFlowComponent(new JLabel("Version: "+GlycoWorkbench.MAJOR_VERSION+"."+GlycoWorkbench.MINOR_VERSION+
-				" "+GlycoWorkbench.BUILD_STATE+" ("+GlycoWorkbench.BUILD_NUMBER+")"+ "("+upToDate+")"));
+		
+		
+		final JLabel status=new JLabel("Version: "+GlycoWorkbench.MAJOR_VERSION+"."+GlycoWorkbench.MINOR_VERSION+
+				" "+GlycoWorkbench.BUILD_STATE+" ("+GlycoWorkbench.BUILD_NUMBER+")"+ "("+upToDate+")");
+		if(upToDate.equals("update available")){
+			status.setText("<html><u>"+status.getText()+"</u></html>");
+			
+			final JFrame browserFrame=new JFrame();
+			final WebBrowser browser = new WebBrowser();
+			try {
+				browser.navigate(new URL("http://download.glycoworkbench.org/current_version/"));
+			} catch (IOException e) {
+				LogUtils.report(e);
+			} catch (URISyntaxException e) {
+				LogUtils.report(e);
+			}
+			browserFrame.setIconImages(getIconImages());
+			browserFrame.add(browser);
+			browserFrame.setSize(500, 500);
+			browserFrame.setTitle("Download update...");
+			
+			status.addMouseListener(new MouseListener(){
+				@Override
+				public void mouseClicked(MouseEvent arg0) {
+					browserFrame.setVisible(true);
+					status.setForeground(Color.GRAY);
+				}
+
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+					Component component=(Component)e.getSource();
+					Cursor cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR); 
+				    setCursor(cursor);
+				}
+
+				@Override
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+					Component component=(Component)e.getSource();
+					Cursor cursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR); 
+				    setCursor(cursor);
+				}
+
+				@Override
+				public void mousePressed(MouseEvent arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void mouseReleased(MouseEvent arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+			});
+		}
+		
+		
+		band3.addFlowComponent(status);
 		band3.addFlowComponent(new JLabel("OS: "+System.getProperty("os.name")));
 		
 		//band3.addFlowComponent(new JLabel(upToDate));
@@ -2457,6 +2520,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 			e.printStackTrace();
 		}
 
+		frame.setIconImages(getIconImages());
 		frame.add(browser);
 		frame.setVisible(true);
 		frame.setSize(500, 500);
