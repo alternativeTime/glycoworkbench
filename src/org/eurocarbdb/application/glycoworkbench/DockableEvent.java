@@ -192,6 +192,7 @@ public class DockableEvent {
 			}
 			frame.setTitle(title);
 			frame.setVisible(true);
+			frame.setIconImages(defaultDockedWindow.getIconImages());
 			
 			detachedFrames.add(frame);
 			DockableEvent.initiliseGlobalKeyBindings(frame);
