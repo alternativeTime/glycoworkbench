@@ -247,3 +247,4 @@ DEFAULT~png~implode
 DEFAULT~png~fragmentation
 DEFAULT~png~deleteNew
 DEFAULT~png~massoptions
+DEFAULT~png~profiler

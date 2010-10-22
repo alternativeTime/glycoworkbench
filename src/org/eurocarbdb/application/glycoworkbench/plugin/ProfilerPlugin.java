@@ -25,6 +25,7 @@ package org.eurocarbdb.application.glycoworkbench.plugin;
 
 import org.eurocarbdb.application.glycoworkbench.*;
 import org.eurocarbdb.application.glycanbuilder.*;
+import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
 
@@ -1053,4 +1054,8 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public ResizableIcon getResizableIcon(){
+    	return FileUtils.getThemeManager().getResizableIcon("profiler", ICON_SIZE.L3).getResizableIcon();
+    }
 }
