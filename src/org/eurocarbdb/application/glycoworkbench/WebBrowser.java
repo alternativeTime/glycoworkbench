@@ -64,6 +64,14 @@ public class WebBrowser extends JPanel {
 			}
 		}
 	}
+	
+	public void navigate(URL remoteResource) throws URISyntaxException, IOException {
+		//this.webBrowser.navigate(remoteResource.toString());
+
+		if (checkSiteExists(remoteResource)) {
+			this.webBrowser.navigate(remoteResource.toString());
+		}
+	}
 
 	public boolean checkSiteExists(URL url) {
 		try {
