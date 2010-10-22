@@ -69,6 +69,7 @@ import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileFilter;
 
 import org.apache.tools.ant.launch.Locator;
 import org.eurocarbdb.application.glycanbuilder.ActionManager;
@@ -695,7 +696,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 							String filename = fileChooser.getSelectedFile().getAbsolutePath();
 							
 							
-							tryOpen(filename,false);
+							tryOpen(filename,false,fileChooser.getFileFilter());
 						}
 
 						
@@ -1948,44 +1949,71 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 			return false;
 		}
 	}
+	
+	private boolean fileFiltersEqual(FileFilter src,FileFilter dest){
+		return src.getDescription().equals(dest.getDescription()) ? true : false;
+	}
 
-	public boolean tryOpen(String filename, boolean merge) {
+	public boolean tryOpen(String filename, boolean merge,FileFilter selectedFilter) {
 
 		try {
 			if (!checkExisting(filename))
 				return false;
-
-			// try to open one document
-			if (theWorkspace.open(filename, merge, false)) {
-				theWorkspace.getFileHistory().add(filename,
-						theWorkspace.getName());
-				return true;
+			
+			File file=new File(filename);
+			
+			FileFilter fileFormats=theWorkspace.getSpectra().getAllFileFormats();
+			if(fileFiltersEqual(selectedFilter,fileFormats) && fileFormats.accept(file)){
+				if (theWorkspace.getSpectra().open(filename, merge, false)) {
+					theWorkspace.getFileHistory().add(filename,
+							theWorkspace.getSpectra().getName());
+					System.err.println("Opening spectra");
+					thePluginManager.show("Spectra", "Spectra");
+					return true;
+				}
 			}
-			if (theWorkspace.getStructures().open(filename, merge, false)) {
-				theWorkspace.getFileHistory().add(filename,
-						theWorkspace.getStructures().getName());
-				return true;
+			
+			fileFormats=theWorkspace.getStructures().getAllFileFormats();
+			if(fileFiltersEqual(selectedFilter,fileFormats) && fileFormats.accept(file)){
+				if (theWorkspace.getStructures().open(filename, merge, false)) {
+					theWorkspace.getFileHistory().add(filename,
+							theWorkspace.getStructures().getName());
+					return true;
+				}
 			}
-			if (theWorkspace.getPeakList().open(filename, merge, false)) {
-				theWorkspace.getFileHistory().add(filename,
-						theWorkspace.getPeakList().getName());
-				thePluginManager.show("PeakList", "PeakList");
-				return true;
+			
+			fileFormats=theWorkspace.getAnnotatedPeakList().getAllFileFormats();
+			if(fileFiltersEqual(selectedFilter,fileFormats) && fileFormats.accept(file)){
+				if (theWorkspace.getAnnotatedPeakList()
+						.open(filename, merge, false)) {
+					theWorkspace.getFileHistory().add(filename,
+							theWorkspace.getAnnotatedPeakList().getName());
+					thePluginManager.show("Annotation", "Summary");
+					return true;
+				}
 			}
-			if (theWorkspace.getAnnotatedPeakList()
-					.open(filename, merge, false)) {
-				theWorkspace.getFileHistory().add(filename,
-						theWorkspace.getAnnotatedPeakList().getName());
-				thePluginManager.show("Annotation", "Summary");
-				return true;
+			
+			fileFormats=theWorkspace.getPeakList().getAllFileFormats();
+			if(fileFiltersEqual(selectedFilter,fileFormats) && fileFormats.accept(file)){
+				if (theWorkspace.getPeakList().open(filename, merge, false)) {
+					theWorkspace.getFileHistory().add(filename,
+							theWorkspace.getPeakList().getName());
+					thePluginManager.show("PeakList", "PeakList");
+					return true;
+				}
 			}
-			if (theWorkspace.getSpectra().open(filename, merge, false)) {
-				theWorkspace.getFileHistory().add(filename,
-						theWorkspace.getSpectra().getName());
-				thePluginManager.show("Spectra", "Spectra");
-				return true;
+			
+			fileFormats=theWorkspace.getAllFileFormats();
+			if(fileFiltersEqual(selectedFilter,fileFormats) && fileFormats.accept(file)){
+				// try to open one document
+				if (theWorkspace.open(filename, merge, false)) {
+					theWorkspace.getFileHistory().add(filename,
+							theWorkspace.getName());
+					System.err.println("Opening workspace");
+					return true;
+				}
 			}
-
+			
 			throw new Exception("Unrecognized file format");
 		} catch (Exception e) {
 			LogUtils.report(e);

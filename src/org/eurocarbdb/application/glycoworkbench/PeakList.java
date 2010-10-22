@@ -616,29 +616,23 @@ public class PeakList extends BaseDocument implements SAXUtils.SAXWriter {
 
 	@Override
 	public boolean open(File file, boolean merge, boolean warning) {
-		System.err.println("In here ?");
+		
 		try {
-			System.err.println("1");
 			// try CSV
 			if (readCSV(file, merge))
 				return true;
-			System.err.println("2");
 			// try MGF peak list
 			if (readMGF(file, merge))
 				return true;
-			System.err.println("3");
 			// try MSA peak list
 			if (readMSA(file, merge))
 				return true;
-			System.err.println("4");
 			// try bruker xml
 			if (readBruker(file, merge)){
-				System.err.println("Read bruker");
 				return true;
 			}else{
 				System.err.println("Failed to read bruker?");
 			}
-			System.err.println("5");
 
 			// bail out
 			init();
