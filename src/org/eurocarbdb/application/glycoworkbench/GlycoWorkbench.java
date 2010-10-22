@@ -149,15 +149,15 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	private static ICON_SIZE defaultMenuIconSize = ICON_SIZE.TINY;
 	private static ICON_SIZE barIconSize = ICON_SIZE.SMALL;
 	
-//	private static String MAJOR_VERSION="GWB_MAJOR";
-//	private static String MINOR_VERSION="GWB_MINOR";
-//	private static String BUILD_NUMBER="GWB_BUILD";
-//	private static String BUILD_STATE="GWB_STATE";
+	private static String MAJOR_VERSION="GWB_MAJOR";
+	private static String MINOR_VERSION="GWB_MINOR";
+	private static String BUILD_NUMBER="GWB_BUILD";
+	private static String BUILD_STATE="GWB_STATE";
 	
-	private static String MAJOR_VERSION="2";
-	private static String MINOR_VERSION="0";
-	private static String BUILD_NUMBER="50";
-	private static String BUILD_STATE="ALPHA";
+//	private static String MAJOR_VERSION="2";
+//	private static String MINOR_VERSION="0";
+//	private static String BUILD_NUMBER="50";
+//	private static String BUILD_STATE="ALPHA";
 
 	// singletons
 	protected GlycanWorkspace theWorkspace;
