@@ -2616,6 +2616,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		NativeInterface.open();
 		
 		JFrame.setDefaultLookAndFeelDecorated(true);
+		JDialog.setDefaultLookAndFeelDecorated(true);
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -2627,7 +2628,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 					GraphicOptions options = new GraphicOptions();
 					options.retrieve(theConfiguration);
 
-					System.err.println(options.THEME);
+					//System.err.println(options.THEME);
 
 					SubstanceLookAndFeel.setSkin(options.THEME);
 					
