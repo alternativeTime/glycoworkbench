@@ -33,7 +33,10 @@ public class MacWrapper {
 					}
 					String output=stringBuffer.toString();
 					if(!output.contains("NORMAL STARTUP COMPLETE")){
-						LogUtils.report(new Exception(stringBuffer.toString()));
+						//Above doesn't always get printed, so catch this instead
+						if(!output.contains("NSConditionLock")){
+							LogUtils.report(new Exception(stringBuffer.toString()));
+						}
 					}
 				}
 			};
