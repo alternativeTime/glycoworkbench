@@ -10,63 +10,66 @@
 	<import file="../../build.common.xml" />
 
 	<!-- ========= PROPERTIES ======== -->
-	<property name="java.source.dir" value="${basedir}/src"/>
+	<property name="java.source.dir" value="${basedir}/src" />
 	<property name="java.build.dir" value="${basedir}/build" />
 	<property name="java.extlib.dir" value="${project.java.extlib.dir}" />
-	
+
 	<property name="doc.dir" value="${basedir}/doc" />
 	<property name="apidoc.dir" value="${doc.dir}/api" />
-	
+
 	<property name="java.dist.dir" value="${project.java.lib.dir}" />
 	<property name="applet.dist.dir" value="${project.binary.dir}" />
-	
-	<property name="gwb.dist" value="${basedir}/dist-zip/"/>
-	<property name="gwb.dist.zip.dir" value="${gwb.dist}/gwb"/>
-	
-	<property name="gwb.artwork" value="${basedir}/artwork"/>
-	<property name="gwb.icon" value="${gwb.artwork}/GlycoWorkbench.ico"/>
-	
+
+	<property name="gwb.dist" value="${basedir}/dist-zip/" />
+	<property name="gwb.dist.zip.dir" value="${gwb.dist}/gwb" />
+
+	<property name="gwb.artwork" value="${basedir}/artwork" />
+	<property name="gwb.icon" value="${gwb.artwork}/GlycoWorkbench.ico" />
+
 	<!-- ==NSIS== Windows/Unix examples -->
 	<!--<property name="nsis.location" value="C:\Program Files (x86)\NSIS\makensis.exe" />-->
-	<property name="nsis.location" value="/home/gwb/runtime/nsis-2.46/makensis.exe"/>
-	
+	<property name="nsis.location" value="/home/gwb/runtime/nsis-2.46/makensis.exe" />
+
 	<!-- ==WinRun4J== -->
-	<property name="static_import.dir" value="${basedir}/static_import"/>
+	<property name="static_import.dir" value="${basedir}/static_import" />
 	<property name="winrun4j.dir" value="${static_import.dir}/winrun4j/" />
-	<property name="winrun4j.exe.32" value="${winrun4j.dir}/bin/WinRun4J.exe"/>
-	<property name="winrun4j.exe.64" value="${winrun4j.dir}/bin/WinRun4J64.exe"/>
-	<property name="winrun4j.url" value="http://downloads.sourceforge.net/project/winrun4j/winrun4j/0.3.3/winrun4J-0.3.3.zip?use_mirror=kent"/>
-	
+	<property name="winrun4j.exe.32" value="${winrun4j.dir}/bin/WinRun4J.exe" />
+	<property name="winrun4j.exe.64" value="${winrun4j.dir}/bin/WinRun4J64.exe" />
+	<property name="winrun4j.url" value="http://downloads.sourceforge.net/project/winrun4j/winrun4j/0.3.3/winrun4J-0.3.3.zip?use_mirror=kent" />
+
 	<!-- ==PACKAGE LOCATIONS== -->
-	<property name="gwb.packages.dir" value="${basedir}/packages"/>
-	<property name="gwb.packages.win.dir" value="${basedir}/packages/windows"/>
-	<property name="gwb.packages.lin.dir" value="${basedir}/packages/linux"/>
-	<property name="gwb.packages.mac.dir" value="${basedir}/packages/macosx"/>
-	
+	<property name="gwb.packages.dir" value="${basedir}/packages" />
+	<property name="gwb.packages.win.dir" value="${basedir}/packages/windows" />
+	<property name="gwb.packages.lin.dir" value="${basedir}/packages/linux" />
+	<property name="gwb.packages.mac.dir" value="${basedir}/packages/macosx" />
+
 	<!-- ==Windows packages== -->
-	<property name="gwb.win.zip.x86" value="${gwb.packages.win.dir}/GlycoWorkbenchWin_x86.zip"/>
-	<property name="gwb.win.zip.x86_64" value="${gwb.packages.win.dir}/GlycoWorkbenchWin_x86-64.zip"/>
-	
-	<property name="gwb.win.setup.x86" value="${gwb.packages.win.dir}/GlycoWorkbenchWin_x86.exe"/>
-	<property name="gwb.win.setup.x86_64" value="${gwb.packages.win.dir}/GlycoWorkbenchWin_x86-64.exe"/>
-	
+	<property name="gwb.win.zip.x86" value="${gwb.packages.win.dir}/GlycoWorkbenchWin_x86.zip" />
+	<property name="gwb.win.zip.x86_64" value="${gwb.packages.win.dir}/GlycoWorkbenchWin_x86-64.zip" />
+
+	<property name="gwb.win.setup.x86" value="${gwb.packages.win.dir}/GlycoWorkbenchWin_x86.exe" />
+	<property name="gwb.win.setup.x86_64" value="${gwb.packages.win.dir}/GlycoWorkbenchWin_x86-64.exe" />
+
 	<!-- ==Linux packages== -->
-	<property name="gwb.lin.zip.x86" value="${gwb.packages.lin.dir}/GlycoWorkbenchLin_x86.zip"/>
-	<property name="gwb.lin.zip.x86-64" value="${gwb.packages.lin.dir}/GlycoWorkbenchLin_x86-64.zip"/>
-	
+	<property name="gwb.lin.zip.x86" value="${gwb.packages.lin.dir}/GlycoWorkbenchLin_x86.zip" />
+	<property name="gwb.lin.zip.x86-64" value="${gwb.packages.lin.dir}/GlycoWorkbenchLin_x86-64.zip" />
+
 	<!-- ==Mac packages== -->
-	<property name="gwb.mac.carbon.32" value="${gwb.packages.mac.dir}/GlycoWorkbenchMac_Carbon_32.zip"/>
-	<property name="gwb.mac.cocoa.32" value="${gwb.packages.mac.dir}/GlycoWorkbenchMac_Cocoa_32.zip"/>
-	<property name="gwb.mac.cocoa.x86-64" value="${gwb.packages.mac.dir}/GlycoWorkbenchMac_Cocoa_x86-64.zip"/>
-	
+	<property name="gwb.mac.wrapper.dir" value="${basedir}/mac_wrappers" />
+	<property name="gwb.mac.wrapper.32" value="${gwb.mac.wrapper.dir}/GlycoWorkbenchMac_32.jar" />
+	<property name="gwb.mac.wrapper.64" value="${gwb.mac.wrapper.dir}/GlycoWorkbenchMac_64.jar" />
+	<property name="gwb.mac.carbon.32" value="${gwb.packages.mac.dir}/GlycoWorkbenchMac_Carbon_32.zip" />
+	<property name="gwb.mac.cocoa.32" value="${gwb.packages.mac.dir}/GlycoWorkbenchMac_Cocoa_32.zip" />
+	<property name="gwb.mac.cocoa.x86-64" value="${gwb.packages.mac.dir}/GlycoWorkbenchMac_Cocoa_x86-64.zip" />
+
 	<!-- ========WinRun4J======== -->
-	<property name="gwb.exe.dir" value="${basedir}/executables"/>
-	<property name="gwb.win.x86.exe" value="${gwb.exe.dir}/GlycoWorkbench_x86.exe"/>
-	<property name="gwb.win.x86-64.exe" value="${gwb.exe.dir}/GlycoWorkbench_x86-64.exe"/>
-	<property name="gwb.winrun4j.ini" value="${gwb.exe.dir}/GlycoWorkbench_x86.ini"/>
+	<property name="gwb.exe.dir" value="${basedir}/executables" />
+	<property name="gwb.win.x86.exe" value="${gwb.exe.dir}/GlycoWorkbench_x86.exe" />
+	<property name="gwb.win.x86-64.exe" value="${gwb.exe.dir}/GlycoWorkbench_x86-64.exe" />
+	<property name="gwb.winrun4j.ini" value="${gwb.exe.dir}/GlycoWorkbench_x86.ini" />
 
 	<!-- ========TARGETS======== -->
-	
+
 	<!-- ==TARGET: build== -->
 	<target name="build" depends="build-resourcesdb, build-molframework, build-glycanbuilder, build-glycopeakfinder" description="Buld GlycoWorkbench and all dependencies">
 		<echo>Building Resources-DB, Molecular Framework, GlycanBuilder and GlycoPeakFinder</echo>
@@ -100,14 +103,14 @@
 			<classpath refid="project.glycoworkbench.classpath" />
 		</manifestclasspath>
 		<jar destfile="${java.dist.dir}/${project.glycoworkbench.jar}">
-			<fileset dir="${java.build.dir}" excludes="**/*.bak"/>
+			<fileset dir="${java.build.dir}" excludes="**/*.bak" />
 			<manifest>
 				<attribute name="Main-Class" value="org.eurocarbdb.application.glycoworkbench.GlycoWorkbench" />
 				<attribute name="Class-Path" value="${manifest.class.path}" />
 			</manifest>
 		</jar>
 	</target>
-	
+
 	<!-- ==clean-dist-zip== -->
 	<target name="clean-dist-zip" depends="">
 		<delete dir="${gwb.dist.zip.dir}" />
@@ -142,7 +145,7 @@
 				<get dest="${project.temp.dir}/winrun4j.zip" src="${winrun4j.url}" />
 				<delete dir="${static_import.dir}" />
 				<mkdir dir="${static_import.dir}" />
-				<unzip src="${project.temp.dir}/winrun4j.zip" dest="${static_import.dir}"/>
+				<unzip src="${project.temp.dir}/winrun4j.zip" dest="${static_import.dir}" />
 			</else>
 		</if>
 	</target>
@@ -152,14 +155,14 @@
 		TODO: Add a wine script, if possible to run on Unix
 	-->
 	<target name="build-win-exe-winrun4j" depends="fetch-winrun4j">
-		<mkdir dir="${gwb.exe.dir}"/>
-		<delete file="${gwb.win.x86.exe}"/>
-		<delete file="${gwb.win.x86-64.exe}"/>
-		<copy file="${winrun4j.exe.32}" tofile="${gwb.win.x86.exe}"/> 
-		<copy file="${winrun4j.exe.64}" tofile="${gwb.win.x86-64.exe}"/>
+		<mkdir dir="${gwb.exe.dir}" />
+		<delete file="${gwb.win.x86.exe}" />
+		<delete file="${gwb.win.x86-64.exe}" />
+		<copy file="${winrun4j.exe.32}" tofile="${gwb.win.x86.exe}" />
+		<copy file="${winrun4j.exe.64}" tofile="${gwb.win.x86-64.exe}" />
 
 		<exec executable="cmd">
-			<arg value="/C .\winrun4j\update_icon.bat"/>	
+			<arg value="/C .\winrun4j\update_icon.bat" />
 		</exec>
 	</target>
 
@@ -179,7 +182,7 @@
 		<copy todir="${gwb.dist.zip.dir}/lib">
 			<fileset dir="${java.extlib.dir}/prefetched" includes="DJNativeSwing.jar,DJNativeSwing-SWT.jar,flamingo*,looks-2.3.1.jar,substance*,trident.jar" />
 		</copy>
-		
+
 		<copy todir="${gwb.dist.zip.dir}/lib">
 			<fileset dir="${java.extlib.dir}/prefetched/" includes="jets* BareBones* commons-codec-* commons-httpclient-* commons-logging-* java-xmlbuilder-1* jna.jar" />
 		</copy>
@@ -206,17 +209,17 @@
 
 	<!-- ==dist-all== -->
 	<target name="dist-all" depends="clean-packages,dist-win,dist-mac,dist-lin" description="Build packages for Mac OSX, Linux and Windows">
-	
+
 	</target>
-	
+
 	<!-- ==clean-packages== -->
 	<target name="clean-packages">
-		<delete dir="${gwb.packages.dir}"/>
-		<mkdir dir="${gwb.packages.win.dir}"/>
-		<mkdir dir="${gwb.packages.mac.dir}"/>
-		<mkdir dir="${gwb.packages.lin.dir}"/>	
+		<delete dir="${gwb.packages.dir}" />
+		<mkdir dir="${gwb.packages.win.dir}" />
+		<mkdir dir="${gwb.packages.mac.dir}" />
+		<mkdir dir="${gwb.packages.lin.dir}" />
 	</target>
-	
+
 	<!-- ==dist-win==
 		Summary: Build complete zip archive for deployment on windows family systems.
 		Description:
@@ -229,39 +232,41 @@
 	-->
 	<target name="dist-win" depends="clean-packages,clean-dist-zip,dist-runnable" description="Build Windows packages">
 		<!-- common -->
-		<copy overwrite="true" file="${basedir}/WIN_README.txt" tofile="${gwb.dist.zip.dir}/README.txt"/>
+		<copy overwrite="true" file="${basedir}/WIN_README.txt" tofile="${gwb.dist.zip.dir}/README.txt" />
 		<copy file="${gwb.artwork}/glycoworkbench.bmp" tofile="${gwb.dist.zip.dir}/GlycoWorkbench.bmp" />
 		<copy file="${gwb.artwork}/GlycoWorkbench.ico" tofile="${gwb.dist.zip.dir}/GlycoWorkbench.ico" />
 		<copy file="${gwb.artwork}/gwb_icon.bmp" tofile="${gwb.dist.zip.dir}/gwb_icon.bmp" />
-		<copy overwrite="true" file="${gwb.winrun4j.ini}" tofile="${gwb.dist.zip.dir}/GlycoWorkbench.ini"/>
-		
+		<copy overwrite="true" file="${gwb.winrun4j.ini}" tofile="${gwb.dist.zip.dir}/GlycoWorkbench.ini" />
+
 		<!-- x86 -->
 		<copy overwrite="true" file="${gwb.win.x86.exe}" tofile="${gwb.dist.zip.dir}/GlycoWorkbench.exe" />
 		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/win-swt_x86.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
 		<zip destfile="${gwb.win.zip.x86}" basedir="${gwb.dist}" />
-		<antcall target="dist-win-installer"></antcall>
-		<copy overwrite="true" file="${basedir}/Setup.exe" tofile="${gwb.win.setup.x86}"/>
-		
+		<antcall target="dist-win-installer">
+		</antcall>
+		<copy overwrite="true" file="${basedir}/Setup.exe" tofile="${gwb.win.setup.x86}" />
+
 		<!-- x86-64 -->
 		<copy overwrite="true" file="${gwb.win.x86-64.exe}" tofile="${gwb.dist.zip.dir}/GlycoWorkbench.exe" />
 		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/win-swt_x86-64.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
 		<zip destfile="${gwb.win.zip.x86_64}" basedir="${gwb.dist}" />
-		<antcall target="dist-win-installer"></antcall>		
-		<copy overwrite="true" file="${basedir}/Setup.exe" tofile="${gwb.win.setup.x86_64}"/>
+		<antcall target="dist-win-installer">
+		</antcall>
+		<copy overwrite="true" file="${basedir}/Setup.exe" tofile="${gwb.win.setup.x86_64}" />
 	</target>
-	
+
 	<!-- ==dist-win-installer== -->
 	<target name="dist-win-installer">
-		<echo>Compiling NSIS installer for Windows</echo>			
+		<echo>Compiling NSIS installer for Windows</echo>
 		<echo>NSIS script created with http://hmne.sourceforge.net/</echo>
-		
+
 		<exec dir="${basedir}" executable="${nsis.location}" osFamily="windows">
 			<arg value="${basedir}/winInstaller.nsi" />
 		</exec>
-			
+
 		<exec dir="${basedir}" executable="wine" osFamily="unix">
-			<arg value="${nsis.location}"/>
-			<arg value="winInstaller.nsi"/>
+			<arg value="${nsis.location}" />
+			<arg value="winInstaller.nsi" />
 		</exec>
 	</target>
 
@@ -269,27 +274,60 @@
 	<target name="dist-lin" depends="clean-packages,clean-dist-zip,dist-runnable" description="Build Linux distribution packages">
 		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/lin-swt_x86.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
 		<zip destfile="${gwb.lin.zip.x86}" basedir="${gwb.dist}" />
-		
+
 		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/lin-swt_x86-64.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
 		<zip destfile="${gwb.lin.zip.x86-64}" basedir="${gwb.dist}" />
 	</target>
 
 	<!-- ==dist-mac== -->
-	<target name="dist-mac" depends="clean-packages,clean-dist-zip,dist-runnable" description="Build Mac OSX packages">
+	<target name="dist-mac" depends="clean-packages,clean-dist-zip,dist-runnable,dist-mac-wrappers" description="Build Mac OSX packages">
+		<!-- 32bit builds -->
+		<copy overwrite="true" file="${gwb.mac.wrapper.32}" tofile="${gwb.dist.zip.dir}/GlycoWorkbench.jar" />
+
 		<!-- carbon-32-->
 		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/mac-carbon-swt_32.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
-		<copy overwrite="true" file="${gwb.exe.dir}/mac_32.sh" tofile="${gwb.dist.zip.dir}/start.sh"/>
+		<copy overwrite="true" file="${gwb.exe.dir}/mac_32.sh" tofile="${gwb.dist.zip.dir}/start.sh" />
 		<zip destfile="${gwb.mac.carbon.32}" basedir="${gwb.dist}" />
-		
+
 		<!-- cocoa-32 -->
 		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/mac-cocoa-swt_32.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
-		<copy overwrite="true" file="${gwb.exe.dir}/mac_32.sh" tofile="${gwb.dist.zip.dir}/start.sh"/>
+		<copy overwrite="true" file="${gwb.exe.dir}/mac_32.sh" tofile="${gwb.dist.zip.dir}/start.sh" />
 		<zip destfile="${gwb.mac.cocoa.32}" basedir="${gwb.dist}" />
-		
+
+
 		<!-- cocoa-x86-64 -->
+		<copy overwrite="true" file="${gwb.mac.wrapper.64}" tofile="${gwb.dist.zip.dir}/GlycoWorkbench.jar" />
+		
 		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/mac-cocoa-swt_x86-64.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
-		<copy overwrite="true" file="${gwb.exe.dir}/mac_64.sh" tofile="${gwb.dist.zip.dir}/start.sh"/>
+		<copy overwrite="true" file="${gwb.exe.dir}/mac_64.sh" tofile="${gwb.dist.zip.dir}/start.sh" />
 		<zip destfile="${gwb.mac.cocoa.x86-64}" basedir="${gwb.dist}" />
+	</target>
+
+	<target name="dist-mac-wrappers" depends="build">
+		<mkdir dir="${gwb.mac.wrapper.dir}"/>
+		<pathconvert property="manifest.classpath" pathsep=" ">
+			<path refid="compile.classpath" />
+			<mapper>
+				<chainedmapper>
+					<flattenmapper />
+					<globmapper from="*.jar" to="lib/*.jar" />
+				</chainedmapper>
+			</mapper>
+		</pathconvert>
+
+		<jar destfile="${gwb.mac.wrapper.32}" basedir="${java.build.dir}" >
+			<manifest>
+				<attribute name="Class-Path" value="${manifest.classpath} ${project.glycoworkbench.jar}" />
+				<attribute name="Main-Class" value="org.eurocarbdb.application.glycoworkbench.launchers.MacWrapper32" />
+			</manifest>
+		</jar>
+
+		<jar destfile="${gwb.mac.wrapper.64}" basedir="${java.build.dir}">
+			<manifest>
+				<attribute name="Class-Path" value="${manifest.classpath} ${project.glycoworkbench.jar}" />
+				<attribute name="Main-Class" value="org.eurocarbdb.application.glycoworkbench.launchers.MacWrapper64" />
+			</manifest>
+		</jar>
 	</target>
 
 
@@ -300,7 +338,7 @@
 		</path>
 
 		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/win-swt_x86.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
-		
+
 		<pathconvert property="manifest.classpath" pathsep=" ">
 			<path refid="compile.classpath" />
 			<mapper>
@@ -370,7 +408,7 @@
 			<arg value="${apidoc.dir}/index.html" />
 		</exec>
 	</target>
-	
+
 	<!-- ==run== (deprecated, without a good reason for it's existence-->
 	<target name="run" depends="build,copy-resources">
 		<java classname="org.eurocarbdb.application.glycoworkbench.GlycoWorkbench" fork="yes">
