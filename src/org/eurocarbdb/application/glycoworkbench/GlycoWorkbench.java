@@ -2756,6 +2756,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 			}
 		});
 		NativeInterface.runEventPump();
+		System.err.println("NORMAL STARTUP COMPLETE");
 	}
 
 	protected void applyApplicationIcon() {
