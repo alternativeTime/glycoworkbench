@@ -1614,22 +1614,14 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 		return tools_menu;
 	}
-
-	protected JPopupMenu rightClickCanvasMenu;
-
+	
 	protected JPopupMenu createPopupMenu() {
-		if (rightClickCanvasMenu == null) {
-			rightClickCanvasMenu = theCanvas.createPopupMenu();
-
-			// add tools menu
-			JMenu tools_menu = createToolsMenu();
-			tools_menu.setIcon(ThemeManager.getEmptyIcon(ICON_SIZE.TINY));
-
-			rightClickCanvasMenu.addSeparator();
-			rightClickCanvasMenu.add(tools_menu);
-		}
-
-		return rightClickCanvasMenu;
+//		if(tools_menu==null){
+//			tools_menu = createToolsMenu();
+//			tools_menu.setIcon(ThemeManager.getEmptyIcon(ICON_SIZE.TINY));
+//		}
+		
+		return theCanvas.createPopupMenu();
 	}
 
 	private void createFileBand() {
