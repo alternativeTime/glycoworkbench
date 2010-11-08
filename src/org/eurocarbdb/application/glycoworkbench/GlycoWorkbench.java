@@ -1658,6 +1658,17 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 				ICON_SIZE.L3, "New", this,
 				new RichTooltip("New workspace", " ")),
 				RibbonElementPriority.TOP);
+		
+		ArrayList<RibbonBandResizePolicy> resizePolicies1 = new ArrayList<RibbonBandResizePolicy>();
+		resizePolicies1.add(new CoreRibbonResizePolicies.Mirror(band
+				.getControlPanel()));
+		resizePolicies1.add(new CoreRibbonResizePolicies.Mid2Low(band
+				.getControlPanel()));
+
+		resizePolicies1.add(new IconRibbonBandResizePolicy(band
+				.getControlPanel()));
+
+		band.setResizePolicies(resizePolicies1);
 
 		JRibbonBand band2 = new JRibbonBand(
 				"Structures",
@@ -1818,15 +1829,15 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		
 		//band3.addFlowComponent(new JLabel(upToDate));
 		
-		ArrayList<RibbonBandResizePolicy> resizePolicies1 = new ArrayList<RibbonBandResizePolicy>();
-		resizePolicies1.add(new CoreRibbonResizePolicies.FlowTwoRows(band3
+		ArrayList<RibbonBandResizePolicy> resizePolicies3 = new ArrayList<RibbonBandResizePolicy>();
+		resizePolicies3.add(new CoreRibbonResizePolicies.FlowTwoRows(band3
 				.getControlPanel()));
-		resizePolicies1.add(new IconRibbonBandResizePolicy(band3
+		resizePolicies3.add(new IconRibbonBandResizePolicy(band3
 				.getControlPanel()));
 		
-		band3.setResizePolicies(resizePolicies1);
-		
-		RibbonTask task = new RibbonTask("Home", band, band2,band4,band3);
+		band3.setResizePolicies(resizePolicies3);
+//		/
+		RibbonTask task = new RibbonTask("Home", band,band2,band4,band3);
 
 		this.getRibbon().addTask(task);
 	}
