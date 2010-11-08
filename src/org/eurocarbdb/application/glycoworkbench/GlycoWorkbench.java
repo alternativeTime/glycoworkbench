@@ -2723,7 +2723,10 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 					//System.err.println(options.THEME);
 
-					SubstanceLookAndFeel.setSkin(options.THEME);
+					if(!options.THEME.equals("basic.white")){
+						SubstanceLookAndFeel.setSkin(options.THEME);
+					}
+					
 					
 					final GlycoWorkbench gwb = new GlycoWorkbench();
 					gwb.setVisible(true);
