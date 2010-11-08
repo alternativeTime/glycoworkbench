@@ -2783,7 +2783,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	@Override
 	public void fireContextChanged(Context context, boolean switchToDefault) {
 		if (Context.GLYCAN_CANVAS_ITEM == context) {
-			this.ribbonManager.setCurrentContext(context, switchToDefault);
+			this.ribbonManager.setCurrentContext(context, false);
 		}
 	}
 
