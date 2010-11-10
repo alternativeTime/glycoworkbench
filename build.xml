@@ -61,6 +61,9 @@
 	<property name="gwb.mac.carbon.32" value="${gwb.packages.mac.dir}/GlycoWorkbenchMac_Carbon_32.zip" />
 	<property name="gwb.mac.cocoa.32" value="${gwb.packages.mac.dir}/GlycoWorkbenchMac_Cocoa_32.zip" />
 	<property name="gwb.mac.cocoa.x86-64" value="${gwb.packages.mac.dir}/GlycoWorkbenchMac_Cocoa_x86-64.zip" />
+	
+	<!-- ==Wrapper== -->
+	<property name="gwb.wrapper" value="${gwb.mac.wrapper.dir}/GlycoWorkbench.jar"/>
 
 	<!-- ========WinRun4J======== -->
 	<property name="gwb.exe.dir" value="${basedir}/executables" />
@@ -275,8 +278,14 @@
 
 	<!-- ==dist-lin== -->
 	<target name="dist-lin" depends="clean-packages,clean-dist-zip,dist-runnable" description="Build Linux distribution packages">
+		<property name="startup.java" value="java"/>
+		<property name="startup.maxmem" value="200M"/>
+		<property name="startup.os" value="linux"/>
+		<property name="startup.arch" value="32"/>
+		<property name="startup.jar" value="${project.glycoworkbench.jar}"/>
+		<antcall target="dist-wrapper"/>
+		
 		<copy file="${gwb.artwork}/gwb_icon.png" tofile="${gwb.dist.zip.dir}/icon.png" />
-		<move file="${gwb.dist.zip.dir}/${project.glycoworkbench.jar}" tofile="${gwb.dist.zip.dir}/GlycoWorkbench.jar" />
 
 		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/lin-swt_x86.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
 		<zip destfile="${gwb.lin.zip.x86}" basedir="${gwb.dist}" />
@@ -286,7 +295,6 @@
 
 		<delete file="${gwb.dist.zip.dir}/GlycoWorkbench.bmp" />
 		<delete file="${gwb.dist.zip.dir}/icon.png" />
-		<move tofile="${gwb.dist.zip.dir}/${project.glycoworkbench.jar}" file="${gwb.dist.zip.dir}/GlycoWorkbench.jar" />
 	</target>
 
 	<!-- ==dist-mac== -->
@@ -312,6 +320,39 @@
 		<delete file="${gwb.dist.zip.dir}/GlycoWorkbench.jar" />
 		<delete file="${gwb.dist.zip.dir}/GlycoWorkbench.bmp" />
 	</target>
+	
+	<target name="configure-startup-options">
+		<copy overwrite="true" file="${basedir}/resources/startup_options.properties" todir="${gwb.dist.zip.dir}" />
+		<replace file="${gwb.dist.zip.dir}/startup_options.properties" value="${startup.java}" token="JAVA_CMD"/>
+		<replace file="${gwb.dist.zip.dir}/startup_options.properties" value="${startup.maxmem}" token="MAX_MEM_LIMIT"/>
+		<replace file="${gwb.dist.zip.dir}/startup_options.properties" value="${startup.os}" token="OS"/>
+		<replace file="${gwb.dist.zip.dir}/startup_options.properties" value="${startup.arch}" token="ARCH"/>
+		<replace file="${gwb.dist.zip.dir}/startup_options.properties" value="${startup.jar}" token="JAR"/>
+	</target>
+
+	<target name="dist-wrapper" depends="build,configure-startup-options">
+		<mkdir dir="${gwb.mac.wrapper.dir}" />
+		<pathconvert property="manifest.classpath" pathsep=" ">
+			<path refid="compile.classpath" />
+			<mapper>
+				<chainedmapper>
+					<flattenmapper />
+					<globmapper from="*.jar" to="lib/*.jar" />
+				</chainedmapper>
+			</mapper>
+		</pathconvert>
+
+		<jar destfile="${gwb.wrapper}" basedir="${java.build.dir}">
+			<manifest>
+				<attribute name="Class-Path" value="${manifest.classpath} ${project.glycoworkbench.jar}" />
+				<attribute name="Main-Class" value="org.eurocarbdb.application.glycoworkbench.launchers.StartupWrapper" />
+			</manifest>
+			<fileset dir="${gwb.dist.zip.dir}" includes="startup_options.properties"/>
+		</jar>
+		
+		<copy overwrite="true" file="${gwb.wrapper}" tofile="${gwb.dist.zip.dir}/GlycoWorkbench.jar" />
+	</target>
+
 
 	<target name="dist-mac-wrappers" depends="build">
 		<mkdir dir="${gwb.mac.wrapper.dir}" />
@@ -342,7 +383,7 @@
 
 
 	<!-- ==dist-runnable== -->
-	<target name="dist-runnable" depends="dist-common">
+	<target name="dist-runnable" depends="dist-common,dist-wrapper">
 		<path id="compile.classpath">
 			<fileset dir="${gwb.dist.zip.dir}/lib/" includes="*.jar" />
 		</path>
@@ -358,30 +399,9 @@
 			</mapper>
 		</pathconvert>
 
-		<jar destfile="${gwb.dist.zip.dir}/${project.glycoworkbench.jar}.jar" basedir="${java.build.dir}">
+		<jar destfile="${gwb.dist.zip.dir}/lib/${project.glycoworkbench.jar}" basedir="${java.build.dir}">
 			<manifest>
 				<attribute name="Class-Path" value="${manifest.classpath} ${project.glycoworkbench.jar}" />
-				<attribute name="Main-Class" value="org.eurocarbdb.application.glycoworkbench.GlycoWorkbench" />
-				<attribute name="SplashScreen-Image" value="resources/artwork/GlycoWorkbench.png" />
-			</manifest>
-			<fileset dir="${gwb.dist.zip.dir}" includes="resources/artwork/GlycoWorkbench.png" />
-			<fileset dir="${basedir}/resources" includes="icons/**" />
-		</jar>
-
-
-		<pathconvert property="manifest.classpath2" pathsep=" ">
-			<path refid="compile.classpath" />
-			<mapper>
-				<chainedmapper>
-					<flattenmapper />
-					<globmapper from="*.jar" to="lib/*.jar" />
-				</chainedmapper>
-			</mapper>
-		</pathconvert>
-
-		<jar destfile="${gwb.dist.zip.dir}/${project.glycoworkbench.jar}" basedir="${java.build.dir}">
-			<manifest>
-				<attribute name="Class-Path" value="${manifest.classpath2} ${project.glycoworkbench.jar}" />
 				<attribute name="Main-Class" value="org.eurocarbdb.application.glycoworkbench.GlycoWorkbench" />
 				<attribute name="SplashScreen-Image" value="resources/artwork/GlycoWorkbench.png" />
 			</manifest>
