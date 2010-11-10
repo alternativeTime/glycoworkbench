@@ -194,19 +194,14 @@
 		</copy>
 
 		<copy todir="${gwb.dist.zip.dir}">
-			<fileset dir="${basedir}/" id="www">
-				<include name="www/**" />
+			<fileset dir="${basedir}/" id="manual">
+				<include name="manual/**" />
 			</fileset>
 		</copy>
 
-		<copy todir="${gwb.dist.zip.dir}/gwb/icons">
-			<fileset dir="${basedir}/resources/gwb/icons" id="icons">
-				<include name="**" />
-			</fileset>
-		</copy>
-
-		<copy file="${gwb.artwork}/glycoworkbench.png" tofile="${gwb.dist.zip.dir}/GlycoWorkbench.png" />
-		<copy file="${gwb.artwork}/GlycoWorkbench.gif" tofile="${gwb.dist.zip.dir}/GlycoWorkbench.gif" />
+		<mkdir dir="${gwb.dist.zip.dir}/resources/artwork" />
+		<copy file="${gwb.artwork}/glycoworkbench.png" tofile="${gwb.dist.zip.dir}/resources/artwork/GlycoWorkbench.png" />
+		<copy file="${gwb.artwork}/GlycoWorkbench.gif" tofile="${gwb.dist.zip.dir}/resources/artwork/GlycoWorkbench.gif" />
 	</target>
 
 	<!-- ==dist-all== -->
@@ -255,6 +250,12 @@
 		<antcall target="dist-win-installer">
 		</antcall>
 		<copy overwrite="true" file="${basedir}/Setup.exe" tofile="${gwb.win.setup.x86_64}" />
+
+		<delete file="${gwb.win.setup.x86_64}" />
+		<delete file="${gwb.win.setup.x86}" />
+		<delete file="${gwb.dist.zip.dir}/GlycoWorkbench.ini" />
+		<delete file="${gwb.dist.zip.dir}/GlycoWorkbench.bmp" />
+		<delete file="${gwb.dist.zip.dir}/GlycoWorkbench.ico" />
 	</target>
 
 	<!-- ==dist-win-installer== -->
@@ -274,39 +275,46 @@
 
 	<!-- ==dist-lin== -->
 	<target name="dist-lin" depends="clean-packages,clean-dist-zip,dist-runnable" description="Build Linux distribution packages">
+		<copy file="${gwb.artwork}/gwb_icon.png" tofile="${gwb.dist.zip.dir}/icon.png" />
+		<move file="${gwb.dist.zip.dir}/${project.glycoworkbench.jar}" tofile="${gwb.dist.zip.dir}/GlycoWorkbench.jar" />
+
 		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/lin-swt_x86.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
 		<zip destfile="${gwb.lin.zip.x86}" basedir="${gwb.dist}" />
 
 		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/lin-swt_x86-64.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
 		<zip destfile="${gwb.lin.zip.x86-64}" basedir="${gwb.dist}" />
+
+		<delete file="${gwb.dist.zip.dir}/GlycoWorkbench.bmp" />
+		<delete file="${gwb.dist.zip.dir}/icon.png" />
+		<move tofile="${gwb.dist.zip.dir}/${project.glycoworkbench.jar}" file="${gwb.dist.zip.dir}/GlycoWorkbench.jar" />
 	</target>
 
 	<!-- ==dist-mac== -->
 	<target name="dist-mac" depends="clean-packages,clean-dist-zip,dist-runnable,dist-mac-wrappers" description="Build Mac OSX packages">
+		<copy file="${gwb.artwork}/glycoworkbench.bmp" tofile="${gwb.dist.zip.dir}/GlycoWorkbench.bmp" />
 		<!-- 32bit builds -->
 		<copy overwrite="true" file="${gwb.mac.wrapper.32}" tofile="${gwb.dist.zip.dir}/GlycoWorkbench.jar" />
 
 		<!-- carbon-32-->
 		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/mac-carbon-swt_32.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
-		<copy overwrite="true" file="${gwb.exe.dir}/mac_32.sh" tofile="${gwb.dist.zip.dir}/start.sh" />
 		<zip destfile="${gwb.mac.carbon.32}" basedir="${gwb.dist}" />
 
 		<!-- cocoa-32 -->
 		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/mac-cocoa-swt_32.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
-		<copy overwrite="true" file="${gwb.exe.dir}/mac_32.sh" tofile="${gwb.dist.zip.dir}/start.sh" />
 		<zip destfile="${gwb.mac.cocoa.32}" basedir="${gwb.dist}" />
-
 
 		<!-- cocoa-x86-64 -->
 		<copy overwrite="true" file="${gwb.mac.wrapper.64}" tofile="${gwb.dist.zip.dir}/GlycoWorkbench.jar" />
-		
+
 		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/mac-cocoa-swt_x86-64.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
-		<copy overwrite="true" file="${gwb.exe.dir}/mac_64.sh" tofile="${gwb.dist.zip.dir}/start.sh" />
 		<zip destfile="${gwb.mac.cocoa.x86-64}" basedir="${gwb.dist}" />
+
+		<delete file="${gwb.dist.zip.dir}/GlycoWorkbench.jar" />
+		<delete file="${gwb.dist.zip.dir}/GlycoWorkbench.bmp" />
 	</target>
 
 	<target name="dist-mac-wrappers" depends="build">
-		<mkdir dir="${gwb.mac.wrapper.dir}"/>
+		<mkdir dir="${gwb.mac.wrapper.dir}" />
 		<pathconvert property="manifest.classpath" pathsep=" ">
 			<path refid="compile.classpath" />
 			<mapper>
@@ -317,7 +325,7 @@
 			</mapper>
 		</pathconvert>
 
-		<jar destfile="${gwb.mac.wrapper.32}" basedir="${java.build.dir}" >
+		<jar destfile="${gwb.mac.wrapper.32}" basedir="${java.build.dir}">
 			<manifest>
 				<attribute name="Class-Path" value="${manifest.classpath} ${project.glycoworkbench.jar}" />
 				<attribute name="Main-Class" value="org.eurocarbdb.application.glycoworkbench.launchers.MacWrapper32" />
@@ -346,6 +354,26 @@
 			<mapper>
 				<chainedmapper>
 					<flattenmapper />
+				</chainedmapper>
+			</mapper>
+		</pathconvert>
+
+		<jar destfile="${gwb.dist.zip.dir}/${project.glycoworkbench.jar}.jar" basedir="${java.build.dir}">
+			<manifest>
+				<attribute name="Class-Path" value="${manifest.classpath} ${project.glycoworkbench.jar}" />
+				<attribute name="Main-Class" value="org.eurocarbdb.application.glycoworkbench.GlycoWorkbench" />
+				<attribute name="SplashScreen-Image" value="resources/artwork/GlycoWorkbench.png" />
+			</manifest>
+			<fileset dir="${gwb.dist.zip.dir}" includes="resources/artwork/GlycoWorkbench.png" />
+			<fileset dir="${basedir}/resources" includes="icons/**" />
+		</jar>
+
+
+		<pathconvert property="manifest.classpath2" pathsep=" ">
+			<path refid="compile.classpath" />
+			<mapper>
+				<chainedmapper>
+					<flattenmapper />
 					<globmapper from="*.jar" to="lib/*.jar" />
 				</chainedmapper>
 			</mapper>
@@ -353,12 +381,15 @@
 
 		<jar destfile="${gwb.dist.zip.dir}/${project.glycoworkbench.jar}" basedir="${java.build.dir}">
 			<manifest>
-				<attribute name="Class-Path" value="${manifest.classpath} ${project.glycoworkbench.jar}" />
+				<attribute name="Class-Path" value="${manifest.classpath2} ${project.glycoworkbench.jar}" />
 				<attribute name="Main-Class" value="org.eurocarbdb.application.glycoworkbench.GlycoWorkbench" />
-				<attribute name="SplashScreen-Image" value="GlycoWorkbench.png" />
+				<attribute name="SplashScreen-Image" value="resources/artwork/GlycoWorkbench.png" />
 			</manifest>
-			<fileset dir="${gwb.dist.zip.dir}" includes="GlycoWorkbench.png" />
+			<fileset dir="${gwb.dist.zip.dir}" includes="resources/artwork/GlycoWorkbench.png" />
+			<fileset dir="${basedir}/resources" includes="icons/**" />
 		</jar>
+
+		<delete dir="${gwb.dist.zip.dir}/resources" />
 	</target>
 
 	<!-- ==TARGET: build-apidocs== -->

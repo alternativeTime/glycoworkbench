@@ -307,7 +307,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 			defaultThemeManager=themeManager;
 			try {
 				themeManager.addIconPath("/icons/glycan_builder", this.getClass());
-				themeManager.addIconPath("/gwb/icons", GlycoWorkbench.class);
+				themeManager.addIconPath("/icons/gwb", GlycoWorkbench.class);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -2505,7 +2505,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 			browser.openResource(new URL(
 					"http://wiki.glycoworkbench.org/index.php/Manual"), Locator
 					.getClassSource(this.getClass()).getParentFile()
-					+ File.separator + "www" + File.separator + "manual.html",
+					+ File.separator + "manual" + File.separator + "manual.html",
 					false);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
