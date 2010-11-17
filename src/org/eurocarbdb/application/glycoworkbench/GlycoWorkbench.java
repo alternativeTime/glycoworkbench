@@ -31,6 +31,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Frame;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -57,6 +58,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import javax.help.HelpSet;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
@@ -1156,7 +1158,10 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		this.applicationMenu.addMenuEntry(quitItem);
 
 	}
-
+	
+	private JCheckBox exportRedEndCheckBox;
+	private JCheckBox exportMassesCheckBox;
+	
 	public void initExportMenu() {
 		RibbonApplicationMenuEntryPrimary saveItem = new RibbonApplicationMenuEntryPrimary(
 				themeManager.getResizableIcon("export", ICON_SIZE.L7)
@@ -1170,10 +1175,10 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 					@Override
 					public void menuEntryActivated(JPanel targetPanel) {
 						targetPanel.removeAll();
-
+						
 						JCommandButtonPanel openTypes = new JCommandButtonPanel(
 								CommandButtonDisplayState.MEDIUM);
-						openTypes.addButtonGroup("Export to sequence formats");
+						openTypes.addButtonGroup("Export to sequence format");
 
 						for (java.util.Map.Entry<String, String> e : GlycanDocument
 								.getExportFormats().entrySet()) {
@@ -1185,7 +1190,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 							openTypes.addButtonToLastGroup(button);
 						}
 
-						openTypes.addButtonGroup("Export to graphical formats");
+						openTypes.addButtonGroup("Export to graphical format");
 
 						for (java.util.Map.Entry<String, String> e : SVGUtils
 								.getExportFormats().entrySet()) {
@@ -1197,15 +1202,42 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 							openTypes.addButtonToLastGroup(button);
 						}
 
+						openTypes.addButtonGroup("Settings");
+						
 						openTypes.setMaxButtonColumns(2);
 						openTypes.setMaxButtonRows(2);
-
-						JScrollPane scrollPane = new JScrollPane(openTypes);
+						
+						JPanel panel=new JPanel();
+						panel.setLayout(new BorderLayout());
+						
+						if(exportRedEndCheckBox==null){
+							exportRedEndCheckBox=theCanvas.getTheActionManager().get("showredend")
+							.getJCheckBox("Include reducing end indicator", theCanvas);
+							
+							exportMassesCheckBox=theCanvas.getTheActionManager().get("showmasses")
+							.getJCheckBox("Include Mass values", theCanvas);
+							
+							theCanvas.getTheActionManager().get("showmasses").setSelected(
+									theCanvas.getTheGlycanRenderer().getGraphicOptions().SHOW_MASSES);
+							theCanvas.getTheActionManager().get("showredend").setSelected(
+									theCanvas.getTheGlycanRenderer().getGraphicOptions().SHOW_REDEND);
+						}
+						
+						panel.add(exportRedEndCheckBox,BorderLayout.EAST);
+						panel.add(exportMassesCheckBox,BorderLayout.WEST);
+						
+						JPanel main=new JPanel();
+						main.setLayout(new BorderLayout());
+						main.add(openTypes,BorderLayout.NORTH);
+						main.add(panel,BorderLayout.CENTER);
+						
+						JScrollPane scrollPane = new JScrollPane(main);
 						scrollPane.setSize(targetPanel.getSize());
 
 						targetPanel.setLayout(new BorderLayout());
 						targetPanel.add(scrollPane, BorderLayout.CENTER);
 
+						
 					}
 				});
 
