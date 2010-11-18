@@ -68,9 +68,9 @@ public class WorkspacePanel extends JPanel implements TreeModel,
 			public void paint( Graphics g )
 			{	
 				if(PAINT_BOX_ON_NONROOT_ITEMS){
-					if(selected)
+					if(selected){
 						g.setColor( backgroundSelectionColor);
-					else{
+					}else{
 						g.setColor( backgroundNonSelectionColor);
 					}
 					g.fillRect(0,0,getWidth() - 1,getHeight() - 1);
@@ -152,6 +152,7 @@ public class WorkspacePanel extends JPanel implements TreeModel,
 				
 				if(!PAINT_BOX_ON_NONROOT_ITEMS){
 					if(selected){
+						System.err.println(backgroundSelectionColor);
 						master.setBackground(backgroundSelectionColor);
 					}else{
 						master.setBackground(backgroundNonSelectionColor);
@@ -257,7 +258,6 @@ public class WorkspacePanel extends JPanel implements TreeModel,
 		setMinimumSize(new Dimension(0, 0));
 		setBackground(Color.white);
 		this.setOpaque(true);
-
 	}
 
 	public void setApplication(GlycoWorkbench application) {
@@ -450,6 +450,7 @@ public class WorkspacePanel extends JPanel implements TreeModel,
 		TreePath sel = theTree.getSelectionPath();
 		if (sel != null)
 			return sel.getLastPathComponent();
+
 		return null;
 	}
 
@@ -719,7 +720,7 @@ public class WorkspacePanel extends JPanel implements TreeModel,
 	}
 
 	public void onSelect() {
-
+		
 		try {
 			Object sel = getSelectedObject();
 			if (sel instanceof Scan)

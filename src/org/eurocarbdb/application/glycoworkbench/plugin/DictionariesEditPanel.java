@@ -655,7 +655,7 @@ public class DictionariesEditPanel extends TablePanel<ProfilerPlugin> implements
     updateActions();
     }
 
-    public void dictionariesChanged(ProfilerPlugin.DictionariesChangeEvent e) {
+    synchronized public void dictionariesChanged(ProfilerPlugin.DictionariesChangeEvent e) {
     
     // update dictionaries list
     String to_sel = (String)theDictionarySelector.getSelectedItem();    
