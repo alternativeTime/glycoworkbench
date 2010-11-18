@@ -37,7 +37,7 @@ import javax.swing.*;
 import java.awt.event.*;
 
 public class ProfilerPlugin implements Plugin, ActionListener,
-		BaseDocument.DocumentChangeListener {
+		BaseDocument.DocumentChangeListener, QuickStartup {
 
 	public interface DictionariesChangeListener {
 
@@ -108,15 +108,6 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 			theDictionaries = new TreeMap<String, StructureDictionary>();
 			theUserDictionaries = new TreeMap<String, StructureDictionary>();
 
-			addDictionary(new StructureDictionary("/conf/carbbankraw_dict.gwd",
-					false, null));
-			addDictionary(new StructureDictionary("/conf/cfg_dict.gwd", false,
-					null));
-			addDictionary(new StructureDictionary(
-					"/conf/glycosciences_dict.gwd", false, null));
-			addDictionary(new StructureDictionary("/conf/glycomedb_dict.gwd",
-					false, null));
-
 			// set panels
 			theDictionariesPane = new JTabbedPane();
 			theDictionariesManagerPanel = new DictionariesManagerPanel(this);
@@ -131,12 +122,29 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 			theProfilerOptions = new ProfilerOptions();
 
 			GlycanAction glycanAction = new GlycanAction("matchDatabase",
-					GlycoWorkbench.getDefaultThemeManager().getResizableIcon("database_annotate", ICON_SIZE.L3),
+					GlycoWorkbench.getDefaultThemeManager().getResizableIcon(
+							"database_annotate", ICON_SIZE.L3),
 					"Annotate peaks with structures from the database",
 					KeyEvent.VK_N, "", this);
 			addActionToPublicMap(glycanAction);
 		} catch (Exception e) {
 			LogUtils.report(e);
+		}
+	}
+
+	public void deferredOnStartup() {
+		try {
+			addDictionary(new StructureDictionary("/conf/carbbankraw_dict.gwd",
+					false, null));
+			addDictionary(new StructureDictionary("/conf/cfg_dict.gwd", false,
+					null));
+			addDictionary(new StructureDictionary(
+					"/conf/glycosciences_dict.gwd", false, null));
+			addDictionary(new StructureDictionary("/conf/glycomedb_dict.gwd",
+					false, null));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -164,15 +172,21 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 		return false;
 	}
 
-	public void addDictionary(StructureDictionary dict) {
-		if (dict == null || containsDictionary(dict))
-			return;
+	public void addDictionary(final StructureDictionary dict) {
+		final ProfilerPlugin self=this;
+		SwingUtilities.invokeLater(new Runnable(){
+			public void run(){
+				if (dict == null || containsDictionary(dict))
+					return;
 
-		dict.addDocumentChangeListener(this);
+				dict.addDocumentChangeListener(self);
 
-		theDictionaries.put(dict.getDictionaryName(), dict);
+				theDictionaries.put(dict.getDictionaryName(), dict);
 
-		fireDictionaryAdded(dict);
+				fireDictionaryAdded(dict);
+
+			}
+		});
 	}
 
 	public void removeDictionary(StructureDictionary dict) {
@@ -1054,8 +1068,9 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	public ResizableIcon getResizableIcon(){
-    	return FileUtils.getThemeManager().getResizableIcon("profiler", ICON_SIZE.L3).getResizableIcon();
-    }
+
+	public ResizableIcon getResizableIcon() {
+		return FileUtils.getThemeManager()
+				.getResizableIcon("profiler", ICON_SIZE.L3).getResizableIcon();
+	}
 }
