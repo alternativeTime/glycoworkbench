@@ -77,7 +77,7 @@ public class PeakFinderPlugin implements Plugin, ActionListener {
     }
 
     public ImageIcon getIcon() {
-    return ThemeManager.getEmptyIcon(ICON_SIZE.TINY);
+    return ThemeManager.getEmptyIcon(Plugin.DEFAULT_ICON_SIZE);
     }
 
     public int getViewPosition(String view) {
@@ -104,16 +104,16 @@ public class PeakFinderPlugin implements Plugin, ActionListener {
     public Collection<GlycanAction> getActions() {
     Vector<GlycanAction> actions = new Vector<GlycanAction>();
 
-    actions.add(new GlycanAction("options",ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),"Set plugin options",KeyEvent.VK_O,"",this));
+    actions.add(new GlycanAction("options",ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"Set plugin options",KeyEvent.VK_O,"",this));
     actions.add(null);
 
-    actions.add(new GlycanAction("findCompositions",ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),"Find structure compositions with a given m/z value",KeyEvent.VK_F,"",this));
-    actions.add(new GlycanAction("matchCompositions",ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),"Find structure compositions matching the peak list",KeyEvent.VK_P,"",this));
+    actions.add(new GlycanAction("findCompositions",ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"Find structure compositions with a given m/z value",KeyEvent.VK_F,"",this));
+    actions.add(new GlycanAction("matchCompositions",ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"Find structure compositions matching the peak list",KeyEvent.VK_P,"",this));
     
     actions.add(null);
     
-    actions.add(new GlycanAction("findFragmentCompositions",ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),"Find fragments compositions with a given m/z value",KeyEvent.VK_I,"",this));
-    actions.add(new GlycanAction("matchFragmentCompositions",ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),"Find fragments compositions matching the peak list",KeyEvent.VK_L,"",this));
+    actions.add(new GlycanAction("findFragmentCompositions",ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"Find fragments compositions with a given m/z value",KeyEvent.VK_I,"",this));
+    actions.add(new GlycanAction("matchFragmentCompositions",ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"Find fragments compositions matching the peak list",KeyEvent.VK_L,"",this));
     
     return actions;
     }
@@ -130,8 +130,8 @@ public class PeakFinderPlugin implements Plugin, ActionListener {
 
     public void setManager(PluginManager manager) {
     theManager = manager;
-    theManager.addMsPeakAction(new GlycanAction("findCompositions",ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),"Find structure compositions matching the peaks",KeyEvent.VK_P,"",this));
-    theManager.addMsMsPeakAction(new GlycanAction("findFragmentCompositions",ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),"Find fragments compositions matching the peaks",KeyEvent.VK_P,"",this));
+    theManager.addMsPeakAction(new GlycanAction("findCompositions",ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"Find structure compositions matching the peaks",KeyEvent.VK_P,"",this));
+    theManager.addMsMsPeakAction(new GlycanAction("findFragmentCompositions",ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"Find fragments compositions matching the peaks",KeyEvent.VK_P,"",this));
 
     }
 

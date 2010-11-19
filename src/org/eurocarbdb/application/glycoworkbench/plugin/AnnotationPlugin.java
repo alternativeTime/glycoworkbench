@@ -84,7 +84,7 @@ public class AnnotationPlugin implements Plugin, ActionListener {
 				thePeakAnnotationCalibrationPanel);
 		
 		GlycanAction glycanAction = new GlycanAction("matchFragments",
-				GlycoWorkbench.getDefaultThemeManager().getResizableIcon("canvas_annotate", ICON_SIZE.L3),
+				GlycoWorkbench.getDefaultThemeManager().getResizableIcon("canvas_annotate", Plugin.DEFAULT_ICON_SIZE),
 				"Annotate peaks with fragments from canvas",
 				KeyEvent.VK_N, "", this);
 		addActionToPublicMap(glycanAction);
@@ -137,11 +137,11 @@ public class AnnotationPlugin implements Plugin, ActionListener {
 	}
 	
 	public ResizableIcon getResizableIcon(){
-    	return FileUtils.getThemeManager().getResizableIcon("annpeaksdoc", ICON_SIZE.L3).getResizableIcon();
+    	return FileUtils.getThemeManager().getResizableIcon("annpeaksdoc", Plugin.DEFAULT_ICON_SIZE).getResizableIcon();
     }
 
 	public ImageIcon getIcon() {
-		return ThemeManager.getEmptyIcon(ICON_SIZE.TINY);
+		return ThemeManager.getEmptyIcon(Plugin.DEFAULT_ICON_SIZE);
 	}
 
 	public int getViewPosition(String view) {
@@ -175,48 +175,48 @@ public class AnnotationPlugin implements Plugin, ActionListener {
 	public Collection<GlycanAction> getActions() {
 		Vector<GlycanAction> actions = new Vector<GlycanAction>();
 
-		actions.add(new GlycanAction("options", ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),
+		actions.add(new GlycanAction("options", ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),
 				"Set plugin options", KeyEvent.VK_O, "", this));
 		actions.add(null);
 		actions
 				.add(new GlycanAction(
 						"findFragmentsCurrent",
-						ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),
+						ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),
 						"Find all fragments of the current structure with a given m/z value",
 						KeyEvent.VK_C, "", this));
 		actions
 				.add(new GlycanAction(
 						"findFragmentsSelected",
-						this.theApplication.getThemeManager().getResizableIcon("findfragments", ICON_SIZE.L3),
+						this.theApplication.getThemeManager().getResizableIcon("findfragments", Plugin.DEFAULT_ICON_SIZE),
 						"Find all fragments of the selected structures with a given m/z value",
 						KeyEvent.VK_S, "", this));
 		actions
 				.add(new GlycanAction(
 						"findFragmentsAll",
-						ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),
+						ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),
 						"Find all fragments of all the structures with a given m/z value",
 						KeyEvent.VK_A, "", this));
 		actions.add(null);
-		actions.add(new GlycanAction("matchFragmentsCurrent", ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),
+		actions.add(new GlycanAction("matchFragmentsCurrent", ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),
 				"Annotate peaks with fragments from current structure",
 				KeyEvent.VK_U, "", this));
-		actions.add(new GlycanAction("matchFragmentsSelected", this.theApplication.getThemeManager().getResizableIcon("findfragments", ICON_SIZE.L3),
+		actions.add(new GlycanAction("matchFragmentsSelected", this.theApplication.getThemeManager().getResizableIcon("findfragments", Plugin.DEFAULT_ICON_SIZE),
 				"Annotate peaks with fragments from selected structures",
 				KeyEvent.VK_E, "", this));
 		actions.add(new GlycanAction("matchFragmentsAll",
-				ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),
+				ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),
 				"Annotate peaks with fragments from all structures",
 				KeyEvent.VK_L, "", this));
 		actions.add(null);
 		actions
 				.add(new GlycanAction(
 						"placeAntennae",
-						ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),
+						ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),
 						"Place uncertain antennae in current structure using the peak list",
 						KeyEvent.VK_P, "", this));
 
 		actions.add(new GlycanAction("cascadeAnnotation",
-				ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3), "Cascade scan annotation",
+				ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE), "Cascade scan annotation",
 				KeyEvent.VK_B, "", this));
 
 		return actions;
@@ -228,10 +228,10 @@ public class AnnotationPlugin implements Plugin, ActionListener {
 		actions
 				.add(new GlycanAction(
 						"findFragmentsSelected",
-						this.theApplication.getThemeManager().getResizableIcon("findfragments", ICON_SIZE.L3),
+						this.theApplication.getThemeManager().getResizableIcon("findfragments", Plugin.DEFAULT_ICON_SIZE),
 						"Find all fragments of the selected structures with a given m/z value",
 						KeyEvent.VK_S, "", this));
-		actions.add(new GlycanAction("matchFragmentsSelected", this.theApplication.getThemeManager().getResizableIcon("findfragments", ICON_SIZE.L3),
+		actions.add(new GlycanAction("matchFragmentsSelected", this.theApplication.getThemeManager().getResizableIcon("findfragments", Plugin.DEFAULT_ICON_SIZE),
 				"Annotate peaks with fragments from selected structures",
 				KeyEvent.VK_E, "", this));
 
@@ -250,7 +250,7 @@ public class AnnotationPlugin implements Plugin, ActionListener {
 			theManager
 					.addMsMsPeakAction(new GlycanAction(
 							"findFragmentsSelected",
-							this.theApplication.getThemeManager().getResizableIcon("findfragments", ICON_SIZE.L3),
+							this.theApplication.getThemeManager().getResizableIcon("findfragments", Plugin.DEFAULT_ICON_SIZE),
 							"Find all fragments of the selected structures matching the peaks",
 							KeyEvent.VK_S, "", this));
 	}

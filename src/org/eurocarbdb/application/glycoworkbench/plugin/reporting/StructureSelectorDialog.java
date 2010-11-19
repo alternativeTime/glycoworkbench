@@ -62,8 +62,8 @@ public class StructureSelectorDialog extends EscapeDialog implements ListSelecti
 
     JPanel buttons_panel = new JPanel(new FlowLayout());
 
-    ok_button = new JButton(new GlycanAction("OK",ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),"OK",-1,"",this));
-    cancel_button = new JButton(new GlycanAction("Cancel",ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),"Cancel",-1,"",this));
+    ok_button = new JButton(new GlycanAction("OK",ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"OK",-1,"",this));
+    cancel_button = new JButton(new GlycanAction("Cancel",ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"Cancel",-1,"",this));
     buttons_panel.add(ok_button);
     buttons_panel.add(cancel_button);
     this.getContentPane().add(buttons_panel,BorderLayout.SOUTH);

@@ -156,13 +156,13 @@ public class PeakAnnotationCalibrationPanel extends DocumentPanel<AnnotatedPeakL
     theActionManager.add("accunit=da",FileUtils.defaultThemeManager.getImageIcon("da"),"Show accuracy in Da",-1, "",this);
     theActionManager.add("accunit=ppm",FileUtils.defaultThemeManager.getImageIcon("ppm"),"Show accuracy in PPM",-1, "",this);
 
-    theActionManager.add("new",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.REFRESH, ICON_SIZE.TINY),"Clear",KeyEvent.VK_N, "",this);
+    theActionManager.add("new",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.REFRESH, Plugin.DEFAULT_ICON_SIZE),"Clear",KeyEvent.VK_N, "",this);
 
     theActionManager.add("close",FileUtils.defaultThemeManager.getImageIcon("close"),"Close structure",KeyEvent.VK_S, "",this);
     theActionManager.add("last",FileUtils.defaultThemeManager.getImageIcon("last"),"Last structure",KeyEvent.VK_L, "",this);
     theActionManager.add("next",FileUtils.defaultThemeManager.getImageIcon("next"),"Next structure",KeyEvent.VK_N, "",this);
 
-    theActionManager.add("print",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_PRINT, ICON_SIZE.TINY),"Print...",KeyEvent.VK_P, "",this);
+    theActionManager.add("print",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_PRINT, Plugin.DEFAULT_ICON_SIZE),"Print...",KeyEvent.VK_P, "",this);
 
     //theActionManager.add("undo",FileUtils.defaultThemeManager.getImageIcon("undo"),"Undo",KeyEvent.VK_U, "",this);
     //theActionManager.add("redo",FileUtils.defaultThemeManager.getImageIcon("redo"),"Redo", KeyEvent.VK_R, "",this);
