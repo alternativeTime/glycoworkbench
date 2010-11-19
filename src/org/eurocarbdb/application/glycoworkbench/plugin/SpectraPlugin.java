@@ -72,11 +72,11 @@ public class SpectraPlugin implements Plugin, ActionListener {
     }
     
     public ResizableIcon getResizableIcon(){
-    	return FileUtils.getThemeManager().getResizableIcon("spectradoc", ICON_SIZE.L3).getResizableIcon();
+    	return FileUtils.getThemeManager().getResizableIcon("spectradoc", Plugin.DEFAULT_ICON_SIZE).getResizableIcon();
     }
 
     public ImageIcon getIcon() {
-    return ThemeManager.getEmptyIcon(ICON_SIZE.TINY);
+    return ThemeManager.getEmptyIcon(Plugin.DEFAULT_ICON_SIZE);
     }
 
     public int getViewPosition(String view) {
@@ -102,9 +102,9 @@ public class SpectraPlugin implements Plugin, ActionListener {
     public Collection<GlycanAction> getActions() {
     Vector<GlycanAction> actions = new Vector<GlycanAction>();
     
-    actions.add(new GlycanAction("addPeaks",this.theApplication.getThemeManager().getResizableIcon("addpeaks", ICON_SIZE.L3),"Add selected peaks to the peak list",KeyEvent.VK_A, "",this));
-    actions.add(new GlycanAction("annotatePeaks",this.theApplication.getThemeManager().getResizableIcon("annotatepeaks", ICON_SIZE.L3),"Find possible annotations for selected peaks",KeyEvent.VK_N, "",this));
-    actions.add(new GlycanAction("centroid",ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),"Compute peak centroids",KeyEvent.VK_C, "",this));
+    actions.add(new GlycanAction("addPeaks",this.theApplication.getThemeManager().getResizableIcon("addpeaks", Plugin.DEFAULT_ICON_SIZE),"Add selected peaks to the peak list",KeyEvent.VK_A, "",this));
+    actions.add(new GlycanAction("annotatePeaks",this.theApplication.getThemeManager().getResizableIcon("annotatepeaks", Plugin.DEFAULT_ICON_SIZE),"Find possible annotations for selected peaks",KeyEvent.VK_N, "",this));
+    actions.add(new GlycanAction("centroid",ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"Compute peak centroids",KeyEvent.VK_C, "",this));
 
     return actions;
     }

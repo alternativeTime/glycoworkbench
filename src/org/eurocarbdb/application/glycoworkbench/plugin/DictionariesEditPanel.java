@@ -168,11 +168,11 @@ public class DictionariesEditPanel extends TablePanel<ProfilerPlugin> implements
     theActionManager.add("last",FileUtils.defaultThemeManager.getImageIcon("last"),"Last page",-1, "",this);
 
 
-    theActionManager.add("print",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_PRINT, ICON_SIZE.TINY),"Print...",KeyEvent.VK_P, "",this);
+    theActionManager.add("print",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_PRINT, Plugin.DEFAULT_ICON_SIZE),"Print...",KeyEvent.VK_P, "",this);
     
-    theActionManager.add("cut",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.CUT, ICON_SIZE.TINY),"Cut",-1, "",this);
-    theActionManager.add("copy",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.COPY, ICON_SIZE.TINY),"Copy",KeyEvent.VK_C, "",this);
-    theActionManager.add("paste",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.PASTE, ICON_SIZE.TINY),"Paste",KeyEvent.VK_C, "",this);
+    theActionManager.add("cut",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.CUT, Plugin.DEFAULT_ICON_SIZE),"Cut",-1, "",this);
+    theActionManager.add("copy",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.COPY, Plugin.DEFAULT_ICON_SIZE),"Copy",KeyEvent.VK_C, "",this);
+    theActionManager.add("paste",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.PASTE, Plugin.DEFAULT_ICON_SIZE),"Paste",KeyEvent.VK_C, "",this);
     theActionManager.add("delete",FileUtils.defaultThemeManager.getImageIcon("delete"),"Delete",-1, "",this);
     
     theActionManager.add("transfer",FileUtils.defaultThemeManager.getImageIcon("transfer"),"Copy structures to canvas",KeyEvent.VK_V, "",this);

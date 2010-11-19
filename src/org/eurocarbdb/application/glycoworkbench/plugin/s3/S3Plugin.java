@@ -44,7 +44,7 @@ public class S3Plugin extends AbstractPlugin implements ActionListener{
 		actions.add(
 				new GlycanAction(
 						SHOW_S3_MANAGER,
-						ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),
+						ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),
 						"Display the S3 manager",
 						KeyEvent.VK_C, "", this
 				)

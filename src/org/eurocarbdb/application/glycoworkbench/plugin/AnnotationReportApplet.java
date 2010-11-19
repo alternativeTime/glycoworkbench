@@ -176,21 +176,21 @@ public class AnnotationReportApplet extends JApplet implements ActionListener, M
     theActionManager.add("zoomin",FileUtils.defaultThemeManager.getImageIcon("zoomin"),"Zoom in",-1, "",this);
     theActionManager.add("zoomout",FileUtils.defaultThemeManager.getImageIcon("zoomout"),"Zoom out",-1, "",this);
 
-    theActionManager.add("notation=" + GraphicOptions.NOTATION_CFG, ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3), "CFG notation", KeyEvent.VK_C, "", this);
-    theActionManager.add("notation=" + GraphicOptions.NOTATION_CFGBW, ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3), "CFG black and white notation", KeyEvent.VK_B, "", this);
-    theActionManager.add("notation=" + GraphicOptions.NOTATION_CFGLINK, ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3), "CFG with linkage placement notation", KeyEvent.VK_L, "", this);
-    theActionManager.add("notation=" + GraphicOptions.NOTATION_UOXF, ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3), "UOXF notation", KeyEvent.VK_O, "", this);
-    theActionManager.add("notation=" + GraphicOptions.NOTATION_TEXT, ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3), "Text only notation", KeyEvent.VK_T, "", this);    
+    theActionManager.add("notation=" + GraphicOptions.NOTATION_CFG, ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE), "CFG notation", KeyEvent.VK_C, "", this);
+    theActionManager.add("notation=" + GraphicOptions.NOTATION_CFGBW, ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE), "CFG black and white notation", KeyEvent.VK_B, "", this);
+    theActionManager.add("notation=" + GraphicOptions.NOTATION_CFGLINK, ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE), "CFG with linkage placement notation", KeyEvent.VK_L, "", this);
+    theActionManager.add("notation=" + GraphicOptions.NOTATION_UOXF, ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE), "UOXF notation", KeyEvent.VK_O, "", this);
+    theActionManager.add("notation=" + GraphicOptions.NOTATION_TEXT, ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE), "Text only notation", KeyEvent.VK_T, "", this);    
 
-    theActionManager.add("display=" + GraphicOptions.DISPLAY_COMPACT, ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3), "compact view", KeyEvent.VK_O, "", this);
-    theActionManager.add("display=" + GraphicOptions.DISPLAY_NORMAL, ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3), "normal view", KeyEvent.VK_N, "", this);
-    theActionManager.add("display=" + GraphicOptions.DISPLAY_NORMALINFO, ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3), "normal view with linkage info", KeyEvent.VK_I, "", this);
-    theActionManager.add("display=" + GraphicOptions.DISPLAY_CUSTOM, ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3), "custom view with user settings", KeyEvent.VK_K, "", this);
+    theActionManager.add("display=" + GraphicOptions.DISPLAY_COMPACT, ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE), "compact view", KeyEvent.VK_O, "", this);
+    theActionManager.add("display=" + GraphicOptions.DISPLAY_NORMAL, ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE), "normal view", KeyEvent.VK_N, "", this);
+    theActionManager.add("display=" + GraphicOptions.DISPLAY_NORMALINFO, ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE), "normal view with linkage info", KeyEvent.VK_I, "", this);
+    theActionManager.add("display=" + GraphicOptions.DISPLAY_CUSTOM, ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE), "custom view with user settings", KeyEvent.VK_K, "", this);
 
     theActionManager.add("orientation",getOrientationIcon(),"Change orientation",-1,"",this);
 
-    theActionManager.add("displaysettings",ThemeManager.getEmptyIcon(ICON_SIZE.TINY),"Change structure display settings",KeyEvent.VK_S,"",this);
-    theActionManager.add("reportsettings",ThemeManager.getEmptyIcon(ICON_SIZE.TINY),"Change report display settings",KeyEvent.VK_R,"",this);
+    theActionManager.add("displaysettings",ThemeManager.getEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"Change structure display settings",KeyEvent.VK_S,"",this);
+    theActionManager.add("reportsettings",ThemeManager.getEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"Change report display settings",KeyEvent.VK_R,"",this);
     }
 
     private void updateActions() {

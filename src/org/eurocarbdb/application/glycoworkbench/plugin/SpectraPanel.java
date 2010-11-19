@@ -220,10 +220,10 @@ public class SpectraPanel extends DocumentPanel<SpectraDocument> implements Acti
 
     theActionManager.add("edit",FileUtils.defaultThemeManager.getImageIcon("edit"),"Edit scan data",-1, "",this);
 
-    theActionManager.add("new",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.REFRESH, ICON_SIZE.TINY),"Clear",KeyEvent.VK_N, "",this);
-    theActionManager.add("openspectra",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_OPEN, ICON_SIZE.TINY),"Open Spectra",KeyEvent.VK_O, "",this);
+    theActionManager.add("new",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.REFRESH, Plugin.DEFAULT_ICON_SIZE),"Clear",KeyEvent.VK_N, "",this);
+    theActionManager.add("openspectra",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_OPEN, Plugin.DEFAULT_ICON_SIZE),"Open Spectra",KeyEvent.VK_O, "",this);
 
-    theActionManager.add("print",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_PRINT, ICON_SIZE.TINY),"Print...",KeyEvent.VK_P, "",this);
+    theActionManager.add("print",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_PRINT, Plugin.DEFAULT_ICON_SIZE),"Print...",KeyEvent.VK_P, "",this);
 
     theActionManager.add("addpeaks",FileUtils.defaultThemeManager.getImageIcon("addpeaks"),"Add selected peaks to list",-1, "",this);
     theActionManager.add("annotatepeaks",FileUtils.defaultThemeManager.getImageIcon("annotatepeaks"),"Find possible annotations for selected peaks",-1, "",this);

@@ -59,7 +59,7 @@ public class ReportingPlugin implements Plugin, ActionListener {
 		}
 		
 		GlycanAction glycanAction = new GlycanAction("reportAnnotations",
-				GlycoWorkbench.getDefaultThemeManager().getResizableIcon("report", ICON_SIZE.L3),
+				GlycoWorkbench.getDefaultThemeManager().getResizableIcon("report", Plugin.DEFAULT_ICON_SIZE),
 				"Generate annotation report",
 				KeyEvent.VK_N, "", this);
 		addActionToPublicMap(glycanAction);
@@ -105,7 +105,7 @@ public class ReportingPlugin implements Plugin, ActionListener {
 	// See future plans
 	public ResizableIcon getResizableIcon() {
 		return FileUtils.getThemeManager()
-				.getResizableIcon("report", ICON_SIZE.L3).getResizableIcon();
+				.getResizableIcon("report", Plugin.DEFAULT_ICON_SIZE).getResizableIcon();
 	}
 
 	public ImageIcon getIcon() {
@@ -136,18 +136,18 @@ public class ReportingPlugin implements Plugin, ActionListener {
 	public Collection<GlycanAction> getActions() {
 		Vector<GlycanAction> actions = new Vector<GlycanAction>();
 		actions.add(new GlycanAction("reportAnnotations", ThemeManager
-				.getResizableEmptyIcon(ICON_SIZE.L3),
+				.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),
 				"Create a report of the annotations", KeyEvent.VK_C, "", this));
 		actions.add(new GlycanAction("openAnnotationsReport", ThemeManager
-				.getResizableEmptyIcon(ICON_SIZE.L3),
+				.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),
 				"Open a previous annotations report", KeyEvent.VK_O, "", this));
 		actions.add(null);
 		actions.add(new GlycanAction("deisotope", ThemeManager
-				.getResizableEmptyIcon(ICON_SIZE.L3),
+				.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),
 				"Deisotope the annotated peaklist using the annotations",
 				KeyEvent.VK_D, "", this));
 		actions.add(new GlycanAction("reportProfilesComparison", ThemeManager
-				.getResizableEmptyIcon(ICON_SIZE.L3),
+				.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),
 				"Create a report comparing different profiles", KeyEvent.VK_P,
 				"", this));
 

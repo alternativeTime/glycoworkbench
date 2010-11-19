@@ -140,9 +140,10 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		MouseListener, GlycanWorkspace.Listener, ContextAwareContainer,
 		NotationChangeListener, UIActionListener, Updatable {
 
+	public static boolean SUBSTANCE_ENABLED=false;
 	private static final long serialVersionUID = 0L;
-	private static ICON_SIZE defaultMenuIconSize = ICON_SIZE.TINY;
-	private static ICON_SIZE barIconSize = ICON_SIZE.SMALL;
+	private static ICON_SIZE defaultMenuIconSize = ICON_SIZE.L1;
+	private static ICON_SIZE barIconSize = ICON_SIZE.L2;
 
 	private static String MAJOR_VERSION = "GWB_MAJOR";
 	private static String MINOR_VERSION = "GWB_MINOR";
@@ -943,7 +944,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 	public void initOpenRecent() {
 		RibbonApplicationMenuEntryPrimary menuPrimary = new RibbonApplicationMenuEntryPrimary(
-				theActionManager2.get("open").getResizableIcon(ICON_SIZE.L4),
+				theActionManager2.get("open").getResizableIcon(ICON_SIZE.L5),
 				"Open Recent", null, CommandButtonKind.ACTION_ONLY);
 
 		final GlycoWorkbench self = this;
@@ -1042,11 +1043,13 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 									.toArray(new String[1]);
 							Arrays.sort(withFilesArray);
 							for (String fileType : withFilesArray) {
-								openTypes.addButtonGroup(fileType);
-								for (JCommandButtonAction button : fileTypeToList
-										.get(fileType)) {
-									openTypes
-											.addButtonToGroup(fileType, button);
+								if(fileType!=null){
+									openTypes.addButtonGroup(fileType);
+									for (JCommandButtonAction button : fileTypeToList
+											.get(fileType)) {
+										openTypes
+										.addButtonToGroup(fileType, button);
+									}
 								}
 							}
 
@@ -2494,8 +2497,10 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		// return false;
 		if (!checkExisting(filename))
 			return false;
-
+		
 		// import structures into the document
+		theWorkspace.getFileHistory().add(filename, format);
+		
 		return theDoc.importFrom(filename, format);
 	}
 
@@ -2544,11 +2549,13 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 			if (theDoc.isSequenceFormat(format)) {
 				if (theDoc.exportTo(filename, format))
 					setLastExportedFile(filename);
+					theWorkspace.getFileHistory().add(filename, format);
 				return true;
 			} else if (SVGUtils.export(theWorkspace.getGlycanRenderer(),
 					filename, theDoc.getStructures(),
 					theWorkspace.getGraphicOptions().SHOW_MASSES,
 					theWorkspace.getGraphicOptions().SHOW_REDEND, format)) {
+				theWorkspace.getFileHistory().add(filename, format);
 				setLastExportedFile(filename);
 				return true;
 			}
@@ -2871,6 +2878,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 					if (!options.THEME.equals("basic.white")) {
 						SubstanceLookAndFeel.setSkin(options.THEME);
+						GlycoWorkbench.SUBSTANCE_ENABLED=true;
 					}
 
 					long start = System.currentTimeMillis();

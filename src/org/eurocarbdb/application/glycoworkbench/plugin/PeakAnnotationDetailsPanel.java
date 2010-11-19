@@ -97,25 +97,25 @@ public class PeakAnnotationDetailsPanel extends SortingTablePanel<AnnotatedPeakL
     }    
 
     protected void createActions() {
-    theActionManager.add("new",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.REFRESH, ICON_SIZE.TINY),"Clear",KeyEvent.VK_N, "",this);
-    theActionManager.add("open",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_OPEN, ICON_SIZE.TINY),"Open",KeyEvent.VK_O, "",this);
-    theActionManager.add("save",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_SAVE, ICON_SIZE.TINY),"Save",KeyEvent.VK_S, "",this);
-    theActionManager.add("saveas",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_SAVE_AS, ICON_SIZE.TINY),"Save as...",KeyEvent.VK_A, "",this);
+    theActionManager.add("new",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.REFRESH, Plugin.DEFAULT_ICON_SIZE),"Clear",KeyEvent.VK_N, "",this);
+    theActionManager.add("open",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_OPEN, Plugin.DEFAULT_ICON_SIZE),"Open",KeyEvent.VK_O, "",this);
+    theActionManager.add("save",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_SAVE, Plugin.DEFAULT_ICON_SIZE),"Save",KeyEvent.VK_S, "",this);
+    theActionManager.add("saveas",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_SAVE_AS, Plugin.DEFAULT_ICON_SIZE),"Save as...",KeyEvent.VK_A, "",this);
 
     theActionManager.add("close",FileUtils.defaultThemeManager.getImageIcon("close"),"Close structure",KeyEvent.VK_S, "",this);
     theActionManager.add("previous",FileUtils.defaultThemeManager.getImageIcon("previous"),"Previous structure",KeyEvent.VK_L, "",this);
     theActionManager.add("next",FileUtils.defaultThemeManager.getImageIcon("next"),"Next structure",KeyEvent.VK_N, "",this);
 
-    theActionManager.add("print",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_PRINT, ICON_SIZE.TINY),"Print...",KeyEvent.VK_P, "",this);
+    theActionManager.add("print",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_PRINT, Plugin.DEFAULT_ICON_SIZE),"Print...",KeyEvent.VK_P, "",this);
     
     // edit
     //theActionManager.add("undo",FileUtils.defaultThemeManager.getImageIcon("undo"),"Undo",KeyEvent.VK_U, "",this);
     //theActionManager.add("redo",FileUtils.defaultThemeManager.getImageIcon("redo"),"Redo", KeyEvent.VK_R, "",this);
 
-    theActionManager.add("cut",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.CUT, ICON_SIZE.TINY),"Cut",-1, "",this);
-    theActionManager.add("copy",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.COPY, ICON_SIZE.TINY),"Copy",KeyEvent.VK_C, "",this);
-    theActionManager.add("paste",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.PASTE, ICON_SIZE.TINY),"Paste",KeyEvent.VK_P, "",this);
-    theActionManager.add("delete",GlycoWorkbench.getDefaultThemeManager().getResizableIcon("deleteNew", ICON_SIZE.TINY),"Delete",-1, "",this);
+    theActionManager.add("cut",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.CUT, Plugin.DEFAULT_ICON_SIZE),"Cut",-1, "",this);
+    theActionManager.add("copy",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.COPY, Plugin.DEFAULT_ICON_SIZE),"Copy",KeyEvent.VK_C, "",this);
+    theActionManager.add("paste",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.PASTE, Plugin.DEFAULT_ICON_SIZE),"Paste",KeyEvent.VK_P, "",this);
+    theActionManager.add("delete",GlycoWorkbench.getDefaultThemeManager().getResizableIcon("deleteNew", Plugin.DEFAULT_ICON_SIZE),"Delete",-1, "",this);
 
     theActionManager.add("transfer",FileUtils.defaultThemeManager.getImageIcon("transfer"),"Copy fragments into canvas",KeyEvent.VK_V, "",this);
 

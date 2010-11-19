@@ -83,7 +83,7 @@ public class GAGPlugin implements Plugin, ActionListener {
     }
 
     public ImageIcon getIcon() {
-    return ThemeManager.getEmptyIcon(ICON_SIZE.TINY);
+    return ThemeManager.getEmptyIcon(Plugin.DEFAULT_ICON_SIZE);
     }
 
     public int getViewPosition(String view) {
@@ -110,25 +110,25 @@ public class GAGPlugin implements Plugin, ActionListener {
     public Collection<GlycanAction> getActions() {
     Vector<GlycanAction> actions = new Vector<GlycanAction>();
 
-    actions.add(new GlycanAction("options",ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),"Set plugin options",KeyEvent.VK_O,"",this));
+    actions.add(new GlycanAction("options",ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"Set plugin options",KeyEvent.VK_O,"",this));
     
     actions.add(null);
 
-    actions.add(new GlycanAction("computeStructures",ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),"Compute all the possible structures for a given family",KeyEvent.VK_M,"",this));
-    actions.add(new GlycanAction("findStructures",ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),"Find all the structures of a given family with a certain m/z value",KeyEvent.VK_F,"",this));
-    actions.add(new GlycanAction("matchStructures",ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),"Annotate peaks with structures from a given family",KeyEvent.VK_N,"",this));
+    actions.add(new GlycanAction("computeStructures",ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"Compute all the possible structures for a given family",KeyEvent.VK_M,"",this));
+    actions.add(new GlycanAction("findStructures",ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"Find all the structures of a given family with a certain m/z value",KeyEvent.VK_F,"",this));
+    actions.add(new GlycanAction("matchStructures",ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"Annotate peaks with structures from a given family",KeyEvent.VK_N,"",this));
 
     actions.add(null);
 
-    actions.add(new GlycanAction("findSulfationsCurrent",ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),"Find the sulfation patterns of the current structures with a given m/z value",KeyEvent.VK_C,"",this));
-    actions.add(new GlycanAction("findSulfationsSelected",ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),"Find the sulfation patterns of the selected structures with a given m/z value",KeyEvent.VK_S,"",this));
-    actions.add(new GlycanAction("findSulfationsAll",ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),"Find the sulfation patterns of all structures with a given m/z value",KeyEvent.VK_A,"",this));
+    actions.add(new GlycanAction("findSulfationsCurrent",ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"Find the sulfation patterns of the current structures with a given m/z value",KeyEvent.VK_C,"",this));
+    actions.add(new GlycanAction("findSulfationsSelected",ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"Find the sulfation patterns of the selected structures with a given m/z value",KeyEvent.VK_S,"",this));
+    actions.add(new GlycanAction("findSulfationsAll",ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"Find the sulfation patterns of all structures with a given m/z value",KeyEvent.VK_A,"",this));
 
     actions.add(null);
 
-    actions.add(new GlycanAction("matchSulfationsCurrent",ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),"Annotate peaks with sulfation patterns of the current structures",KeyEvent.VK_U,"",this));
-    actions.add(new GlycanAction("matchSulfationsSelected",ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),"Annotate peaks with sulfation patterns of the selected structures",KeyEvent.VK_E,"",this));
-    actions.add(new GlycanAction("matchSulfationsAll",ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),"Annotate peaks with sulfation patterns of all structures",KeyEvent.VK_L,"",this));    
+    actions.add(new GlycanAction("matchSulfationsCurrent",ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"Annotate peaks with sulfation patterns of the current structures",KeyEvent.VK_U,"",this));
+    actions.add(new GlycanAction("matchSulfationsSelected",ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"Annotate peaks with sulfation patterns of the selected structures",KeyEvent.VK_E,"",this));
+    actions.add(new GlycanAction("matchSulfationsAll",ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"Annotate peaks with sulfation patterns of all structures",KeyEvent.VK_L,"",this));    
     
     return actions;
     }
@@ -146,7 +146,7 @@ public class GAGPlugin implements Plugin, ActionListener {
     public void setManager(PluginManager manager) {
     theManager = manager;
     if( theManager!=null ) 
-        theManager.addMsPeakAction(new GlycanAction("findStructures",ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),"Find all GAG structures matching the peaks",KeyEvent.VK_F,"",this));
+        theManager.addMsPeakAction(new GlycanAction("findStructures",ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"Find all GAG structures matching the peaks",KeyEvent.VK_F,"",this));
     }
 
     public void setApplication(GlycoWorkbench application) {

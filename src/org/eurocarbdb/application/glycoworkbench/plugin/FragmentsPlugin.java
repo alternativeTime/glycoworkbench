@@ -66,7 +66,7 @@ public class FragmentsPlugin implements Plugin, ActionListener {
 		this.theApplication = bench;
 		
 		GlycanAction glycanAction = new GlycanAction("computeFragments",
-				GlycoWorkbench.getDefaultThemeManager().getResizableIcon("fragmentation", ICON_SIZE.L3),
+				GlycoWorkbench.getDefaultThemeManager().getResizableIcon("fragmentation", Plugin.DEFAULT_ICON_SIZE),
 				"Compute fragments",
 				KeyEvent.VK_N, "", this);
 		addActionToPublicMap(glycanAction);
@@ -100,12 +100,12 @@ public class FragmentsPlugin implements Plugin, ActionListener {
 
 	public ResizableIcon getResizableIcon() {
 		return FileUtils.getThemeManager()
-				.getResizableIcon("computefragments", ICON_SIZE.L3)
+				.getResizableIcon("computefragments", Plugin.DEFAULT_ICON_SIZE)
 				.getResizableIcon();
 	}
 
 	public ImageIcon getIcon() {
-		return ThemeManager.getEmptyIcon(ICON_SIZE.TINY);
+		return ThemeManager.getEmptyIcon(Plugin.DEFAULT_ICON_SIZE);
 	}
 
 	public int getViewPosition(String view) {
@@ -148,30 +148,30 @@ public class FragmentsPlugin implements Plugin, ActionListener {
 		Vector<GlycanAction> actions = new Vector<GlycanAction>();
 
 		actions.add(new GlycanAction("options", ThemeManager
-				.getResizableEmptyIcon(ICON_SIZE.L3), "Set plugin options",
+				.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE), "Set plugin options",
 				KeyEvent.VK_O, "", this));
 		actions.add(null);
 		actions.add(new GlycanAction("editFragmentsCurrent", ThemeManager
-				.getResizableEmptyIcon(ICON_SIZE.L3),
+				.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),
 				"Edit fragments for current structure", KeyEvent.VK_T, "", this));
 		actions.add(new GlycanAction("editFragmentsResidue", ThemeManager
-				.getResizableEmptyIcon(ICON_SIZE.L3),
+				.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),
 				"Show fragments at current residue", KeyEvent.VK_R, "", this));
 		actions.add(new GlycanAction("editFragmentsLinkage", ThemeManager
-				.getResizableEmptyIcon(ICON_SIZE.L3),
+				.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),
 				"Show fragments at current linkage", KeyEvent.VK_L, "", this));
 		actions.add(null);
 		actions.add(new GlycanAction("computeFragmentsCurrent", ThemeManager
-				.getResizableEmptyIcon(ICON_SIZE.L3),
+				.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),
 				"Compute fragments for current structure", KeyEvent.VK_C, "",
 				this));
 		actions.add(new GlycanAction("computeFragmentsSelected",
 				this.theApplication.getThemeManager().getResizableIcon(
-						"computefragments", ICON_SIZE.L3),
+						"computefragments", Plugin.DEFAULT_ICON_SIZE),
 				"Compute fragments for selected structures", KeyEvent.VK_S, "",
 				this));
 		actions.add(new GlycanAction("computeFragmentsAll", ThemeManager
-				.getResizableEmptyIcon(ICON_SIZE.L3),
+				.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),
 				"Compute fragments for all structures", KeyEvent.VK_A, "", this));
 
 		return actions;
@@ -182,7 +182,7 @@ public class FragmentsPlugin implements Plugin, ActionListener {
 
 		actions.add(new GlycanAction("computeFragmentsSelected",
 				this.theApplication.getThemeManager().getResizableIcon(
-						"computefragments", ICON_SIZE.L3),
+						"computefragments", Plugin.DEFAULT_ICON_SIZE),
 				"Compute fragments for selected structures", KeyEvent.VK_S, "",
 				this));
 
