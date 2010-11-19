@@ -282,7 +282,7 @@
 		<property name="startup.maxmem" value="200M"/>
 		<property name="startup.os" value="linux"/>
 		<property name="startup.arch" value="32"/>
-		<property name="startup.jar" value="${project.glycoworkbench.jar}"/>
+		<property name="startup.jar" value="/lib/${project.glycoworkbench.jar}"/>
 		<antcall target="dist-wrapper"/>
 		
 		<copy file="${gwb.artwork}/gwb_icon.png" tofile="${gwb.dist.zip.dir}/icon.png" />
@@ -351,6 +351,7 @@
 		</jar>
 		
 		<copy overwrite="true" file="${gwb.wrapper}" tofile="${gwb.dist.zip.dir}/GlycoWorkbench.jar" />
+		<delete file="${gwb.dist.zip.dir}/startup_options.properties" />
 	</target>
 
 
@@ -390,7 +391,7 @@
 
 		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/win-swt_x86.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
 
-		<pathconvert property="manifest.classpath" pathsep=" ">
+		<pathconvert property="manifest.classpath1" pathsep=" ">
 			<path refid="compile.classpath" />
 			<mapper>
 				<chainedmapper>
@@ -399,9 +400,11 @@
 			</mapper>
 		</pathconvert>
 
+		<echo>Here: ${manifest.classpath1}</echo>
+		
 		<jar destfile="${gwb.dist.zip.dir}/lib/${project.glycoworkbench.jar}" basedir="${java.build.dir}">
 			<manifest>
-				<attribute name="Class-Path" value="${manifest.classpath} ${project.glycoworkbench.jar}" />
+				<attribute name="Class-Path" value="${manifest.classpath1} ${project.glycoworkbench.jar}" />
 				<attribute name="Main-Class" value="org.eurocarbdb.application.glycoworkbench.GlycoWorkbench" />
 				<attribute name="SplashScreen-Image" value="resources/artwork/GlycoWorkbench.png" />
 			</manifest>
