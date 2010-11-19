@@ -30,6 +30,7 @@ import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -1078,6 +1079,8 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 				}, CommandButtonKind.ACTION_ONLY);
 
 		saveItem.setRolloverCallback(new RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {
+			private JCheckBox saveSpectraCheckBox;
+
 			@Override
 			public void menuEntryActivated(JPanel targetPanel) {
 				targetPanel.removeAll();
@@ -1141,8 +1144,32 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 				openTypes.addButtonToLastGroup(saveStructures);
 				openTypes.addButtonToLastGroup(saveStructuresAs);
 
+				openTypes.addButtonGroup("Save settings");
+				//
+				JPanel panel = new JPanel();
+				panel.setLayout(new BorderLayout());
+
+				if (saveSpectraCheckBox == null) {
+					saveSpectraCheckBox = theCanvas.getTheActionManager().get("savespec").getJCheckBox(
+							"Save spectra in workspace file", theCanvas);
+					
+					theCanvas.getTheActionManager().get("savespec").setSelected(
+							theCanvas.getTheGlycanRenderer().getGraphicOptions().SAVE_SPECTRA_CUSTOM);
+				}
+
+				panel.add(saveSpectraCheckBox, BorderLayout.NORTH);
+
+				JPanel main = new JPanel();
+				main.setLayout(new BorderLayout());
+				main.add(openTypes, BorderLayout.NORTH);
+				main.add(panel, BorderLayout.CENTER);
+
+				JScrollPane scrollPane = new JScrollPane(main);
+				scrollPane.setSize(targetPanel.getSize());
+
 				targetPanel.setLayout(new BorderLayout());
-				targetPanel.add(openTypes, BorderLayout.CENTER);
+				targetPanel.add(scrollPane, BorderLayout.CENTER);
+				//
 
 			}
 		});
@@ -1315,18 +1342,18 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 				openTypes.setMaxButtonRows(2);
 
 				JPanel panel = new JPanel();
-				panel.setLayout(new BorderLayout());
+				panel.setLayout(new GridLayout(2,1));
 
 				if (exportRedEndCheckBox == null) {
 					exportRedEndCheckBox = theCanvas
 							.getTheActionManager()
 							.get("showredend")
-							.getJCheckBox("Include reducing end indicator",
+							.getJCheckBox("Export reducing end indicator",
 									theCanvas);
 
 					exportMassesCheckBox = theCanvas.getTheActionManager()
 							.get("showmasses")
-							.getJCheckBox("Include Mass values", theCanvas);
+							.getJCheckBox("Export mass values", theCanvas);
 
 					theCanvas
 							.getTheActionManager()
@@ -1342,8 +1369,8 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 											.getGraphicOptions().SHOW_REDEND);
 				}
 
-				panel.add(exportRedEndCheckBox, BorderLayout.EAST);
-				panel.add(exportMassesCheckBox, BorderLayout.WEST);
+				panel.add(exportRedEndCheckBox);
+				panel.add(exportMassesCheckBox);
 
 				JPanel main = new JPanel();
 				main.setLayout(new BorderLayout());
