@@ -137,9 +137,9 @@ public class FragmentEditorPanel extends JPanel implements ActionListener, BaseD
     theActionManager.add("previous",FileUtils.defaultThemeManager.getImageIcon("previous"),"Previous structure",KeyEvent.VK_L, "",this);
     theActionManager.add("next",FileUtils.defaultThemeManager.getImageIcon("next"),"Next structure",KeyEvent.VK_N, "",this);
     
-    theActionManager.add("print",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_PRINT, ICON_SIZE.TINY),"Print...",KeyEvent.VK_P, "",this);
+    theActionManager.add("print",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_PRINT, Plugin.DEFAULT_ICON_SIZE),"Print...",KeyEvent.VK_P, "",this);
 
-    theActionManager.add("copy",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.COPY, ICON_SIZE.TINY),"Copy",KeyEvent.VK_C, "",this);
+    theActionManager.add("copy",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.COPY, Plugin.DEFAULT_ICON_SIZE),"Copy",KeyEvent.VK_C, "",this);
     theActionManager.add("transfer",FileUtils.defaultThemeManager.getImageIcon("transfer"),"Copy fragments into canvas",KeyEvent.VK_V, "",this);
 
     }

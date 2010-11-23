@@ -78,7 +78,7 @@ public class SearchPlugin implements Plugin {
     }
 
     public ImageIcon getIcon() {
-    return ThemeManager.getEmptyIcon(ICON_SIZE.TINY);
+    return ThemeManager.getEmptyIcon(Plugin.DEFAULT_ICON_SIZE);
     }
 
     public int getViewPosition(String view) {

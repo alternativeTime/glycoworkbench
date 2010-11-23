@@ -37,7 +37,7 @@ import javax.swing.*;
 import java.awt.event.*;
 
 public class ProfilerPlugin implements Plugin, ActionListener,
-		BaseDocument.DocumentChangeListener {
+		BaseDocument.DocumentChangeListener, QuickStartup {
 
 	public interface DictionariesChangeListener {
 
@@ -108,15 +108,6 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 			theDictionaries = new TreeMap<String, StructureDictionary>();
 			theUserDictionaries = new TreeMap<String, StructureDictionary>();
 
-			addDictionary(new StructureDictionary("/conf/carbbankraw_dict.gwd",
-					false, null));
-			addDictionary(new StructureDictionary("/conf/cfg_dict.gwd", false,
-					null));
-			addDictionary(new StructureDictionary(
-					"/conf/glycosciences_dict.gwd", false, null));
-			addDictionary(new StructureDictionary("/conf/glycomedb_dict.gwd",
-					false, null));
-
 			// set panels
 			theDictionariesPane = new JTabbedPane();
 			theDictionariesManagerPanel = new DictionariesManagerPanel(this);
@@ -131,12 +122,29 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 			theProfilerOptions = new ProfilerOptions();
 
 			GlycanAction glycanAction = new GlycanAction("matchDatabase",
-					GlycoWorkbench.getDefaultThemeManager().getResizableIcon("database_annotate", ICON_SIZE.L3),
+					GlycoWorkbench.getDefaultThemeManager().getResizableIcon(
+							"database_annotate", Plugin.DEFAULT_ICON_SIZE),
 					"Annotate peaks with structures from the database",
 					KeyEvent.VK_N, "", this);
 			addActionToPublicMap(glycanAction);
 		} catch (Exception e) {
 			LogUtils.report(e);
+		}
+	}
+
+	public void deferredOnStartup() {
+		try {
+			addDictionary(new StructureDictionary("/conf/carbbankraw_dict.gwd",
+					false, null));
+			addDictionary(new StructureDictionary("/conf/cfg_dict.gwd", false,
+					null));
+			addDictionary(new StructureDictionary(
+					"/conf/glycosciences_dict.gwd", false, null));
+			addDictionary(new StructureDictionary("/conf/glycomedb_dict.gwd",
+					false, null));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -164,15 +172,21 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 		return false;
 	}
 
-	public void addDictionary(StructureDictionary dict) {
-		if (dict == null || containsDictionary(dict))
-			return;
+	public void addDictionary(final StructureDictionary dict) {
+		final ProfilerPlugin self=this;
+		SwingUtilities.invokeLater(new Runnable(){
+			public void run(){
+				if (dict == null || containsDictionary(dict))
+					return;
 
-		dict.addDocumentChangeListener(this);
+				dict.addDocumentChangeListener(self);
 
-		theDictionaries.put(dict.getDictionaryName(), dict);
+				theDictionaries.put(dict.getDictionaryName(), dict);
 
-		fireDictionaryAdded(dict);
+				fireDictionaryAdded(dict);
+
+			}
+		});
 	}
 
 	public void removeDictionary(StructureDictionary dict) {
@@ -266,7 +280,7 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 	}
 
 	public ImageIcon getIcon() {
-		return ThemeManager.getEmptyIcon(ICON_SIZE.TINY);
+		return ThemeManager.getEmptyIcon(Plugin.DEFAULT_ICON_SIZE);
 	}
 
 	public int getViewPosition(String view) {
@@ -307,14 +321,14 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 		Vector<GlycanAction> actions = new Vector<GlycanAction>();
 
 		actions.add(new GlycanAction("options", ThemeManager
-				.getResizableEmptyIcon(ICON_SIZE.L3), "Set plugin options",
+				.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE), "Set plugin options",
 				KeyEvent.VK_O, "", this));
 
 		actions.add(null);
 
 		actions.add(new GlycanAction("findDatabase", this.theApplication
 				.getThemeManager().getResizableIcon("finddatabase",
-						ICON_SIZE.L3),
+						Plugin.DEFAULT_ICON_SIZE),
 				"Find all structures with a given m/z value", KeyEvent.VK_F,
 				"", this));
 
@@ -323,45 +337,45 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 		actions.add(null);
 
 		actions.add(new GlycanAction("matchStructuresCurrent", ThemeManager
-				.getResizableEmptyIcon(ICON_SIZE.L3),
+				.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),
 				"Annotate peaks with current structure", KeyEvent.VK_C, "",
 				this));
 		actions.add(new GlycanAction("matchStructuresSelected",
 				this.theApplication.getThemeManager().getResizableIcon(
-						"matchstructures", ICON_SIZE.L3),
+						"matchstructures", Plugin.DEFAULT_ICON_SIZE),
 				"Annotate peaks with selected structures", KeyEvent.VK_S, "",
 				this));
 		actions.add(new GlycanAction("matchStructuresAll", ThemeManager
-				.getResizableEmptyIcon(ICON_SIZE.L3),
+				.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),
 				"Annotate peaks with all structures", KeyEvent.VK_A, "", this));
 
 		actions.add(null);
 
 		actions.add(new GlycanAction("search", this.theApplication
-				.getThemeManager().getResizableIcon("search", ICON_SIZE.L3),
+				.getThemeManager().getResizableIcon("search", Plugin.DEFAULT_ICON_SIZE),
 				"Search the databases", KeyEvent.VK_D, "", this));
 		actions.add(new GlycanAction("searchAgain", this.theApplication
 				.getThemeManager()
-				.getResizableIcon("searchagain", ICON_SIZE.L3),
+				.getResizableIcon("searchagain", Plugin.DEFAULT_ICON_SIZE),
 				"Filter the search results", KeyEvent.VK_R, "", this));
 		actions.add(new GlycanAction("searchCurrent", ThemeManager
-				.getResizableEmptyIcon(ICON_SIZE.L3),
+				.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),
 				"Search for the current structure in the databases",
 				KeyEvent.VK_H, "", this));
 
 		actions.add(null);
 
 		actions.add(new GlycanAction("storeStructuresCurrent", ThemeManager
-				.getResizableEmptyIcon(ICON_SIZE.L3),
+				.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),
 				"Store current structure in a user database", KeyEvent.VK_U,
 				"", this));
 		actions.add(new GlycanAction("storeStructuresSelected",
 				this.theApplication.getThemeManager().getResizableIcon(
-						"storedatabase", ICON_SIZE.L3),
+						"storedatabase", Plugin.DEFAULT_ICON_SIZE),
 				"Store selected structures in a user database", KeyEvent.VK_E,
 				"", this));
 		actions.add(new GlycanAction("storeStructuresAll", ThemeManager
-				.getResizableEmptyIcon(ICON_SIZE.L3),
+				.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),
 				"Store all structures in a user database", KeyEvent.VK_L, "",
 				this));
 
@@ -373,25 +387,25 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 
 		actions.add(new GlycanAction("matchStructuresSelected",
 				this.theApplication.getThemeManager().getResizableIcon(
-						"matchstructures", ICON_SIZE.L3),
+						"matchstructures", Plugin.DEFAULT_ICON_SIZE),
 				"Annotate peaks with selected structures", KeyEvent.VK_S, "",
 				this));
 		actions.add(new GlycanAction("findDatabase", this.theApplication
 				.getThemeManager().getResizableIcon("finddatabase",
-						ICON_SIZE.L3),
+						Plugin.DEFAULT_ICON_SIZE),
 				"Find all structures with a given m/z value", KeyEvent.VK_F,
 				"", this));
 		actions.add(new GlycanAction("storeStructuresSelected",
 				this.theApplication.getThemeManager().getResizableIcon(
-						"storedatabase", ICON_SIZE.L3),
+						"storedatabase", Plugin.DEFAULT_ICON_SIZE),
 				"Store selected structures in a user database", KeyEvent.VK_E,
 				"", this));
 		actions.add(new GlycanAction("search", this.theApplication
-				.getThemeManager().getResizableIcon("search", ICON_SIZE.L3),
+				.getThemeManager().getResizableIcon("search", Plugin.DEFAULT_ICON_SIZE),
 				"Search the databases", KeyEvent.VK_D, "", this));
 		actions.add(new GlycanAction("searchAgain", this.theApplication
 				.getThemeManager()
-				.getResizableIcon("searchagain", ICON_SIZE.L3),
+				.getResizableIcon("searchagain", Plugin.DEFAULT_ICON_SIZE),
 				"Filter the search results", KeyEvent.VK_R, "", this));
 		return actions;
 	}
@@ -403,10 +417,10 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 		 * if( prototype instanceof PeakAnnotation ) { al = (al==null) ?this
 		 * :al; actions.add(new
 		 * GlycanAction("storeAnnotations",ThemeManager.getResizableEmptyIcon
-		 * (ICON_SIZE.L3),"Store structures in a user database",-1,"",al));
+		 * (Plugin.DEFAULT_ICON_SIZE),"Store structures in a user database",-1,"",al));
 		 * actions.add(new
 		 * GlycanAction("editAnnotations",ThemeManager.getResizableEmptyIcon
-		 * (ICON_SIZE.L3),"Edit structure details",-1,"",al)); actions.add(new
+		 * (Plugin.DEFAULT_ICON_SIZE),"Edit structure details",-1,"",al)); actions.add(new
 		 * GlycanAction
 		 * ("removeAnnotations",ThemeManager.getResizableEmptyIcon(ICON_SIZE
 		 * .L3),"Remove structures from the user database",-1,"",al)); }
@@ -419,7 +433,7 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 		if (theManager != null)
 			theManager.addMsPeakAction(new GlycanAction("findDatabase",
 					this.theApplication.getThemeManager().getResizableIcon(
-							"finddatabase", ICON_SIZE.L3),
+							"finddatabase", Plugin.DEFAULT_ICON_SIZE),
 					"Find all structures matching the peaks", KeyEvent.VK_D,
 					"", this));
 	}
@@ -1054,8 +1068,9 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	public ResizableIcon getResizableIcon(){
-    	return FileUtils.getThemeManager().getResizableIcon("profiler", ICON_SIZE.L3).getResizableIcon();
-    }
+
+	public ResizableIcon getResizableIcon() {
+		return FileUtils.getThemeManager()
+				.getResizableIcon("profiler", Plugin.DEFAULT_ICON_SIZE).getResizableIcon();
+	}
 }

@@ -99,7 +99,7 @@ public class ProgressDialog extends JDialog implements ActionListener {
     
     // set buttons
     JPanel buttons_panel = new JPanel(new FlowLayout());
-    cancel_button = new JButton(new GlycanAction("Stop",ThemeManager.getResizableEmptyIcon(ICON_SIZE.L3),"Stop",-1,"",this));
+    cancel_button = new JButton(new GlycanAction("Stop",ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),"Stop",-1,"",this));
     buttons_panel.add(cancel_button);
     this.getContentPane().add(buttons_panel);     
 

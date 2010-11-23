@@ -36,6 +36,8 @@ import java.awt.Component;
 import javax.swing.ImageIcon;
 
 public interface Plugin {
+	public static ICON_SIZE DEFAULT_ICON_SIZE=ICON_SIZE.L2;
+	
 	/**
 	 * Not currently used...
 	 */

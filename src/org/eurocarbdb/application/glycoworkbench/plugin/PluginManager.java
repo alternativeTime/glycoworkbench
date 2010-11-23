@@ -63,14 +63,14 @@ public class PluginManager {
 		add(new SpectraPlugin(application));
 		add(new PeakListPlugin(application));
 		add(new FragmentsPlugin(application));
-		add(new AnnotationPlugin(application));
+    	add(new AnnotationPlugin(application));
 		add(new SearchPlugin(application));
 		add(new NotesPlugin(application));
 		add(new ProfilerPlugin(application));
 		add(new PeakFinderPlugin(application));
 		add(new ReportingPlugin(application));
 		add(new GAGPlugin(application));
-		add(new S3Plugin(application));
+		
 
 		String landmarkFolder = FileUtils.getRootDir();
 		String pluginDir = landmarkFolder.substring(0, landmarkFolder
