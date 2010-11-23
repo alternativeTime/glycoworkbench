@@ -27,11 +27,14 @@ public class StartupWrapper {
 	}
 
 	public String getStartupCommand() throws Exception{
-		File startupConfigurationFile=ResourceUtilities.getConfigurationFile(".glycoworkbench.launch");
+		File startupConfigurationFile=ResourceUtilities.getConfigurationFile(".glycoworkbench.launch","GlycoWorkbench");
 		
+		String internalDefaultConfigurationFileName="";
 		if(!startupConfigurationFile.exists()){
 			try{
 				URL url=ResourceUtilities.getResource("/startup_options.properties");
+				internalDefaultConfigurationFileName=url.toString();
+				
 				BufferedReader reader=new BufferedReader(new InputStreamReader(url.openStream()));
 
 				FileWriter writer=new FileWriter(startupConfigurationFile);
@@ -62,7 +65,7 @@ public class StartupWrapper {
 		String javaArch=StartupWrapper.getProperty(prop, "Arch");
 		String javaJar=StartupWrapper.getProperty(prop, "jar");
 		
-		javaJar=ResourceUtilities.getParentDirectory(ResourceUtilities.class)+javaJar;
+		javaJar=ResourceUtilities.getParentDirectory(ResourceUtilities.class)+File.separator+javaJar;
 		
 		System.err.println(javaJar.toString());
 		//System.exit(0);
@@ -72,7 +75,7 @@ public class StartupWrapper {
 		}else if(os.contains("macosx")){
 			return javaCommand+" -d"+javaArch+" -XstartOnFirstThread -Xmx"+javaMaxMem+" -jar "+javaJar;
 		}else{
-			throw new Exception("Startup properties file (startup_options.properties) contains an invalid value for property os");
+			throw new Exception("Startup properties file ("+startupConfigurationFile+")/"+internalDefaultConfigurationFileName+" contains an invalid value for property os --"+os+"--");
 		}
 	}
 	

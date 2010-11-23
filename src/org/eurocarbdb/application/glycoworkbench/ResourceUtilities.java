@@ -32,7 +32,7 @@ public class ResourceUtilities {
 		return Locator.getClassSource(clazz).getParent();
 	}
 	
-	public static File getConfigurationFile(String configFileName) throws IOException{
+	public static File getConfigurationFile(String configFileName,String subDirectory) throws IOException{
 		String userHomeDirectory = System.getProperty("user.home");
 		String osName = System.getProperty("os.name");
 
@@ -46,7 +46,7 @@ public class ResourceUtilities {
 				applicationDataDirectory=userHomeDirectory+File.separator+"Application Data";
 			}
 			
-			File glycoworkBenchProfilesDirectory = new File(applicationDataDirectory+File.separator+configFileName);
+			File glycoworkBenchProfilesDirectory = new File(applicationDataDirectory+File.separator+subDirectory);
 			
 			if (!glycoworkBenchProfilesDirectory.exists()) {
 				if (!glycoworkBenchProfilesDirectory.mkdir()) {
