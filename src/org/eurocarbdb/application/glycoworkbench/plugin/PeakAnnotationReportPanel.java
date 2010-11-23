@@ -98,8 +98,8 @@ public class PeakAnnotationReportPanel extends DocumentPanel<AnnotatedPeakList> 
 
     protected void createActions() {    
 
-    theActionManager.add("new",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.REFRESH, ICON_SIZE.TINY),"Clear",KeyEvent.VK_N, "",this);
-    theActionManager.add("print",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_PRINT, ICON_SIZE.TINY),"Print...",KeyEvent.VK_P, "",this);
+    theActionManager.add("new",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.REFRESH, Plugin.DEFAULT_ICON_SIZE),"Clear",KeyEvent.VK_N, "",this);
+    theActionManager.add("print",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_PRINT, Plugin.DEFAULT_ICON_SIZE),"Print...",KeyEvent.VK_P, "",this);
     }
 
     protected void updateActions() {

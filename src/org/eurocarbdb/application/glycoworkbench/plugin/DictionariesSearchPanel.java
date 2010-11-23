@@ -147,7 +147,7 @@ public class DictionariesSearchPanel extends TablePanel<ProfilerPlugin> implemen
 
     theActionManager.add("print",FileUtils.defaultThemeManager.getImageIcon("print"),"Print...",KeyEvent.VK_P, "",this);
     
-    theActionManager.add("copy",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.COPY, ICON_SIZE.TINY),"Copy",KeyEvent.VK_C, "",this);    
+    theActionManager.add("copy",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.COPY, Plugin.DEFAULT_ICON_SIZE),"Copy",KeyEvent.VK_C, "",this);    
     theActionManager.add("transfer",FileUtils.defaultThemeManager.getImageIcon("transfer"),"Copy structures to canvas",KeyEvent.VK_V, "",this);
 
     theActionManager.add("goto",FileUtils.defaultThemeManager.getImageIcon("goto"),"Jump to a specific m/z value",-1, "",this);
