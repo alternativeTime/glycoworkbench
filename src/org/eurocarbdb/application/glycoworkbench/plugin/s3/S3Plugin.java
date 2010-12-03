@@ -15,6 +15,7 @@ import org.eurocarbdb.application.glycanbuilder.ICON_SIZE;
 import org.eurocarbdb.application.glycanbuilder.ThemeManager;
 import org.eurocarbdb.application.glycoworkbench.GlycoWorkbench;
 import org.eurocarbdb.application.glycoworkbench.plugin.AbstractPlugin;
+import org.eurocarbdb.application.glycoworkbench.plugin.Plugin;
 import org.jets3t.service.S3ServiceException;
 
 public class S3Plugin extends AbstractPlugin implements ActionListener{

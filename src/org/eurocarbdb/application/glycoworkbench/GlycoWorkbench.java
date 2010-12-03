@@ -944,7 +944,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 	public void initOpenRecent() {
 		RibbonApplicationMenuEntryPrimary menuPrimary = new RibbonApplicationMenuEntryPrimary(
-				theActionManager2.get("open").getResizableIcon(ICON_SIZE.L5),
+				theActionManager2.get("open").getResizableIcon(ICON_SIZE.L4),
 				"Open Recent", null, CommandButtonKind.ACTION_ONLY);
 
 		final GlycoWorkbench self = this;
