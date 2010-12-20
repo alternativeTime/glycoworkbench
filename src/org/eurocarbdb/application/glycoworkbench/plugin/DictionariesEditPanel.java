@@ -660,9 +660,14 @@ public class DictionariesEditPanel extends TablePanel<ProfilerPlugin> implements
     // update dictionaries list
     String to_sel = (String)theDictionarySelector.getSelectedItem();    
     theDictionarySelector.setModel(new DefaultComboBoxModel(new Vector<String>(theDocument.getDictionaryNames())));
-    if( to_sel==null || ! theDocument.getDictionaryNames().contains(to_sel) ) 
-        to_sel = theDocument.getDictionaryNames().iterator().next();
-
+    if( to_sel==null || ! theDocument.getDictionaryNames().contains(to_sel) ){ 
+    	if(theDocument.getDictionaryNames().iterator().hasNext()){
+    		to_sel = theDocument.getDictionaryNames().iterator().next();
+    	}else{
+    		return;
+    	}
+    }
+    
     ignore_selector = true;
     theDictionarySelector.setSelectedItem(to_sel);
     setDictionary(theDocument.getDictionary(to_sel));
