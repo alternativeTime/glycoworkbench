@@ -172,6 +172,7 @@
 		<copy file="${java.dist.dir}/${project.glycanbuilder.jar}" tofile="${gwb.dist.zip.dir}/lib/${project.glycanbuilder.jar}" />
 		<copy file="${java.dist.dir}/${project.molframework.jar}" tofile="${gwb.dist.zip.dir}/lib/${project.molframework.jar}" />
 		<copy file="${java.dist.dir}/${project.resourcesdb.jar}" tofile="${gwb.dist.zip.dir}/lib/${project.resourcesdb.jar}" />
+		<copy file="${java.dist.dir}/${project.glycopeakfinder.jar}" tofile="${gwb.dist.zip.dir}/lib/${project.glycopeakfinder.jar}" />
 		<copy file="${project.flamingo.jar}" todir="${gwb.dist.zip.dir}/lib" />
 		<copy file="${project.flamingo-tst.jar}" todir="${gwb.dist.zip.dir}/lib" />
 		<copy file="${basedir}/LICENSE.txt" tofile="${gwb.dist.zip.dir}/LICENSE.txt" />
