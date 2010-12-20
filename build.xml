@@ -300,14 +300,14 @@
 
 		<!-- cocoa-x86-64 -->
 		<copy overwrite="true" file="${gwb.mac.wrapper.64}" tofile="${gwb.dist.zip.dir}/GlycoWorkbench.jar" />
-		
+
 		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/mac-cocoa-swt_x86-64.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
 		<copy overwrite="true" file="${gwb.exe.dir}/mac_64.sh" tofile="${gwb.dist.zip.dir}/start.sh" />
 		<zip destfile="${gwb.mac.cocoa.x86-64}" basedir="${gwb.dist}" />
 	</target>
 
 	<target name="dist-mac-wrappers" depends="build">
-		<mkdir dir="${gwb.mac.wrapper.dir}"/>
+		<mkdir dir="${gwb.mac.wrapper.dir}" />
 		<pathconvert property="manifest.classpath" pathsep=" ">
 			<path refid="compile.classpath" />
 			<mapper>
@@ -318,7 +318,7 @@
 			</mapper>
 		</pathconvert>
 
-		<jar destfile="${gwb.mac.wrapper.32}" basedir="${java.build.dir}" >
+		<jar destfile="${gwb.mac.wrapper.32}" basedir="${java.build.dir}">
 			<manifest>
 				<attribute name="Class-Path" value="${manifest.classpath} ${project.glycoworkbench.jar}" />
 				<attribute name="Main-Class" value="org.eurocarbdb.application.glycoworkbench.launchers.MacWrapper32" />

@@ -145,15 +145,15 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	private static ICON_SIZE defaultMenuIconSize = ICON_SIZE.L1;
 	private static ICON_SIZE barIconSize = ICON_SIZE.L2;
 
-	private static String MAJOR_VERSION = "GWB_MAJOR";
-	private static String MINOR_VERSION = "GWB_MINOR";
-	private static String BUILD_NUMBER = "GWB_BUILD";
-	private static String BUILD_STATE = "GWB_STATE";
+//	private static String MAJOR_VERSION = "GWB_MAJOR";
+//	private static String MINOR_VERSION = "GWB_MINOR";
+//	private static String BUILD_NUMBER = "GWB_BUILD";
+//	private static String BUILD_STATE = "GWB_STATE";
 
-	// private static String MAJOR_VERSION="2";
-	// private static String MINOR_VERSION="0";
-	// private static String BUILD_NUMBER="50";
-	// private static String BUILD_STATE="ALPHA";
+	 private static String MAJOR_VERSION="2";
+	 private static String MINOR_VERSION="0";
+	 private static String BUILD_NUMBER="50";
+	 private static String BUILD_STATE="ALPHA";
 
 	// singletons
 	protected GlycanWorkspace theWorkspace;
@@ -727,24 +727,32 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 					status.setText("<html><u>" + status.getText()
 							+ "</u></html>");
 
-					final JFrame browserFrame = new JFrame();
-					final WebBrowser browser = new WebBrowser();
-					try {
-						browser.navigate(new URL(
-								"http://download.glycoworkbench.org/current_version/"));
-					} catch (IOException e) {
-						LogUtils.report(e);
-					} catch (URISyntaxException e) {
-						LogUtils.report(e);
-					}
-					browserFrame.setIconImages(getIconImages());
-					browserFrame.add(browser);
-					browserFrame.setSize(500, 500);
-					browserFrame.setTitle("Download update...");
-
+					
+						
 					status.addMouseListener(new MouseListener() {
 						@Override
 						public void mouseClicked(MouseEvent arg0) {
+							final JFrame browserFrame = new JFrame();
+							
+							final WebBrowser browser = new WebBrowser();
+							SwingUtilities.invokeLater(new Runnable(){
+								public void run(){
+									try{
+										browser.navigate(new URL(
+										"http://download.glycoworkbench.org/current_version/"));
+										browserFrame.setIconImages(getIconImages());
+										browserFrame.add(browser);
+										browserFrame.setSize(500, 500);
+										browserFrame.setTitle("Download update...");
+									} catch (IOException e) {
+										LogUtils.report(e);
+									} catch (URISyntaxException e) {
+										LogUtils.report(e);
+									}
+								}
+							});
+							
+							
 							browserFrame.setVisible(true);
 							status.setForeground(Color.GRAY);
 						}

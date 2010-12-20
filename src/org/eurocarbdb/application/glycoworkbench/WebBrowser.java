@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -17,37 +18,29 @@ import java.net.URL;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import chrriis.dj.nativeswing.swtimpl.components.JWebBrowser;
 
 public class WebBrowser extends JPanel {
 	final public JWebBrowser webBrowser;
+	final public JPanel webBrowserPanel;
 
 	public WebBrowser() {
 		super(new BorderLayout());
-		JPanel webBrowserPanel = new JPanel(new BorderLayout());
+		webBrowserPanel = new JPanel(new BorderLayout());
 		webBrowserPanel.setBorder(BorderFactory
 				.createTitledBorder("Native Web Browser component"));
 		webBrowser = new JWebBrowser();
-		webBrowser.navigate("http://www.google.com");
-		webBrowser.setMenuBarVisible(false);
-		webBrowserPanel.add(webBrowser, BorderLayout.CENTER);
-		add(webBrowserPanel, BorderLayout.CENTER);
-
-		// // Create an additional bar allowing to show/hide the menu bar of the
-		// web browser.
-		// JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 4,
-		// 4));
-		// JCheckBox menuBarCheckBox = new JCheckBox("Menu Bar",
-		// webBrowser.isMenuBarVisible());
-		// menuBarCheckBox.addItemListener(new ItemListener() {
-		// public void itemStateChanged(ItemEvent e) {
-		// webBrowser.setMenuBarVisible(e.getStateChange() ==
-		// ItemEvent.SELECTED);
-		// }
-		// });
-		// buttonPanel.add(menuBarCheckBox);
-		// add(buttonPanel, BorderLayout.SOUTH);
+		
+		SwingUtilities.invokeLater(new Runnable(){
+			public void run(){	
+				webBrowser.navigate("http://www.google.com");
+				webBrowser.setMenuBarVisible(false);
+				webBrowserPanel.add(webBrowser, BorderLayout.CENTER);
+				add(webBrowserPanel, BorderLayout.CENTER);
+			}
+		});
 	}
 
 	public void openResource(URL remoteResource, String localResource,
@@ -65,11 +58,15 @@ public class WebBrowser extends JPanel {
 		}
 	}
 	
-	public void navigate(URL remoteResource) throws URISyntaxException, IOException {
+	public void navigate(final URL remoteResource) throws URISyntaxException, IOException {
 		//this.webBrowser.navigate(remoteResource.toString());
 
 		if (checkSiteExists(remoteResource)) {
-			this.webBrowser.navigate(remoteResource.toString());
+			SwingUtilities.invokeLater(new Runnable(){
+				public void run(){
+					webBrowser.navigate(remoteResource.toString());
+				}
+			});
 		}
 	}
 
