@@ -304,7 +304,7 @@ public class FragmentCanvas extends JComponent implements Printable, MouseListen
 
     public FragmentCanvas() {
     // init
-    theGlycanRenderer = new GlycanRenderer();
+    theGlycanRenderer = new GlycanRendererAWT();
     theTextRenderer = new StyledTextCellRenderer();
 
     thePosManager  = new PositionManager();
@@ -317,7 +317,7 @@ public class FragmentCanvas extends JComponent implements Printable, MouseListen
     all_nodes = new Vector<FragmentNode>();
     selected_nodes = new HashSet<FragmentNode>();
 
-    theGlycanRenderer = new GlycanRenderer();
+    theGlycanRenderer = new GlycanRendererAWT();
     thePosManager  = new PositionManager();
     theBBoxManager = new BBoxManager();
     all_bbox = null;
@@ -700,7 +700,7 @@ public class FragmentCanvas extends JComponent implements Printable, MouseListen
         paintIcon(g2d,fn.close_bbox,minus_button);
     
     // paint fragment
-    theGlycanRenderer.paint(g2d,fn.entry.fragment,selected_residues,selected_linkages,false,true,thePosManager,theBBoxManager);
+    theGlycanRenderer.paint(new DefaultPaintable(g2d),fn.entry.fragment,selected_residues,selected_linkages,false,true,thePosManager,theBBoxManager);
 
     // paint type
     paintText(g2d,fn.type_bbox,fn.entry.name);

@@ -452,7 +452,7 @@ public class SearchDetailsPanel extends SortingTablePanel<AnnotatedPeakList> imp
         if( fragment!=null )
             structures.add(fragment);        
         }
-        ClipUtils.setContents(new AnnotationSelection(theTable.getSelectedData(),theDocument.extractAnnotations(current_ind,mod_inds),theWorkspace.getGlycanRenderer(),structures));
+        ClipUtils.setContents(new AnnotationSelection(theTable.getSelectedData(),theDocument.extractAnnotations(current_ind,mod_inds),(GlycanRendererAWT) theWorkspace.getGlycanRenderer(),structures));
     }     
     }
 

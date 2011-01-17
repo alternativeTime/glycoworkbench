@@ -232,7 +232,7 @@ public class WorkspacePanel extends JPanel implements TreeModel,
 
 		// init data
 		// theApplication = null;
-		theWorkspace = new GlycanWorkspace();
+		theWorkspace = new GlycanWorkspace(new GlycanRendererAWT());
 
 		// init actions
 		theActionManager = new ActionManager();

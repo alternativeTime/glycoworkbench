@@ -67,7 +67,7 @@ public class GlycanTable extends ResizingTable implements SVGUtils.Renderable, P
     // init members
     thePopupMenu = null;
         
-    theGlycanRenderer = new GlycanRenderer();
+    theGlycanRenderer = new GlycanRendererAWT();
     df_fourdigits  = new DecimalFormat("0.0000");
     df_twodigits  = new DecimalFormat("0.00");
 
