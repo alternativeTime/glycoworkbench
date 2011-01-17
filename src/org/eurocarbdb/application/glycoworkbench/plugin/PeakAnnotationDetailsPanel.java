@@ -465,7 +465,7 @@ public class PeakAnnotationDetailsPanel extends SortingTablePanel<AnnotatedPeakL
         }
 
         // get annotations
-        ClipUtils.setContents(new AnnotationSelection(theTable.getSelectedData(),theDocument.extractAnnotations(current_ind,mod_inds),theWorkspace.getGlycanRenderer(),structures));
+        ClipUtils.setContents(new AnnotationSelection(theTable.getSelectedData(),theDocument.extractAnnotations(current_ind,mod_inds),(GlycanRendererAWT) theWorkspace.getGlycanRenderer(),structures));
     }     
     }
 

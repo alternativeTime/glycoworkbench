@@ -82,7 +82,7 @@ public class SearchDialog extends JRibbonFrame implements ActionListener,
 		super();
 
 		// create environment
-		theWorkspace = new BuilderWorkspace(null, false);
+		theWorkspace = new BuilderWorkspace(null, false, new GlycanRendererAWT());
 		theWorkspace.getGraphicOptions().copy(gopt);
 		theWorkspace.getGraphicOptions().SHOW_MASSES_CANVAS = false;
 		theWorkspace.getGraphicOptions().SHOW_REDEND_CANVAS = false;

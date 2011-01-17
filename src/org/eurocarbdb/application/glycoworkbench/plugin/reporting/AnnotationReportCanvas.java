@@ -72,7 +72,7 @@ public class AnnotationReportCanvas extends JComponent implements SVGUtils.Rende
     }
   
     private AnnotationReportDocument theDocument;
-    private GlycanRenderer  theGlycanRenderer;
+    private GlycanRendererAWT  theGlycanRenderer;
     private JScrollPane theScrollPane = null;
  
     private DefaultXYDataset   theDataset;
@@ -120,7 +120,7 @@ public class AnnotationReportCanvas extends JComponent implements SVGUtils.Rende
 
     theOptions = theDocument.getAnnotationReportOptions();
     theGraphicOptions = theDocument.getGraphicOptions();
-    theGlycanRenderer = theDocument.getWorkspace().getGlycanRenderer();
+    theGlycanRenderer = (GlycanRendererAWT) theDocument.getWorkspace().getGlycanRenderer();
 
     // create chart
     updateChart();    
@@ -421,7 +421,7 @@ public class AnnotationReportCanvas extends JComponent implements SVGUtils.Rende
 
         // paint glycan
         for( Glycan s: a.getStructures() ) 
-        theGlycanRenderer.paint(g2d,s,null,null,false,false,pman,bbman);        
+        theGlycanRenderer.paint(new DefaultPaintable(g2d),s,null,null,false,false,pman,bbman);        
      
         // paint MZ text
         g2d.setFont(new_font);

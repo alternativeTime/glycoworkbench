@@ -287,7 +287,7 @@ public class ProfilesComparisonReportTableFrame extends JFrame implements Action
         int r = theTableSorter.modelIndex(sel_ind[i]);
         structures.add(theDocument.getRows().get(r).structure);
         }
-        ClipUtils.setContents(new GlycanSelection(theTable.getSelectedData(),theApplication.getWorkspace().getGlycanRenderer(),structures));
+        ClipUtils.setContents(new GlycanSelection(theTable.getSelectedData(),(GlycanRendererAWT) theApplication.getWorkspace().getGlycanRenderer(),structures));
     }     
     }
 

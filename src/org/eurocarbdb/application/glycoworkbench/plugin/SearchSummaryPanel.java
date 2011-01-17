@@ -321,7 +321,7 @@ public class SearchSummaryPanel extends SortingTablePanel<AnnotatedPeakList> imp
 
         int[] mod_inds = theTableSorter.modelIndexes(sel_inds);
         if( structures!=null )
-        ClipUtils.setContents(new AnnotationSelection(theTable.getSelectedData(),theDocument.extractAnnotations(mod_inds),theWorkspace.getGlycanRenderer(),structures));
+        ClipUtils.setContents(new AnnotationSelection(theTable.getSelectedData(),theDocument.extractAnnotations(mod_inds),(GlycanRendererAWT) theWorkspace.getGlycanRenderer(),structures));
         else
         ClipUtils.setContents(new AnnotationSelection(theTable.getSelectedData(),theDocument.extractAnnotations(mod_inds)));
     }     

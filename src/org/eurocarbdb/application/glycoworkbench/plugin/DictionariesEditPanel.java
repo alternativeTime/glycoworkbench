@@ -519,7 +519,7 @@ public class DictionariesEditPanel extends TablePanel<ProfilerPlugin> implements
     
     if( structures.size()>0 ) {
         // get annotations
-        ClipUtils.setContents(new DictionarySelection(theTable.getSelectedData(),structure_types,theWorkspace.getGlycanRenderer(),structures));
+        ClipUtils.setContents(new DictionarySelection(theTable.getSelectedData(),structure_types,(GlycanRendererAWT) theWorkspace.getGlycanRenderer(),structures));
     }
     }
 

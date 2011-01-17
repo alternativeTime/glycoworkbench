@@ -67,7 +67,7 @@ public class AnnotationReportDocument extends BaseDocument implements SAXUtils.S
 
     public AnnotationReportDocument() { 
 
-    theWorkspace = new BuilderWorkspace(null,false);
+    theWorkspace = new BuilderWorkspace(null,false, new GlycanRendererAWT());
     
     theOptions = new AnnotationReportOptions();
     theGraphicOptions = theWorkspace.getGraphicOptions();

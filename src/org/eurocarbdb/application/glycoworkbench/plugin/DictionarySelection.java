@@ -39,7 +39,7 @@ public class DictionarySelection extends GlycanSelection {
     // data in this selection
     private Collection<StructureType> structure_types;
     
-    public DictionarySelection(Data _data, Collection<StructureType> _structure_types, GlycanRenderer _glycanRenderer, Collection<Glycan> _structures) {
+    public DictionarySelection(Data _data, Collection<StructureType> _structure_types, GlycanRendererAWT _glycanRenderer, Collection<Glycan> _structures) {
     super(_data,_glycanRenderer,_structures);
     structure_types = _structure_types;
     }

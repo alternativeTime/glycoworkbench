@@ -180,7 +180,7 @@ public class ProfilesComparisonReportDocument {
                     Row row = ret.get(pa.getAnnotation().getFragmentEntry());
                     if( row==null ) {
                         row = new Row(pa.getAnnotation().getFragmentEntry(),fg_size,sg_size);
-            row.name = GlycanRenderer.makeCompositionTextPlain(row.structure.getComposition(false));
+            row.name = GlycanRendererAWT.makeCompositionTextPlain(row.structure.getComposition(false));
                         ret.put(pa.getAnnotation().getFragmentEntry(),row);
                     }
                     row.intensities_firstgroup[i] += pa.getPeak().getIntensity();
@@ -197,7 +197,7 @@ public class ProfilesComparisonReportDocument {
                     Row row = ret.get(pa.getAnnotation().getFragmentEntry());
                     if( row==null ) {
                         row = new Row(pa.getAnnotation().getFragmentEntry(),fg_size,sg_size);
-            row.name = GlycanRenderer.makeCompositionTextPlain(row.structure.getComposition(false));
+            row.name = GlycanRendererAWT.makeCompositionTextPlain(row.structure.getComposition(false));
                         ret.put(pa.getAnnotation().getFragmentEntry(),row);
                     }
                     row.intensities_secondgroup[i] += pa.getPeak().getIntensity();
@@ -393,7 +393,7 @@ public class ProfilesComparisonReportDocument {
         for( Glycan g : resolved ) {
             Row dest = ret.get(g);
             if( dest==null ) {
-            String name = GlycanRenderer.makeCompositionTextPlain(g.getComposition(false));
+            String name = GlycanRendererAWT.makeCompositionTextPlain(g.getComposition(false));
             dest = new Row(g,name,fg_size,sg_size);
             ret.put(g,dest);
             }
