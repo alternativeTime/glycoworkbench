@@ -99,12 +99,12 @@ public class GlycanWorkspace extends BuilderWorkspace implements
 
 	// ----
 
-	public GlycanWorkspace() {
-		super();
+	public GlycanWorkspace(GlycanRenderer glycanRenderer) {
+		super(glycanRenderer);
 	}
 
-	public GlycanWorkspace(String config_file, boolean create) {
-		super(config_file, create);
+	public GlycanWorkspace(String config_file, boolean create,GlycanRenderer glycanRenderer) {
+		super(config_file, create,glycanRenderer);
 	}
 
 	// base document

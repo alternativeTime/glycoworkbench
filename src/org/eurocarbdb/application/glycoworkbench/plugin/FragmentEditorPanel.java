@@ -67,7 +67,7 @@ public class FragmentEditorPanel extends JPanel implements ActionListener, BaseD
     super(new BorderLayout());
     
     theApplication    = null;
-    theWorkspace = new GlycanWorkspace();
+    theWorkspace = new GlycanWorkspace(new GlycanRendererAWT());
     theDocument  = theWorkspace.getStructures();
     theDocument.addDocumentChangeListener(this);
     
@@ -278,7 +278,7 @@ public class FragmentEditorPanel extends JPanel implements ActionListener, BaseD
     }
    
     public void copy() {        
-    ClipUtils.setContents(new GlycanSelection(theWorkspace.getGlycanRenderer(),theCanvas.getSelectedFragments()));
+    ClipUtils.setContents(new GlycanSelection((GlycanRendererAWT) theWorkspace.getGlycanRenderer(),theCanvas.getSelectedFragments()));
     }
 
     public void transfer() {

@@ -386,7 +386,7 @@ public class FragmentDetailsPanel extends SortingTablePanel<FragmentDocument> im
         // get structure
         structures.add(getFragmentEntry(r).fragment);
         }
-        ClipUtils.setContents(new GlycanSelection(theTable.getSelectedData(),theWorkspace.getGlycanRenderer(),structures));
+        ClipUtils.setContents(new GlycanSelection(theTable.getSelectedData(),(GlycanRendererAWT) theWorkspace.getGlycanRenderer(),structures));
     }     
     }
 

@@ -301,7 +301,7 @@ public class FragmentSummaryPanel extends SortingTablePanel<FragmentDocument> im
         }
         }
 
-        ClipUtils.setContents(new AnnotationSelection(theTable.getSelectedData(),theWorkspace.getGlycanRenderer(),structures));
+        ClipUtils.setContents(new AnnotationSelection(theTable.getSelectedData(),(GlycanRendererAWT) theWorkspace.getGlycanRenderer(),structures));
     }     
     }  
 

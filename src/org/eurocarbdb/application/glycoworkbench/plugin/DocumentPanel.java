@@ -65,7 +65,7 @@ abstract public class DocumentPanel<DOCUMENTTYPE> extends JPanel implements Comp
 
     protected  void initSingletons() {
     theApplication = null;
-    theWorkspace = new GlycanWorkspace();
+    theWorkspace = new GlycanWorkspace(new GlycanRendererAWT());
     theDocument = getDocumentFromWorkspace(theWorkspace);
     }
 
@@ -101,7 +101,7 @@ abstract public class DocumentPanel<DOCUMENTTYPE> extends JPanel implements Comp
     }
     
     if( workspace==null )
-        theWorkspace = new GlycanWorkspace();
+        theWorkspace = new GlycanWorkspace(new GlycanRendererAWT());
     else
         theWorkspace = workspace;
 
