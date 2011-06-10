@@ -47,11 +47,11 @@ public class AnnotationSelection extends GlycanSelection {
     theAnnotations = _annotations;
     }    
 
-    public AnnotationSelection(Data _data, GlycanRenderer _glycanRenderer, Collection<Glycan> _structures) {
+    public AnnotationSelection(Data _data, GlycanRendererAWT _glycanRenderer, Collection<Glycan> _structures) {
     super(_data,_glycanRenderer,_structures);
     }
 
-    public AnnotationSelection(Data _data, AnnotatedPeakList _annotations, GlycanRenderer _glycanRenderer, Collection<Glycan> _structures) {
+    public AnnotationSelection(Data _data, AnnotatedPeakList _annotations, GlycanRendererAWT _glycanRenderer, Collection<Glycan> _structures) {
     super(_data,_glycanRenderer,_structures);
     theAnnotations = _annotations;
     }

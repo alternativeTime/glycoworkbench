@@ -89,6 +89,7 @@ import org.eurocarbdb.application.glycanbuilder.FileUtils;
 import org.eurocarbdb.application.glycanbuilder.GlycanAction;
 import org.eurocarbdb.application.glycanbuilder.GlycanCanvas;
 import org.eurocarbdb.application.glycanbuilder.GlycanDocument;
+import org.eurocarbdb.application.glycanbuilder.GlycanRendererAWT;
 import org.eurocarbdb.application.glycanbuilder.GraphicOptions;
 import org.eurocarbdb.application.glycanbuilder.ICON_SIZE;
 import org.eurocarbdb.application.glycanbuilder.JCommandButtonAction;
@@ -359,7 +360,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		LogUtils.setGraphicalReport(true);
 
 		theWorkspace = new GlycanWorkspace(this.getConfigurationFile()
-				.toString(), true);
+				.toString(), true, new GlycanRendererAWT());
 		theWorkspace.setAutoSave(true);
 
 		theDoc = theWorkspace.getStructures();
@@ -2559,7 +2560,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 					setLastExportedFile(filename);
 					theWorkspace.getFileHistory().add(filename, format);
 				return true;
-			} else if (SVGUtils.export(theWorkspace.getGlycanRenderer(),
+			} else if (SVGUtils.export((GlycanRendererAWT) theWorkspace.getGlycanRenderer(),
 					filename, theDoc.getStructures(),
 					theWorkspace.getGraphicOptions().SHOW_MASSES,
 					theWorkspace.getGraphicOptions().SHOW_REDEND, format)) {

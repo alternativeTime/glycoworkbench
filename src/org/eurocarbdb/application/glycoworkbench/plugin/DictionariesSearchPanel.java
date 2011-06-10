@@ -438,7 +438,7 @@ public class DictionariesSearchPanel extends TablePanel<ProfilerPlugin> implemen
     
     if( structures.size()>0 ) {
         // get annotations
-        ClipUtils.setContents(new DictionarySelection(theTable.getSelectedData(),structure_types,theWorkspace.getGlycanRenderer(),structures));
+        ClipUtils.setContents(new DictionarySelection(theTable.getSelectedData(),structure_types,(GlycanRendererAWT) theWorkspace.getGlycanRenderer(),structures));
     }
     }    
 
