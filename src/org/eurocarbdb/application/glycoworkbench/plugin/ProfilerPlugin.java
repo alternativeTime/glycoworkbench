@@ -157,7 +157,7 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 					false, null));
 			
 			StructureDictionary cfgWggds=new StructureDictionary();
-			cfgWggds.setUri("http://www.functionalglycomics.org/glycomics/molecule/jsp/carbohydrate/carbMoleculeHome.jsp");
+			cfgWggds.setUri("http://togows2.dbcls.jp/wggds/kegg-glycan/");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -924,6 +924,7 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 									e.printStackTrace();
 								}
 							}
+							
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
