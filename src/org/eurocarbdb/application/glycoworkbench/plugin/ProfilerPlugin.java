@@ -23,13 +23,26 @@
 
 package org.eurocarbdb.application.glycoworkbench.plugin;
 
+import org.eurocarbdb.MolecularFramework.io.CarbohydrateSequenceEncoding;
 import org.eurocarbdb.application.glycoworkbench.*;
 import org.eurocarbdb.application.glycanbuilder.*;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
+import org.wggds.webservices.io.WggdsResultUtilXml;
+import org.wggds.webservices.io.data.CompleteInformation;
+import org.wggds.webservices.io.data.OutputFormat;
+import org.wggds.webservices.io.data.QueryResult;
+import org.wggds.webservices.io.query.SubstructureQuery;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.*;
 
 import javax.swing.*;
@@ -142,6 +155,9 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 					"/conf/glycosciences_dict.gwd", false, null));
 			addDictionary(new StructureDictionary("/conf/glycomedb_dict.gwd",
 					false, null));
+			
+			StructureDictionary cfgWggds=new StructureDictionary();
+			cfgWggds.setUri("http://www.functionalglycomics.org/glycomics/molecule/jsp/carbohydrate/carbMoleculeHome.jsp");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -880,54 +896,84 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				if (!dlg.getReturnStatus().equals("OK"))
+				if (!dlg.getReturnStatus().equals("OK")){
 					return;
+				}
 
 				// init search set
 				Collection<StructureType> entries;
-				if (search_again)
+				
+				if(search_again){
 					entries = theDictionariesSearchPanel.getData();
-				else
-					entries = dlg.getDatabase().getStructureTypes();
-
-				try {
-					// init parameters
-					MassOptions mass_opt = new MassOptions();
-					Glycan structure = dlg.getStructure();
-					String type = dlg.getType().toLowerCase();
-					String source = dlg.getSource().toLowerCase();
-					boolean include_redend = dlg.getIncludeRedEnd();
-					boolean include_all_leafs = dlg.getIncludeAllLeafs();
-					structure.setMassOptions(mass_opt);
-
-					// filter entries
+				}else{
 					Collection<StructureType> found = new Vector<StructureType>();
-					if (!structure.isEmpty() || type.length() > 0
-							|| source.length() > 0) {
-						for (StructureType st : entries) {
-							Glycan s = st.generateStructure(mass_opt);
-							if ((structure.isEmpty() || s.contains(structure,
-									include_redend, include_all_leafs))
-									&& (type.length() == 0 || st.type
-											.toLowerCase().indexOf(type) != -1)
-									&& (source.length() == 0 || st.source
-											.toLowerCase().indexOf(source) != -1))
-								found.add(st);
+					if(dlg.getDatabase().isWggds()){
+						try {
+							GlycanParser glydeParser=GlycanParserFactory.getParser(CarbohydrateSequenceEncoding.glyde.getId());
+							
+							SubstructureQuery query=new SubstructureQuery();
+							query.setCompleteInformation(CompleteInformation.Complete);
+							query.setFormat(OutputFormat.XML);
+							query.setSequence(glydeParser.writeGlycan(dlg.getStructure()));
+							
+							List<QueryResult> queryResults=query.runQuery(dlg.getDatabase().getUri());
+							for(QueryResult queryResult:queryResults){
+								try{
+									found.add(new StructureType(glydeParser.readGlycan(queryResult.getSequence(), new MassOptions())));
+								}catch(Exception e){
+									e.printStackTrace();
+								}
+							}
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
-					} else
-						found = entries;
+					}else{
+						entries = dlg.getDatabase().getStructureTypes();
+						try {
+							// init parameters
+							MassOptions mass_opt = new MassOptions();
+							Glycan structure = dlg.getStructure();
+							String type = dlg.getType().toLowerCase();
+							String source = dlg.getSource().toLowerCase();
+							boolean include_redend = dlg.getIncludeRedEnd();
+							boolean include_all_leafs = dlg.getIncludeAllLeafs();
+							structure.setMassOptions(mass_opt);
 
+							// filter entries
+							
+							if (!structure.isEmpty() || type.length() > 0
+									|| source.length() > 0) {
+								for (StructureType st : entries) {
+									Glycan s = st.generateStructure(mass_opt);
+									if ((structure.isEmpty() || s.contains(structure,
+											include_redend, include_all_leafs))
+											&& (type.length() == 0 || st.type
+													.toLowerCase().indexOf(type) != -1)
+											&& (source.length() == 0 || st.source
+													.toLowerCase().indexOf(source) != -1))
+										found.add(st);
+								}
+							} else
+								found = entries;
+
+							
+						} catch (Exception e) {
+							LogUtils.report(e);
+							// return false
+						}
+					}
+					
 					// show results
 					theDictionariesSearchPanel.setData(found);
-					theManager.show("Profiler", "Search");
-
-				} catch (Exception e) {
-					LogUtils.report(e);
-					// return false
-				}
-
+					try {
+						theManager.show("Profiler", "Search");
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}		
 			}
-
 		};
 
 		dlg.setRunnable(run);
@@ -936,7 +982,6 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 		dlg.setVisible(true);
 
 		return true;
-
 	}
 
 	/*

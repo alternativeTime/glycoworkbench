@@ -43,6 +43,10 @@ public class StructureType implements FragmentSource {
 
     public StructureType() {
     }
+    
+    public StructureType(Glycan glycan){
+    	structure=GWSParser.toString(glycan);
+    }
 
     public StructureType(String d, String t, String s, String g) {
     database = "" + d;
