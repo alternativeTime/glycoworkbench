@@ -158,6 +158,8 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 			
 			StructureDictionary cfgWggds=new StructureDictionary();
 			cfgWggds.setUri("http://togows2.dbcls.jp/wggds/kegg-glycan/");
+			
+			addDictionary(cfgWggds);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -915,6 +917,7 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 							query.setCompleteInformation(CompleteInformation.Complete);
 							query.setFormat(OutputFormat.XML);
 							query.setSequence(glydeParser.writeGlycan(dlg.getStructure()));
+							query.setExactMatch(false);
 							
 							List<QueryResult> queryResults=query.runQuery(dlg.getDatabase().getUri());
 							for(QueryResult queryResult:queryResults){
