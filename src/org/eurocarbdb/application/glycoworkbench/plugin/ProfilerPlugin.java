@@ -703,6 +703,11 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 			ProfilerOptionsDialog pdlg = new ProfilerOptionsDialog(
 					theApplication, this, theProfilerOptions);
 			pdlg.setVisible(true);
+			
+			if(theProfilerOptions.CLEAR_EXISTING_ANNOTATIONS){
+				theWorkspace.getAnnotatedPeakList().clear();
+			}
+			
 			if (!pdlg.getReturnStatus().equals("OK"))
 				return false;
 		}
@@ -730,6 +735,10 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 			if (!adlg.getReturnStatus().equals("OK"))
 				return false;
 		}
+		
+		if(ann_opt.CLEAR_EXISTING_ANNOTATIONS){
+			theWorkspace.getAnnotatedPeakList().clear();
+		}
 
 		// halt interactions
 		theApplication.haltInteractions();
@@ -755,6 +764,10 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 			adlg.setVisible(true);
 			if (!adlg.getReturnStatus().equals("OK"))
 				return false;
+		}
+		
+		if(ann_opt.CLEAR_EXISTING_ANNOTATIONS){
+			theWorkspace.getAnnotatedPeakList().clear();
 		}
 
 		// halt interactions

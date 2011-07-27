@@ -355,6 +355,10 @@ public class GAGPlugin implements Plugin, ActionListener {
         if( !adlg.getReturnStatus().equals("OK") )
         return false;    
     }
+    
+    if(ann_opt.CLEAR_EXISTING_ANNOTATIONS){
+		theWorkspace.getAnnotatedPeakList().clear();
+	}
 
     // halt interactions
     theApplication.haltInteractions();
@@ -383,6 +387,10 @@ public class GAGPlugin implements Plugin, ActionListener {
         if( !adlg.getReturnStatus().equals("OK") )
         return false;        
     }
+    
+    if(ann_opt.CLEAR_EXISTING_ANNOTATIONS){
+		theWorkspace.getAnnotatedPeakList().clear();
+	}
 
     // halt interactions
     theApplication.haltInteractions();

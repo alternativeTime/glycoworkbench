@@ -404,6 +404,7 @@ public class FragmentDetailsPanel extends SortingTablePanel<FragmentDocument> im
     FragmentOptions frag_opt = theWorkspace.getFragmentOptions();
     AnnotationOptions ann_opt = theWorkspace.getAnnotationOptions();
     AnnotationOptionsDialog dlg = new AnnotationOptionsDialog(theApplication,frag_opt,ann_opt,false,true);
+    dlg.hideClearAnnotationOption();
 
     dlg.setVisible(true);     
     if( !dlg.getReturnStatus().equals("OK") )

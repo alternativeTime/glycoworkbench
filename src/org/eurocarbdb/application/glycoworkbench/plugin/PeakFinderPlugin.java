@@ -286,6 +286,10 @@ public class PeakFinderPlugin implements Plugin, ActionListener {
         if( !adlg.getReturnStatus().equals("OK") )
         return false;        
     }
+    
+    if(ann_opt.CLEAR_EXISTING_ANNOTATIONS){
+		theWorkspace.getAnnotatedPeakList().clear();
+	}
 
     // halt interactions
     theApplication.haltInteractions();
