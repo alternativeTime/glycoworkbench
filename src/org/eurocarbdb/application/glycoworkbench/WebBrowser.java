@@ -20,6 +20,10 @@ import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import org.eurocarbdb.application.glycanbuilder.LogUtils;
+
+import sun.swing.SwingUtilities2;
+
 import chrriis.dj.nativeswing.swtimpl.components.JWebBrowser;
 
 public class WebBrowser extends JPanel {
@@ -43,17 +47,27 @@ public class WebBrowser extends JPanel {
 		});
 	}
 
-	public void openResource(URL remoteResource, String localResource,
+	public void openResource(final URL remoteResource, final String localResource,
 			boolean localInJar) throws URISyntaxException, IOException {
 		//this.webBrowser.navigate(remoteResource.toString());
 
 		if (checkSiteExists(remoteResource)) {
-			this.webBrowser.navigate(remoteResource.toString());
+			SwingUtilities.invokeLater(new Runnable(){
+				@Override
+				public void run() {
+					webBrowser.navigate(remoteResource.toString());
+				}
+			});
 		}else{
 			if (localInJar) {
 				this.openResource(new File(localResource));
 			} else {
-				this.webBrowser.navigate(localResource.toString());
+				SwingUtilities.invokeLater(new Runnable(){
+					@Override
+					public void run() {
+						webBrowser.navigate(localResource.toString());
+					}
+				});
 			}
 		}
 	}
@@ -118,7 +132,11 @@ public class WebBrowser extends JPanel {
 		this.setHTMLContent(buf.toString());
 	}
 
-	public void setHTMLContent(String content) {
-		webBrowser.setHTMLContent(content);
+	public void setHTMLContent(final String content) {
+		SwingUtilities.invokeLater(new Runnable(){
+			public void run(){
+				webBrowser.setHTMLContent(content);
+			}
+		});
 	}
 }
