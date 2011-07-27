@@ -967,9 +967,15 @@ public class AnnotationReportCanvas extends JComponent implements SVGUtils.Rende
     theDataset = new DefaultXYDataset();
 
     if( theDocument.getPeakData()!=null ) {
-        theChart = org.jfree.chart.ChartFactory.createScatterPlot(null, x_label, y_label, theDataset, org.jfree.chart.plot.PlotOrientation.VERTICAL, false, false, false);
-        thePlot = (XYPlot)theChart.getPlot();    
-        thePlot.setRenderer(new StandardXYItemRenderer(StandardXYItemRenderer.LINES));
+        if(theOptions.SHOW_COMPLETE_PEAK_LIST){
+        	theChart = org.jfree.chart.ChartFactory.createScatterPlot(null, x_label, y_label, new XYBarDataset(theDataset,0.001), org.jfree.chart.plot.PlotOrientation.VERTICAL, false, false, false);
+        	thePlot = (XYPlot)theChart.getPlot();
+        	thePlot.setRenderer(new XYBarRenderer());
+        }else{
+        	theChart = org.jfree.chart.ChartFactory.createScatterPlot(null, x_label, y_label, theDataset, org.jfree.chart.plot.PlotOrientation.VERTICAL, false, false, false);
+        	thePlot = (XYPlot)theChart.getPlot();
+        	thePlot.setRenderer(new StandardXYItemRenderer(StandardXYItemRenderer.LINES));
+        }
     }
     else {
         theChart = org.jfree.chart.ChartFactory.createScatterPlot(null, x_label, y_label, new XYBarDataset(theDataset,0.001), org.jfree.chart.plot.PlotOrientation.VERTICAL, false, false, false);
