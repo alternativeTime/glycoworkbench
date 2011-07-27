@@ -156,10 +156,10 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 			addDictionary(new StructureDictionary("/conf/glycomedb_dict.gwd",
 					false, null));
 			
-			StructureDictionary cfgWggds=new StructureDictionary();
-			cfgWggds.setUri("http://togows2.dbcls.jp/wggds/kegg-glycan/");
-			
-			addDictionary(cfgWggds);
+//			StructureDictionary cfgWggds=new StructureDictionary();
+//			cfgWggds.setUri("http://togows2.dbcls.jp/wggds/kegg-glycan/");
+//			
+//			addDictionary(cfgWggds);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
