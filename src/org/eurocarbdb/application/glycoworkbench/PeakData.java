@@ -66,6 +66,14 @@ public class PeakData implements SAXUtils.SAXWriter {
     setData(peaks,mmfc);
     }
     
+    public PeakData(float[][] peaks, MMFCreator mmfc) throws Exception {
+        setData(peaks,mmfc);
+    }
+    
+    public PeakData(double[][] peaks, MMFCreator mmfc) throws Exception {
+        setData(peaks,mmfc);
+    }
+    
     private void initData() {
     no_peaks = 0;
     min_mz = max_mz = 0.;
@@ -124,6 +132,33 @@ public class PeakData implements SAXUtils.SAXWriter {
     max_mz = data[0][data[0].length-1];
     theData = mmfc.getPointerFromLast();
     }   
+    
+    private void setData(double[][] data, MMFCreator mmfc) throws Exception {
+        // init
+        initData();
+
+        // check for empty data
+        if( data==null || data[0].length==0 ) 
+            return;
+
+
+        // skip trailing zeros
+        int start = 0;
+        for( ; start<data[0].length && data[0][start]==0.; start++ );
+        if( start==data[0].length )
+            return;
+
+        // add data
+        for( int i=start; i<data[0].length; i++ ) {
+            mmfc.addDouble(data[0][i]);
+            mmfc.addDouble(data[1][i]);
+        }
+        
+        no_peaks = data[0].length-start;
+        min_mz = data[0][start];
+        max_mz = data[0][data[0].length-1];
+        theData = mmfc.getPointerFromLast();
+        }  
 
 
     private void setData(List<Peak> data, MMFCreator mmfc) throws Exception {
