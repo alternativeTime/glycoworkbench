@@ -50,6 +50,7 @@ public class AnnotationReportDocument extends BaseDocument implements SAXUtils.S
     private BuilderWorkspace theWorkspace;
     private AnnotationReportOptions theOptions = null;
     private GraphicOptions theGraphicOptions = null;
+    private PeakList thePeakList = null;
   
     private boolean show_rel_int = false;
     private boolean show_empty_annotations = false;
@@ -91,7 +92,7 @@ public class AnnotationReportDocument extends BaseDocument implements SAXUtils.S
 
     start_mz = smz;
     end_mz = emz;
-    thePeakData = (opt.SHOW_RAW_SPECTRUM) ?pd :null;
+    thePeakData = (opt.SHOW_RAW_SPECTRUM || opt.SHOW_COMPLETE_PEAK_LIST) ?pd :null;
     theParentStructure = parent;
     thePeakAnnotationCollection = pac;
 
@@ -1236,5 +1237,4 @@ public class AnnotationReportDocument extends BaseDocument implements SAXUtils.S
     th.endElement("","","AnnotationReportDocument");
 
     }
-
 }

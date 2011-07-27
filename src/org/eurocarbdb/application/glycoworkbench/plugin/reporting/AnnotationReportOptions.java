@@ -97,6 +97,7 @@ public class AnnotationReportOptions {
     public boolean SHOW_RELATIVE_INTENSITIES = true; 
     public boolean SHOW_EMPTY_ANNOTATIONS = false; 
     public boolean SHOW_MAX_INTENSITY = true;
+    public boolean SHOW_COMPLETE_PEAK_LIST = false;
 
     public void setScale(double scale) {
     if( scale>0. )
@@ -155,7 +156,8 @@ public class AnnotationReportOptions {
     config.put("AnnotationReportOptions","show_raw_spectrum",SHOW_RAW_SPECTRUM);    
     config.put("AnnotationReportOptions","show_relative_intensities",SHOW_RELATIVE_INTENSITIES);    
     config.put("AnnotationReportOptions","show_empty_annotations",SHOW_EMPTY_ANNOTATIONS);    
-    config.put("AnnotationReportOptions","show_max_intensity",SHOW_MAX_INTENSITY);    
+    config.put("AnnotationReportOptions","show_max_intensity",SHOW_MAX_INTENSITY);
+    config.put("AnnotationReportOptions","show_complete_peak_list",SHOW_COMPLETE_PEAK_LIST);
  
     config.put("AnnotationReportOptions","spectrum_color",SPECTRUM_COLOR);    
     config.put("AnnotationReportOptions","mass_text_color",MASS_TEXT_COLOR);    
@@ -185,7 +187,8 @@ public class AnnotationReportOptions {
     SHOW_RAW_SPECTRUM = config.get("AnnotationReportOptions","show_raw_spectrum",SHOW_RAW_SPECTRUM);    
     SHOW_RELATIVE_INTENSITIES = config.get("AnnotationReportOptions","show_relative_intensities",SHOW_RELATIVE_INTENSITIES);
     SHOW_EMPTY_ANNOTATIONS = config.get("AnnotationReportOptions","show_empty_annotations",SHOW_EMPTY_ANNOTATIONS);        
-    SHOW_MAX_INTENSITY = config.get("AnnotationReportOptions","show_max_intensity",SHOW_MAX_INTENSITY);        
+    SHOW_MAX_INTENSITY = config.get("AnnotationReportOptions","show_max_intensity",SHOW_MAX_INTENSITY);
+    SHOW_COMPLETE_PEAK_LIST = config.get("AnnotationReportOptions","show_complete_peak_list",SHOW_COMPLETE_PEAK_LIST);
 
     SPECTRUM_COLOR = config.get("AnnotationReportOptions","spectrum_color",SPECTRUM_COLOR);    
     MASS_TEXT_COLOR = config.get("AnnotationReportOptions","mass_text_color",MASS_TEXT_COLOR);    
