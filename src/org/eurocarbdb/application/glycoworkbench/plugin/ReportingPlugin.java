@@ -244,14 +244,28 @@ public class ReportingPlugin implements Plugin, ActionListener {
 			dlg.setVisible(true);
 
 			if (dlg.getReturnStatus().equals("OK")) {
-				AnnotationReportDocument doc = new AnnotationReportDocument(
-						dlg.getStartMZ(), dlg.getEndMZ(), dlg.getPeakData(),
-						dlg.getParentStructure(),
-						dlg.getPeakAnnotationCollection(),
-						theAnnotationReportOptions,
-						theWorkspace.getGraphicOptions());
-				theWorkspace.addAnnotationReport(doc);
-				showAnnotationsReport(doc, true);
+				try{
+					PeakData peakData;
+					if(theAnnotationReportOptions.SHOW_COMPLETE_PEAK_LIST){
+						peakData=new PeakData(theWorkspace.getPeakList().getData(),new MMFCreator());
+						
+						LogUtils.report(new Exception("Size: "+theWorkspace.getPeakList().getData()[0].length));
+					}else{
+						LogUtils.report(new Exception("here1"));
+						peakData=dlg.getPeakData();
+					}
+
+					AnnotationReportDocument doc = new AnnotationReportDocument(
+							dlg.getStartMZ(), dlg.getEndMZ(), peakData,
+							dlg.getParentStructure(),
+							dlg.getPeakAnnotationCollection(),
+							theAnnotationReportOptions,
+							theWorkspace.getGraphicOptions());
+					theWorkspace.addAnnotationReport(doc);
+					showAnnotationsReport(doc, true);
+				}catch(Exception ex){
+					LogUtils.report(ex);
+				}
 				return true;
 			}
 		} else

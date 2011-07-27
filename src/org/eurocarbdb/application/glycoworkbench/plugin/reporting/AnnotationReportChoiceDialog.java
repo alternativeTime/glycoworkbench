@@ -25,6 +25,9 @@
 
 package org.eurocarbdb.application.glycoworkbench.plugin.reporting;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
 import org.eurocarbdb.application.glycoworkbench.plugin.*;
 import org.eurocarbdb.application.glycoworkbench.*;
 import org.eurocarbdb.application.glycanbuilder.*;
@@ -146,6 +149,7 @@ public class AnnotationReportChoiceDialog extends EscapeDialog implements java.a
 
     if( theSpectra.size()>0 )
         field_show_raw_spectrum.setSelected(theOptions.SHOW_RAW_SPECTRUM);
+    field_show_complete_peak_list.setSelected(theOptions.SHOW_COMPLETE_PEAK_LIST);
     field_show_rel_int.setSelected(theOptions.SHOW_RELATIVE_INTENSITIES);
     field_show_empty_ann.setSelected(theOptions.SHOW_EMPTY_ANNOTATIONS);
     field_show_max_int.setSelected(theOptions.SHOW_MAX_INTENSITY);
@@ -164,6 +168,32 @@ public class AnnotationReportChoiceDialog extends EscapeDialog implements java.a
     field_spectra_list.setEnabled( (theSpectra.size()>0) && field_show_raw_spectrum.isSelected() );
     field_show_raw_spectrum.setEnabled(theSpectra.size()>0 );
     field_show_max_int.setEnabled(field_show_rel_int.isSelected());
+    
+    if(field_show_raw_spectrum.isEnabled()){
+    	field_show_raw_spectrum.addChangeListener(new ChangeListener(){
+			@Override
+			public void stateChanged(ChangeEvent event) {
+				if(field_show_raw_spectrum.isSelected()){
+					field_show_complete_peak_list.setSelected(false);
+					field_show_complete_peak_list.setEnabled(false);
+				}else{
+					field_show_complete_peak_list.setEnabled(true);
+				}
+			}
+        });
+    	
+    	field_show_complete_peak_list.addChangeListener(new ChangeListener(){
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				if(field_show_complete_peak_list.isSelected()){
+					field_show_raw_spectrum.setSelected(false);
+					field_show_raw_spectrum.setEnabled(false);
+				}else{
+					field_show_raw_spectrum.setEnabled(true);
+				}
+			}
+    	});
+    }
     }
    
     private void retrieveData() {
@@ -198,6 +228,7 @@ public class AnnotationReportChoiceDialog extends EscapeDialog implements java.a
         return_pd = null;
     
     theOptions.SHOW_RAW_SPECTRUM = field_show_raw_spectrum.isSelected();
+    theOptions.SHOW_COMPLETE_PEAK_LIST = field_show_complete_peak_list.isSelected();
     theOptions.SHOW_RELATIVE_INTENSITIES = field_show_rel_int.isSelected();
     theOptions.SHOW_EMPTY_ANNOTATIONS = field_show_empty_ann.isSelected();
     theOptions.SHOW_MAX_INTENSITY = field_show_max_int.isSelected();
@@ -241,6 +272,7 @@ public class AnnotationReportChoiceDialog extends EscapeDialog implements java.a
         field_spectra_list = new javax.swing.JList();
         field_show_rel_int = new javax.swing.JCheckBox();
         field_show_raw_spectrum = new javax.swing.JCheckBox();
+        field_show_complete_peak_list = new javax.swing.JCheckBox();
         field_show_empty_ann = new javax.swing.JCheckBox();
         field_show_max_int = new javax.swing.JCheckBox();
 
@@ -285,6 +317,9 @@ public class AnnotationReportChoiceDialog extends EscapeDialog implements java.a
 
         field_show_raw_spectrum.setText("Show raw spectrum");
         field_show_raw_spectrum.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        
+        field_show_complete_peak_list.setText("Show complete peak list");
+        field_show_complete_peak_list.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
         field_show_empty_ann.setText("Show empty annotations");
         field_show_empty_ann.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -316,6 +351,7 @@ public class AnnotationReportChoiceDialog extends EscapeDialog implements java.a
                                 .add(jLabel4))
                             .add(field_show_rel_int)
                             .add(field_show_raw_spectrum)
+                            .add(field_show_complete_peak_list)                             
                             .add(field_show_empty_ann)))
                     .add(layout.createSequentialGroup()
                         .addContainerGap()
@@ -353,6 +389,8 @@ public class AnnotationReportChoiceDialog extends EscapeDialog implements java.a
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(field_show_raw_spectrum)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(field_show_complete_peak_list)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(field_show_rel_int)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(field_show_empty_ann)
@@ -384,6 +422,7 @@ public class AnnotationReportChoiceDialog extends EscapeDialog implements java.a
     private javax.swing.JCheckBox field_show_empty_ann;
     private javax.swing.JCheckBox field_show_max_int;
     private javax.swing.JCheckBox field_show_raw_spectrum;
+    private javax.swing.JCheckBox field_show_complete_peak_list;
     private javax.swing.JCheckBox field_show_rel_int;
     private javax.swing.JList field_spectra_list;
     private javax.swing.JTextField field_start_mz;
