@@ -187,7 +187,7 @@
 		</copy>
 
 		<copy todir="${gwb.dist.zip.dir}/lib">
-			<fileset dir="${java.extlib.dir}/prefetched/" includes="jets* BareBones* commons-codec-* commons-httpclient-* commons-logging-* java-xmlbuilder-1* jna.jar" />
+			<fileset dir="${java.extlib.dir}/prefetched/" includes="jets* BareBones* commons-codec-* commons-httpclient-* commons-logging-* java-xmlbuilder-1* jna.jar wggds.jar" />
 		</copy>
 
 		<copy todir="${gwb.dist.zip.dir}/examples">
