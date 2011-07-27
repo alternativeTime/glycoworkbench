@@ -55,6 +55,8 @@ public class AnnotationOptions {
     public boolean GAIN_H2O = false;
     public boolean GAIN_NH3 = false;
     public boolean GAIN_CO2 = false;
+    
+    public boolean CLEAR_EXISTING_ANNOTATIONS = false;
 
     // pojo
     
@@ -203,6 +205,8 @@ public class AnnotationOptions {
     ret.MASS_ACCURACY = this.MASS_ACCURACY;
     ret.MASS_ACCURACY_UNIT = this.MASS_ACCURACY_UNIT;
 
+    ret.CLEAR_EXISTING_ANNOTATIONS = this.CLEAR_EXISTING_ANNOTATIONS;
+    
     return ret;
     }
 
@@ -234,6 +238,8 @@ public class AnnotationOptions {
     ret.MASS_ACCURACY = this.MASS_ACCURACY;
     ret.MASS_ACCURACY_UNIT = this.MASS_ACCURACY_UNIT;
 
+    ret.CLEAR_EXISTING_ANNOTATIONS = this.CLEAR_EXISTING_ANNOTATIONS;
+    
     return ret;
     }
     
@@ -263,6 +269,8 @@ public class AnnotationOptions {
     config.put("AnnotationOptions","gain_h2o",GAIN_H2O);
     config.put("AnnotationOptions","gain_nh3",GAIN_NH3);
     config.put("AnnotationOptions","gain_co2",GAIN_CO2);
+    
+    config.put("AnnotationOptions","clear_existing_annotations",CLEAR_EXISTING_ANNOTATIONS);
     }
 
     public void retrieve(Configuration config) {
@@ -290,6 +298,8 @@ public class AnnotationOptions {
     GAIN_H2O = config.get("AnnotationOptions","gain_h2o",GAIN_H2O);
     GAIN_NH3 = config.get("AnnotationOptions","gain_nh3",GAIN_NH3);
     GAIN_CO2 = config.get("AnnotationOptions","gain_co2",GAIN_CO2);
+    
+    CLEAR_EXISTING_ANNOTATIONS = config.get("AnnotationOptions","clear_existing_annotations",CLEAR_EXISTING_ANNOTATIONS);
     }
     
 }

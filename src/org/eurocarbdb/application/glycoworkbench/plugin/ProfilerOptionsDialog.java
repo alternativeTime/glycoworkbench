@@ -53,6 +53,8 @@ public class ProfilerOptionsDialog extends EscapeDialog implements java.awt.even
 
     // set location
     setLocationRelativeTo(parent);
+    
+    pack();
     }
 
     private void setTraversal() {
@@ -95,6 +97,8 @@ public class ProfilerOptionsDialog extends EscapeDialog implements java.awt.even
         field_other_redend_name.setText("");
         field_other_redend_mass.setText("0");
     }
+    
+    jClearAnnotations.setSelected(opt.CLEAR_EXISTING_ANNOTATIONS);
     }
 
     private void setActions() {
@@ -174,6 +178,7 @@ public class ProfilerOptionsDialog extends EscapeDialog implements java.awt.even
         field_other_redend_name = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         field_other_redend_mass = new javax.swing.JTextField();
+        jClearAnnotations = new javax.swing.JCheckBox();
 
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -211,6 +216,8 @@ public class ProfilerOptionsDialog extends EscapeDialog implements java.awt.even
         jLabel3.setText("mass");
 
         field_other_redend_mass.setText("jTextField2");
+        
+        jClearAnnotations.setText("Clear existing annotations");
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this.getContentPane());
         this.getContentPane().setLayout(layout);
@@ -235,7 +242,10 @@ public class ProfilerOptionsDialog extends EscapeDialog implements java.awt.even
                             .add(field_derivatization, 0, 162, Short.MAX_VALUE)
                             .add(field_reducingend, 0, 162, Short.MAX_VALUE)
                             .add(field_other_redend_name, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
-                            .add(field_other_redend_mass, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)))
+                            .add(field_other_redend_mass, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
+                            .add(jClearAnnotations, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE))
+                    		
+                     )
                     .add(jSeparator1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE)
                     .add(layout.createSequentialGroup()
                         .add(57, 57, 57)
@@ -270,6 +280,8 @@ public class ProfilerOptionsDialog extends EscapeDialog implements java.awt.even
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(jLabel3)
                     .add(field_other_redend_mass, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+                    .add(jClearAnnotations, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(jSeparator1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
@@ -303,6 +315,7 @@ public class ProfilerOptionsDialog extends EscapeDialog implements java.awt.even
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JCheckBox jClearAnnotations;
     // End of variables declaration//GEN-END:variables
     
 }

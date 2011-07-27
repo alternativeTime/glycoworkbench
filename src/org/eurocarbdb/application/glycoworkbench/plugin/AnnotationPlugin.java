@@ -560,6 +560,10 @@ public class AnnotationPlugin implements Plugin, ActionListener {
 			if (!dlg.getReturnStatus().equals("OK"))
 				return false;
 		}
+		
+		if(ann_opt.CLEAR_EXISTING_ANNOTATIONS){
+			theWorkspace.getAnnotatedPeakList().clear();
+		}
 
 		// create fragmenter
 		Fragmenter frag = new Fragmenter(frag_opt);
@@ -618,6 +622,9 @@ public class AnnotationPlugin implements Plugin, ActionListener {
 		if (ask_options) {
 			AnnotationOptionsDialog dlg = new AnnotationOptionsDialog(
 					theApplication, frag_opt, ann_opt, true, true);
+			
+			dlg.hideClearAnnotationOption();
+			
 			dlg.setVisible(true);
 			if (!dlg.getReturnStatus().equals("OK"))
 				return false;

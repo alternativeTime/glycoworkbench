@@ -161,6 +161,8 @@ public class AnnotationOptionsDialog extends EscapeDialog implements
 				.toString(theAnnotationOptions.MASS_ACCURACY));
 		field_accuracy_unit
 				.setSelectedItem(theAnnotationOptions.MASS_ACCURACY_UNIT);
+		
+		field_clearExistingAnnotations.setSelected(theAnnotationOptions.CLEAR_EXISTING_ANNOTATIONS);
 	}
 
 	private void setTraversal() {
@@ -194,6 +196,8 @@ public class AnnotationOptionsDialog extends EscapeDialog implements
 		tp.addComponent(field_accuracy);
 		tp.addComponent(field_accuracy_unit);
 
+		tp.addComponent(field_clearExistingAnnotations);
+		
 		tp.addComponent(button_ok);
 		tp.addComponent(button_cancel);
 
@@ -220,6 +224,8 @@ public class AnnotationOptionsDialog extends EscapeDialog implements
 
 		button_ok.addActionListener(this);
 		button_cancel.addActionListener(this);
+		
+		field_clearExistingAnnotations.addActionListener(this);
 	}
 
 	private void enableItems() {
@@ -299,6 +305,8 @@ public class AnnotationOptionsDialog extends EscapeDialog implements
 				.getText());
 		theAnnotationOptions.MASS_ACCURACY_UNIT = (String) field_accuracy_unit
 				.getSelectedItem();
+		
+		theAnnotationOptions.CLEAR_EXISTING_ANNOTATIONS = field_clearExistingAnnotations.isSelected();
 	}
 
 	public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -408,6 +416,8 @@ public class AnnotationOptionsDialog extends EscapeDialog implements
 		jSeparator2 = new javax.swing.JSeparator();
 		jSeparator1 = new javax.swing.JSeparator();
 
+		field_clearExistingAnnotations = new javax.swing.JCheckBox();
+		
 		setTitle("Fragment options");
 		addWindowListener(new java.awt.event.WindowAdapter() {
 			public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -497,6 +507,8 @@ public class AnnotationOptionsDialog extends EscapeDialog implements
 		jLabel21.setText("Max ex. Li ions");
 
 		jLabel22.setText("Max ex K ions");
+		
+		field_clearExistingAnnotations.setText("Clear existing annotations");
 
 		field_derive_from_parent.setText("Derive options from parent ion");
 		field_derive_from_parent.setBorder(javax.swing.BorderFactory
@@ -772,7 +784,9 @@ public class AnnotationOptionsDialog extends EscapeDialog implements
 																		.addPreferredGap(
 																				org.jdesktop.layout.LayoutStyle.RELATED)
 																		.add(
-																				button_cancel)))
+																				button_cancel))
+													   .add(org.jdesktop.layout.GroupLayout.LEADING,
+																						field_clearExistingAnnotations))
 										.addContainerGap()));
 
 		layout.linkSize(new java.awt.Component[] { button_cancel, button_ok },
@@ -981,13 +995,15 @@ public class AnnotationOptionsDialog extends EscapeDialog implements
 												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
 										.addPreferredGap(
 												org.jdesktop.layout.LayoutStyle.RELATED)
+												.addPreferredGap(
+												org.jdesktop.layout.LayoutStyle.RELATED)
 										.add(
 												layout
 														.createParallelGroup(
 																org.jdesktop.layout.GroupLayout.BASELINE)
 														.add(button_ok).add(
 																button_cancel))
-										.addContainerGap()));
+										.addContainerGap().add(field_clearExistingAnnotations)));
 		
 		pack();
 	}// </editor-fold>
@@ -1023,6 +1039,7 @@ public class AnnotationOptionsDialog extends EscapeDialog implements
 	private javax.swing.JCheckBox field_xfragments;
 	private javax.swing.JCheckBox field_yfragments;
 	private javax.swing.JCheckBox field_zfragments;
+	private javax.swing.JCheckBox field_clearExistingAnnotations;
 	private javax.swing.JLabel jLabel1;
 	private javax.swing.JLabel jLabel14;
 	private javax.swing.JLabel jLabel15;
@@ -1044,4 +1061,8 @@ public class AnnotationOptionsDialog extends EscapeDialog implements
 	private javax.swing.JSeparator jSeparator2;
 	// End of variables declaration//GEN-END:variables
 
+	public void hideClearAnnotationOption() {
+		field_clearExistingAnnotations.setVisible(false);
+		pack();
+	}
 }

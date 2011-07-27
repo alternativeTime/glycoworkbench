@@ -35,6 +35,7 @@ public class ProfilerOptions {
     public String REDUCING_END = "freeEnd";
     public String OTHER_REDEND_NAME = "";
     public double OTHER_REDEND_MASS = 0.;
+    public boolean CLEAR_EXISTING_ANNOTATIONS=false;
 
     public String LAST_DICT_NAME = "";
     public String LAST_TYPE = "";
@@ -60,7 +61,8 @@ public class ProfilerOptions {
     config.put("ProfilerOptions","last_dict_name",LAST_DICT_NAME);    
     config.put("ProfilerOptions","last_type",LAST_TYPE);    
     config.put("ProfilerOptions","last_source",LAST_SOURCE);    
-    config.put("ProfilerOptions","user_dictionaries_filename",USER_DICTIONARIES_FILENAME,',');    
+    config.put("ProfilerOptions","user_dictionaries_filename",USER_DICTIONARIES_FILENAME,',');
+    config.put("ProfilerOptions","clear_existing_annotations",CLEAR_EXISTING_ANNOTATIONS);
     }
 
     public void retrieve(Configuration config) {
@@ -73,7 +75,8 @@ public class ProfilerOptions {
     LAST_DICT_NAME = config.get("ProfilerOptions","last_dict_name",LAST_DICT_NAME);    
     LAST_TYPE = config.get("ProfilerOptions","last_type",LAST_TYPE);    
     LAST_SOURCE = config.get("ProfilerOptions","last_source",LAST_SOURCE);    
-    USER_DICTIONARIES_FILENAME = config.get("ProfilerOptions","user_dictionaries_filename",USER_DICTIONARIES_FILENAME,',');    
+    USER_DICTIONARIES_FILENAME = config.get("ProfilerOptions","user_dictionaries_filename",USER_DICTIONARIES_FILENAME,',');
+    CLEAR_EXISTING_ANNOTATIONS = config.get("ProfilerOptions","clear_existing_annotations",CLEAR_EXISTING_ANNOTATIONS);
     }
 
 
