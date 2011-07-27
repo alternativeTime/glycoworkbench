@@ -248,10 +248,7 @@ public class ReportingPlugin implements Plugin, ActionListener {
 					PeakData peakData;
 					if(theAnnotationReportOptions.SHOW_COMPLETE_PEAK_LIST){
 						peakData=new PeakData(theWorkspace.getPeakList().getData(),new MMFCreator());
-						
-						LogUtils.report(new Exception("Size: "+theWorkspace.getPeakList().getData()[0].length));
 					}else{
-						LogUtils.report(new Exception("here1"));
 						peakData=dlg.getPeakData();
 					}
 
