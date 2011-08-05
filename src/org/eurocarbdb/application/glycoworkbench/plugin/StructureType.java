@@ -161,6 +161,9 @@ public class StructureType implements FragmentSource {
 
     public Glycan generateStructure(MassOptions mass_opt) throws Exception {    
     Glycan ret = Glycan.fromString(structure,new MassOptions());
+    if(ret==null){
+    	return null;
+    }
     ret.setMassOptions(mass_opt);
     return ret;
     }
