@@ -55,7 +55,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.help.HelpSet;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
@@ -174,9 +173,6 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	protected ActionManager theActionManager;
 	protected ActionManager theActionManager2;
 	protected RibbonManager ribbonManager;
-
-	protected HelpSet theHelpSet;
-
 	// graphical objects
 	protected JMenuBar theMenuBar;
 	protected JToolBar theToolBarFile;

@@ -59,6 +59,7 @@ public class SearchDialog extends JRibbonFrame implements ActionListener,
 	private String return_source = "";
 	private boolean include_redend = false;
 	private boolean include_all_leafs = false;
+	private boolean fuzzy=false;
 	protected String return_status;
 	protected Runnable run;
 	
@@ -107,6 +108,10 @@ public class SearchDialog extends JRibbonFrame implements ActionListener,
 	public boolean getIncludeAllLeafs() {
 		return include_all_leafs;
 	}
+	
+	public boolean getFuzzy(){
+		return fuzzy;
+	}
 
 	public StructureDictionary getDatabase() {
 		return return_database;
@@ -130,7 +135,7 @@ public class SearchDialog extends JRibbonFrame implements ActionListener,
 		return_structure = s;
 	}
 
-	public String getType() {
+	public String getStructureType() {
 		return return_type;
 	}
 
@@ -191,6 +196,7 @@ public class SearchDialog extends JRibbonFrame implements ActionListener,
 		tp.addComponent(button_search);
 		tp.addComponent(button_search_core);
 		tp.addComponent(button_search_terminal);
+		tp.addComponent(button_search_fuzzy);
 		tp.addComponent(button_cancel);
 
 		this.setFocusTraversalPolicy(tp);
@@ -202,7 +208,22 @@ public class SearchDialog extends JRibbonFrame implements ActionListener,
 		button_search.addActionListener(this);
 		button_search_core.addActionListener(this);
 		button_search_terminal.addActionListener(this);
+		button_search_fuzzy.addActionListener(this);
 		button_cancel.addActionListener(this);
+		
+		field_database.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				if(theProfiler.getDictionary((String) field_database
+						.getSelectedItem()).isWggds()){
+					field_source.setEnabled(false);
+					field_type.setEnabled(false);
+				}else{
+					field_source.setEnabled(true);
+					field_type.setEnabled(true);
+				}
+			}
+		});
 	}
 
 	// Listeners
@@ -227,28 +248,32 @@ public class SearchDialog extends JRibbonFrame implements ActionListener,
 
 		if (action.equals("Search")) {
 			retrieveData();
-			include_redend = false;
-			include_all_leafs = false;
+			//include_redend = false;
+			//include_all_leafs = false;
 			return_status = "OK";
 			//closeDialog();
+			run.run();
 		} else if (action.equals("Search core")) {
-			retrieveData();
-			include_redend = true;
-			include_all_leafs = false;
-			return_status = "OK";
+			//retrieveData();
+			include_redend = button_search_core.isSelected();
+			//include_all_leafs = false;
+			//return_status = "OK";
 			//closeDialog();
 		} else if (action.equals("Search terminal")) {
-			retrieveData();
-			include_redend = false;
-			include_all_leafs = true;
-			return_status = "OK";
+			//retrieveData();
+			//include_redend = false;
+			include_all_leafs = button_search_terminal.isSelected();;
+			//return_status = "OK";
 			//closeDialog();
 		} else if (action.equals("Cancel")) {
 			return_status = "Cancel";
+			run.run();
 			//closeDialog();
+		} else if(action.equals("Search fuzzy")){
+			fuzzy=button_search_fuzzy.isSelected();
 		}
 		
-		run.run();
+		
 	}
 
 	public void mouseEntered(MouseEvent e) {
@@ -291,8 +316,9 @@ public class SearchDialog extends JRibbonFrame implements ActionListener,
 		jLabel2 = new javax.swing.JLabel();
 		field_type = new javax.swing.JTextField();
 		jSeparator1 = new javax.swing.JSeparator();
-		button_search_core = new javax.swing.JButton();
-		button_search_terminal = new javax.swing.JButton();
+		button_search_core = new javax.swing.JCheckBox();
+		button_search_terminal = new javax.swing.JCheckBox();
+		button_search_fuzzy = new javax.swing.JCheckBox();
 		button_search = new javax.swing.JButton();
 		button_cancel = new javax.swing.JButton();
 		jLabel3 = new javax.swing.JLabel();
@@ -325,6 +351,10 @@ public class SearchDialog extends JRibbonFrame implements ActionListener,
 		button_search_core.setText("Search core");
 
 		button_search_terminal.setText("Search terminal");
+		
+		button_search_fuzzy.setText("Search fuzzy");
+		
+		button_search_fuzzy.setSelected(true);
 
 		button_search.setText("Search");
 
@@ -402,6 +432,10 @@ public class SearchDialog extends JRibbonFrame implements ActionListener,
 																				org.jdesktop.layout.LayoutStyle.RELATED)
 																		.add(
 																				button_search_terminal)
+																		.addPreferredGap(
+																				org.jdesktop.layout.LayoutStyle.RELATED)
+																		.add(
+																				button_search_fuzzy)
 																		.addPreferredGap(
 																				org.jdesktop.layout.LayoutStyle.RELATED)
 																		.add(
@@ -488,6 +522,8 @@ public class SearchDialog extends JRibbonFrame implements ActionListener,
 														.add(button_search_core)
 														.add(
 																button_search_terminal)
+													    .add(
+																button_search_fuzzy)
 														.add(button_search)
 														.add(button_cancel))
 										.addContainerGap(
@@ -506,8 +542,9 @@ public class SearchDialog extends JRibbonFrame implements ActionListener,
 	// Variables declaration - do not modify//GEN-BEGIN:variables
 	private javax.swing.JButton button_cancel;
 	private javax.swing.JButton button_search;
-	private javax.swing.JButton button_search_core;
-	private javax.swing.JButton button_search_terminal;
+	private javax.swing.JCheckBox button_search_core;
+	private javax.swing.JCheckBox button_search_terminal;
+	private javax.swing.JCheckBox button_search_fuzzy;
 	private javax.swing.JComboBox field_database;
 	private javax.swing.JTextField field_source;
 	private javax.swing.JTextField field_type;
