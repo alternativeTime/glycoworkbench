@@ -550,7 +550,7 @@ public class DictionariesEditPanel extends TablePanel<ProfilerPlugin> implements
             if( dlg.getReturnStatus().equals("Cancel") )
             return ;
            
-            if( current_dictionary.addAll(topaste,dlg.getType(),dlg.getSource()) ) 
+            if( current_dictionary.addAll(topaste,dlg.getStructureType(),dlg.getSource()) ) 
             current_dictionary.save();    
         }
             }        

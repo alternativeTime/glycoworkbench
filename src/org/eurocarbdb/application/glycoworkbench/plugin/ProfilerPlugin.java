@@ -156,10 +156,10 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 			addDictionary(new StructureDictionary("/conf/glycomedb_dict.gwd",
 					false, null));
 			
-//			StructureDictionary cfgWggds=new StructureDictionary();
-//			cfgWggds.setUri("http://togows2.dbcls.jp/wggds/kegg-glycan/");
-//			
-//			addDictionary(cfgWggds);
+			StructureDictionary iggWggds=new StructureDictionary("IGG (WGGDS)");
+			iggWggds.setUri("http://localhost:8080/Wggds-IGG/Temp/");
+
+			addDictionary(iggWggds);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -804,7 +804,7 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 			return false;
 
 		// store
-		if (dict.addAll(tostore, dlg.getType(), dlg.getSource())) {
+		if (dict.addAll(tostore, dlg.getStructureType(), dlg.getSource())) {
 			try {
 				dict.save();
 				return true;
@@ -930,7 +930,9 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 							query.setCompleteInformation(CompleteInformation.Complete);
 							query.setFormat(OutputFormat.XML);
 							query.setSequence(glydeParser.writeGlycan(dlg.getStructure()));
-							query.setExactMatch(false);
+							query.setExactMatch(!dlg.getFuzzy());
+							query.setReducingEnd(dlg.getIncludeRedEnd());
+							query.setTerminal(dlg.getIncludeAllLeafs());
 							
 							List<QueryResult> queryResults=query.runQuery(dlg.getDatabase().getUri());
 							for(QueryResult queryResult:queryResults){
@@ -951,10 +953,11 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 							// init parameters
 							MassOptions mass_opt = new MassOptions();
 							Glycan structure = dlg.getStructure();
-							String type = dlg.getType().toLowerCase();
+							String type = dlg.getStructureType().toLowerCase();
 							String source = dlg.getSource().toLowerCase();
 							boolean include_redend = dlg.getIncludeRedEnd();
 							boolean include_all_leafs = dlg.getIncludeAllLeafs();
+							boolean fuzzy=dlg.getFuzzy();
 							structure.setMassOptions(mass_opt);
 
 							// filter entries
@@ -964,7 +967,7 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 								for (StructureType st : entries) {
 									Glycan s = st.generateStructure(mass_opt);
 									if ((structure.isEmpty() || s.contains(structure,
-											include_redend, include_all_leafs))
+											include_redend, include_all_leafs,fuzzy))
 											&& (type.length() == 0 || st.type
 													.toLowerCase().indexOf(type) != -1)
 											&& (source.length() == 0 || st.source

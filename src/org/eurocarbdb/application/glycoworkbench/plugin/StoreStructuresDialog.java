@@ -164,7 +164,7 @@ public class StoreStructuresDialog extends EscapeDialog implements ActionListene
     return dict_name;
     }
 
-    public String getType() {
+    public String getStructureType() {
     return type;
     }
 
