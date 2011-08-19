@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<StructureDictionary name="Glycosciences">
+<?xml version="1.0" encoding="UTF-8"?><StructureDictionary name="Glycosciences">
 <StructureType database="Glycosciences" source="unknown" structure="freeEnd--?b1D-Glc,p(--3b1D-Glc,p)--6b1D-Glc,p--6b1D-Glc,p(--3b1D-Glc,p)--6b1D-Glc,p--6b1D-Glc,p(--3b1D-Glc,p)--6b1D-Glc,p$MONO,perMe,Na,0,freeEnd" type="unknown"/>
 <StructureType database="Glycosciences" source="unknown" structure="freeEnd--?b1D-Glc,p(--3b1D-Glc,p)--6b1D-Glc,p--6b1D-Glc,p(--3b1D-Glc,p)--6b1D-Glc,p$MONO,perMe,Na,0,freeEnd" type="unknown"/>
 <StructureType database="Glycosciences" source="unknown" structure="freeEnd--?D-Glc--6b1D-Glc,p(--3b1D-Glc,p)--6b1D-Glc,p--6b1D-Glc,p(--3b1D-Glc,p)--6b1D-Glc,p--6b1D-Glc,p(--3b1D-Glc,p)--6b1D-Glc,p$MONO,perMe,Na,0,freeEnd" type="unknown"/>

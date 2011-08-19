@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<StructureDictionary name="CFG">
+<?xml version="1.0" encoding="UTF-8"?><StructureDictionary name="CFG">
 <StructureType database="CFG" source="unknown" structure="freeEnd--??1D-GlcNAc,p(--4b1D-GlcNAc,p--4b1D-Man,p((--3a1D-Man,p(--2b1D-GlcNAc,p(--3a1L-Fuc,p)--4b1D-Gal,p--3/6a2D-NeuGc,p--8a2D-NeuGc,p)--4b1D-GlcNAc,p)--4b1D-GlcNAc,p)--6a1D-Man,p(--2b1D-GlcNAc,p)--6b1D-GlcNAc,p)--6a1L-Fuc,p$MONO,perMe,Na,0,freeEnd" type="n-linked"/>
 <StructureType database="CFG" source="unknown" structure="freeEnd--??1D-GlcNAc,p--4b1D-GlcNAc,p--4b1D-Man,p(--3a1D-Man,p(--2b1D-GlcNAc,p(--3a1L-Fuc,p)--4b1D-Gal,p--3/6a2D-NeuAc,p--8a2D-NeuAc,p)--4b1D-GlcNAc,p)--6a1D-Man,p(--2b1D-GlcNAc,p)--6b1D-GlcNAc,p$MONO,perMe,Na,0,freeEnd" type="n-linked"/>
 <StructureType database="CFG" source="unknown" structure="freeEnd--??1D-GlcNAc,p--4b1D-GlcNAc,p--4b1D-Man,p(--3a1D-Man,p(--2b1D-GlcNAc,p--4b1D-Gal,p--3b1D-GlcNAc,p--4b1D-Gal,p--3a1D-Gal,p)--4b1D-GlcNAc,p--4b1D-Gal,p--3/6a2D-NeuAc,p)--6a1D-Man,p(--3a1D-Man,p)--6a1D-Man,p$MONO,perMe,Na,0,freeEnd" type="n-linked"/>
