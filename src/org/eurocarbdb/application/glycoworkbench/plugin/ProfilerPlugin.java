@@ -156,10 +156,10 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 			addDictionary(new StructureDictionary("/conf/glycomedb_dict.gwd",
 					false, null));
 			
-			StructureDictionary iggWggds=new StructureDictionary("IGG (WGGDS)");
-			iggWggds.setUri("http://localhost:8080/Wggds-IGG/Temp/");
-
-			addDictionary(iggWggds);
+//			StructureDictionary iggWggds=new StructureDictionary("IGG (WGGDS)");
+//			iggWggds.setUri("http://localhost:8080/Wggds-IGG/Temp/");
+//
+//			addDictionary(iggWggds);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
