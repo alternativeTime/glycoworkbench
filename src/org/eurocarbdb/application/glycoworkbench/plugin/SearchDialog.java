@@ -59,7 +59,7 @@ public class SearchDialog extends JRibbonFrame implements ActionListener,
 	private String return_source = "";
 	private boolean include_redend = false;
 	private boolean include_all_leafs = false;
-	private boolean fuzzy=false;
+	private boolean fuzzy=true;
 	protected String return_status;
 	protected Runnable run;
 	

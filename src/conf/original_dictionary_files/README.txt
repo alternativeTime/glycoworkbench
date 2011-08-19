@@ -1,0 +1,1 @@
+org.eurocarbdb.application.glycoworkbench.GWDValidator has been run on the files within this directory.  The output of this script has been placed in the directory above this one.  Note that this script removes any sequences that throw an exception when they are parsed by the GWSParser.  At the moment the only sequences that are removed are those with nested repeat units.
