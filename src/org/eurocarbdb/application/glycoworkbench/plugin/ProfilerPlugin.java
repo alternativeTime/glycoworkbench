@@ -922,7 +922,7 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 					entries = theDictionariesSearchPanel.getData();
 				}else{
 					Collection<StructureType> found = new Vector<StructureType>();
-					if(dlg.getDatabase().isWggds()){
+					if(dlg.getDatabase().isWggds() && (dlg.getDatabase().size()==0 || (dlg.getDatabase().size()>1 && dlg.getDatabase().isLiveSearch()))){
 						try {
 							GlycanParser glydeParser=GlycanParserFactory.getParser(CarbohydrateSequenceEncoding.glyde.getId());
 							
