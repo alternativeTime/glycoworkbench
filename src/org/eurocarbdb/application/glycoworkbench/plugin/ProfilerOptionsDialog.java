@@ -81,7 +81,7 @@ public class ProfilerOptionsDialog extends EscapeDialog implements java.awt.even
         field_dictionaries.addSelectionInterval(ind,ind);
     }        
     
-    field_derivatization.setModel(new javax.swing.DefaultComboBoxModel(new String[] {MassOptions.NO_DERIVATIZATION, MassOptions.PERMETHYLATED, MassOptions.PERDMETHYLATED, MassOptions.PERACETYLATED, MassOptions.PERDACETYLATED}));
+    field_derivatization.setModel(new javax.swing.DefaultComboBoxModel(new String[] {MassOptions.NO_DERIVATIZATION, MassOptions.PERMETHYLATED, MassOptions.PERDMETHYLATED, MassOptions.HEAVYPERMETHYLATION, MassOptions.PERACETYLATED, MassOptions.PERDACETYLATED}));
     field_derivatization.setSelectedItem(opt.DERIVATIZATION);
     
     field_reducingend.setModel(new javax.swing.DefaultComboBoxModel(new Union<String>().and("---").and(ResidueDictionary.getReducingEndsString()).and("Other...").toArray(new String[0])));

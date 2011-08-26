@@ -162,7 +162,7 @@ public class GAGOptionsDialog extends EscapeDialog implements java.awt.event.Act
     field_reduced.setSelected(gag_opt.IS_REDUCED);
     field_unsaturated.setSelected(gag_opt.IS_UNSATURATED);
 
-    field_derivatization.setModel(new javax.swing.DefaultComboBoxModel(new String[] {MassOptions.NO_DERIVATIZATION, MassOptions.PERMETHYLATED, MassOptions.PERDMETHYLATED, MassOptions.PERACETYLATED, MassOptions.PERDACETYLATED}));
+    field_derivatization.setModel(new javax.swing.DefaultComboBoxModel(new String[] {MassOptions.NO_DERIVATIZATION, MassOptions.PERMETHYLATED, MassOptions.PERDMETHYLATED, MassOptions.HEAVYPERMETHYLATION ,MassOptions.PERACETYLATED, MassOptions.PERDACETYLATED}));
     field_derivatization.setSelectedItem(gag_opt.DERIVATIZATION);
 
     field_modifications.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);                   
