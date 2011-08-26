@@ -23,9 +23,15 @@
 
 package org.eurocarbdb.application.glycoworkbench.plugin;
 
+import org.eurocarbdb.MolecularFramework.io.CarbohydrateSequenceEncoding;
 import org.eurocarbdb.application.glycanbuilder.*;
 
 import org.eurocarbdb.application.glycoworkbench.*;
+import org.wggds.webservices.io.data.BiologicalContext;
+import org.wggds.webservices.io.data.CompleteInformation;
+import org.wggds.webservices.io.data.OutputFormat;
+import org.wggds.webservices.io.data.QueryResult;
+import org.wggds.webservices.io.query.SubstructureQuery;
 
 import java.io.*;
 import javax.swing.*;
@@ -37,6 +43,7 @@ import java.awt.*;
 import java.awt.image.*;
 import java.awt.event.*;
 import java.util.*;
+import java.util.List;
 import java.text.*;
 import java.awt.print.*;
 
@@ -94,6 +101,9 @@ public class DictionariesManagerPanel extends SortingTablePanel<ProfilerPlugin> 
     theActionManager.add("open",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.DOCUMENT_OPEN, Plugin.DEFAULT_ICON_SIZE),"Open existing dictionary",KeyEvent.VK_O, "",this);
     theActionManager.add("delete",GlycoWorkbench.getDefaultThemeManager().getResizableIcon("deleteNew", Plugin.DEFAULT_ICON_SIZE),"Delete selected dictionary",KeyEvent.VK_DELETE, "",this);
     theActionManager.add("edit",FileUtils.defaultThemeManager.getImageIcon("edit"),"Edit selected dictionary",KeyEvent.VK_E, "",this);
+    theActionManager.add("setwggdsurl",FileUtils.defaultThemeManager.getImageIcon("wggds_logo_260"),"Edit WGGDS URL",KeyEvent.VK_M, "",this);
+    theActionManager.add("wggdssync",FileUtils.defaultThemeManager.getImageIcon("wggds_logo_260"),"Sync",KeyEvent.VK_M, "",this);
+    theActionManager.add("wggdsearchlive",FileUtils.defaultThemeManager.getImageIcon("wggds_logo_260"),"Search live",KeyEvent.VK_M, "",this);
     }
 
     protected void updateActions() {    
@@ -102,6 +112,20 @@ public class DictionariesManagerPanel extends SortingTablePanel<ProfilerPlugin> 
 
     theActionManager.get("delete").setEnabled(writeable);
     theActionManager.get("edit").setEnabled(has_selection);
+    theActionManager.get("setwggdsurl").setEnabled(has_selection);
+    
+    if(has_selection){
+    	StructureDictionary dict=getSelectedDictionary();
+    	theActionManager.get("wggdssync").setEnabled(dict.isWggds());
+        theActionManager.get("wggdsearchlive").setEnabled(dict.isWggds());
+        
+        theActionManager.get("wggdsearchlive").setSelected(dict.isLiveSearch());
+    }else{
+    	theActionManager.get("wggdssync").setEnabled(false);
+        theActionManager.get("wggdsearchlive").setEnabled(false);
+    }
+    
+    
     }  
 
     private JToolBar createToolBar() {
@@ -115,16 +139,50 @@ public class DictionariesManagerPanel extends SortingTablePanel<ProfilerPlugin> 
 
     toolbar.add(theActionManager.get("delete"));
     toolbar.add(theActionManager.get("edit"));
+    toolbar.add(theActionManager.get("setwggdsurl"));
+    toolbar.add(theActionManager.get("wggdssync"));
+    toolbar.add(theActionManager.get("wggdsearchlive").getJCheckBox("Search Live", false, new ActionListener(){
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			StructureDictionary dict=getSelectedDictionary();
+			if(dict!=null){
+				dict.setLiveSearch(((JCheckBox) arg0.getSource()).isSelected());
+			}
+			
+			dict.save();
+			
+			updateActions();
+		}
+    }));
     
     return toolbar;
     }
 
     protected JPopupMenu createPopupMenu() {
 
-    JPopupMenu menu = new JPopupMenu();
+    final JPopupMenu menu = new JPopupMenu();
 
     menu.add(theActionManager.get("delete"));
     menu.add(theActionManager.get("edit"));
+    menu.add(theActionManager.get("setwggdsurl"));
+    menu.add(theActionManager.get("wggdssync"));
+    menu.add(theActionManager.get("wggdsearchlive").getJCheckBox("Search Live", false, new ActionListener(){
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			StructureDictionary dict=getSelectedDictionary();
+			
+			if(dict!=null){
+				dict.setLiveSearch(((JCheckBox) arg0.getSource()).isSelected());
+			}
+			
+			menu.setVisible(false);
+			
+			dict.save();
+			
+			updateActions();
+		}
+    }));
 
     return menu;
     }
@@ -306,10 +364,60 @@ public class DictionariesManagerPanel extends SortingTablePanel<ProfilerPlugin> 
     else if( action.equals("delete") ) 
         removeSelectedDatabase();    
     else if( action.equals("edit") ) 
-        editSelectedDatabase();        
+        editSelectedDatabase();
+    else if( action.equals("setwggdsurl"))
+    	setWggdsUrl();
+    else if( action.equals("wggdssync"))
+    	wggdsSync();
+    	
     
     updateActions();
-     }  
+     }
+    
+    public void setWggdsUrl(){
+    	StructureDictionary selected=getSelectedDictionary();
+    	String url=JOptionPane.showInputDialog(this,"Set WGGDS URI",selected.getUri());
+        if(url==null || url.length()==0){
+        	return;
+        }else{
+        	selected.setUri(url);
+        }
+        
+        selected.save();
+    }
+    
+    public void wggdsSync(){
+    	try{
+    		StructureDictionary dict=getSelectedDictionary();
+    		SubstructureQuery query=new SubstructureQuery();
+    		query.setCompleteInformation(CompleteInformation.Complete);
+    		query.setFormat(OutputFormat.XML);
+    		query.setSequence("");
+
+    		GlycanParser glydeParser=GlycanParserFactory.getParser(CarbohydrateSequenceEncoding.glyde.getId());
+    		List<QueryResult> queryResults=query.runQuery(dict.getUri());
+    		for(QueryResult queryResult:queryResults){
+    			if(queryResult.getBiologicalSource()==null || queryResult.getBiologicalSource().size()==0){
+    				try{
+    					dict.add(new StructureType(glydeParser.readGlycan(queryResult.getSequence(), new MassOptions())));
+    				}catch(Exception e){
+    					e.printStackTrace();
+    				}
+    			}else{
+    				for(BiologicalContext context:queryResult.getBiologicalSource()){
+    					StructureType type=new StructureType(glydeParser.readGlycan(queryResult.getSequence(), new MassOptions()));
+    					type.setSource(context.getTaxonomyName());
+    					
+    					dict.add(type);
+    				}
+    			}
+    		}
+    		
+    		dict.save();
+    	} catch (Exception e) {
+			LogUtils.report(e);
+		}
+    }
 
     public void dictionariesChanged(ProfilerPlugin.DictionariesChangeEvent e) {
     updateView();

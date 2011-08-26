@@ -942,7 +942,6 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 									e.printStackTrace();
 								}
 							}
-							
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
