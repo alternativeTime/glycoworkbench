@@ -116,6 +116,8 @@ public class FragmentDetailsPanel extends SortingTablePanel<FragmentDocument> im
 
     theActionManager.add("filterselection",FileUtils.defaultThemeManager.getImageIcon(""),"Show only selected fragments",-1, "",this);
     theActionManager.add("showallrows",FileUtils.defaultThemeManager.getImageIcon(""),"Show all fragments",-1, "",this);
+    
+    theActionManager.add("copy_to_peak_list", GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.COPY, Plugin.DEFAULT_ICON_SIZE), "Copy m/z values to peak list",KeyEvent.VK_M, "",this);
     }
 
     protected void updateActions() {
@@ -155,6 +157,7 @@ public class FragmentDetailsPanel extends SortingTablePanel<FragmentDocument> im
     toolbar.add(theActionManager.get("open"));    
     toolbar.add(theActionManager.get("save"));
     toolbar.add(theActionManager.get("saveas"));
+    toolbar.add(theActionManager.get("copy_to_peak_list"));
 
     toolbar.addSeparator();
 
@@ -452,6 +455,8 @@ public class FragmentDetailsPanel extends SortingTablePanel<FragmentDocument> im
         theApplication.onSave(theDocument);
     else if( action.equals("saveas") )
         theApplication.onSaveAs(theDocument);
+    else if( action.equals("copy_to_peak_list"))
+    	copyToPeakList();
 
 
     /*else if( action.equals("undo") )
@@ -488,5 +493,16 @@ public class FragmentDetailsPanel extends SortingTablePanel<FragmentDocument> im
     }   
 
    
+    public void copyToPeakList(){
+    	PeakList peakList=theWorkspace.getPeakList();
+    	Collection<FragmentEntry> fragmentList=getSelectedFragments();
+    	if(fragmentList.size()==0){
+    		FragmentCollection fragmentCollection=getCurrentFragments();
+    		fragmentList=fragmentCollection.getFragments();
+    	}
+    	
+    	for(FragmentEntry fragmentEntry:fragmentList){
+    		peakList.add(new Peak(fragmentEntry.getMZ(),1));
+    	}
+    }
 }
-
