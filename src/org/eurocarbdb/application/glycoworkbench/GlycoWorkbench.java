@@ -41,12 +41,17 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.print.PrinterJob;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -55,6 +60,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
@@ -68,6 +75,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -77,12 +85,15 @@ import javax.swing.filechooser.FileFilter;
 import org.apache.tools.ant.launch.Locator;
 import org.eurocarbdb.application.glycanbuilder.ActionManager;
 import org.eurocarbdb.application.glycanbuilder.BaseDocument;
+import org.eurocarbdb.application.glycanbuilder.BuilderWorkspace;
 import org.eurocarbdb.application.glycanbuilder.Configuration;
 import org.eurocarbdb.application.glycanbuilder.Context;
 import org.eurocarbdb.application.glycanbuilder.ContextAwareContainer;
 import org.eurocarbdb.application.glycanbuilder.CoreDictionary;
 import org.eurocarbdb.application.glycanbuilder.CoreType;
+import org.eurocarbdb.application.glycanbuilder.DictionaryConfiguration;
 import org.eurocarbdb.application.glycanbuilder.ExtensionFileFilter;
+import org.eurocarbdb.application.glycanbuilder.FileConstants;
 import org.eurocarbdb.application.glycanbuilder.FileHistory;
 import org.eurocarbdb.application.glycanbuilder.FileUtils;
 import org.eurocarbdb.application.glycanbuilder.GlycanAction;
@@ -96,6 +107,7 @@ import org.eurocarbdb.application.glycanbuilder.LogUtils;
 import org.eurocarbdb.application.glycanbuilder.Monitor;
 import org.eurocarbdb.application.glycanbuilder.MouseUtils;
 import org.eurocarbdb.application.glycanbuilder.NotationChangeListener;
+import org.eurocarbdb.application.glycanbuilder.ResidueDictionary;
 import org.eurocarbdb.application.glycanbuilder.STOCK_ICON;
 import org.eurocarbdb.application.glycanbuilder.SVGUtils;
 import org.eurocarbdb.application.glycanbuilder.ThemeManager;
@@ -390,6 +402,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		initImportMenu();
 		initAboutAppMenuItem();
 		initOthersMenu();
+		initSettingsMenu();
 
 		createFileBand();
 
@@ -1197,67 +1210,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 					}
 				}, CommandButtonKind.ACTION_ONLY);
 
-		// final GlycoWorkbench self = this;
-
-		// saveItem
-		// .setRolloverCallback(new
-		// RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {
-		// @Override
-		// public void menuEntryActivated(JPanel targetPanel) {
-		// targetPanel.removeAll();
-		// ICON_SIZE iconSize = ICON_SIZE.L3;
-		// JCommandButtonPanel openTypes = new JCommandButtonPanel(
-		// CommandButtonDisplayState.MEDIUM);
-		//
-		// for (String superclass : CoreDictionary
-		// .getSuperclasses()) {
-		// Collection<CoreType> core_types = CoreDictionary
-		// .getCores(superclass);
-		// if (core_types.size() > 0) {
-		// openTypes.addButtonGroup(superclass);
-		// for (CoreType core_type : core_types) {
-		// JCommandButtonAction button = new JCommandButtonAction(
-		// core_type.getName(),
-		// ImageWrapperResizableIcon
-		// .getIcon(
-		// theCanvas
-		// .getGlycanRenderer()
-		// .getImage(
-		// Glycan
-		// .fromString(core_type
-		// .getStructure()),
-		// false,
-		// false,
-		// false),
-		// new Dimension(
-		// iconSize
-		// .getSize(),
-		// iconSize
-		// .getSize())));
-		// button
-		// .setHorizontalAlignment(SwingUtilities.LEFT);
-		// button.setActionCommand("new="
-		// + core_type.getName());
-		// button.addActionListener(self);
-		// openTypes.addButtonToLastGroup(button);
-		// }
-		// }
-		// }
-		//
-		// openTypes.setMaxButtonColumns(2);
-		// openTypes.setMaxButtonRows(2);
-		//
-		// JScrollPane scrollPane = new JScrollPane(openTypes);
-		// scrollPane.setSize(targetPanel.getSize());
-		//
-		// targetPanel.setLayout(new BorderLayout());
-		// targetPanel.add(scrollPane, BorderLayout.CENTER);
-		//
-		// }
-		// });
-
 		applicationMenu.addMenuEntry(saveItem);
-
 	}
 
 	public void initOthersMenu() {
@@ -1301,6 +1254,118 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		this.applicationMenu.addMenuEntry(quitItem);
 
 	}
+	
+	public void initSettingsMenu() {
+		RibbonApplicationMenuEntryPrimary settingsItem = new RibbonApplicationMenuEntryPrimary(
+						themeManager.getResizableIcon("export", ICON_SIZE.L7)
+								.getResizableIcon(), "Settings", null,
+						CommandButtonKind.ACTION_AND_POPUP_MAIN_POPUP);
+		
+		final GlycoWorkbench self=this;
+		
+		settingsItem.setRolloverCallback(new RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {
+			@Override
+			public void menuEntryActivated(JPanel targetPanel) {
+				targetPanel.removeAll();
+				//targetPanel.setLayout(new BorderLayout());
+				
+				JPanel panel=new JPanel();
+				//panel.setLayout(new GridLayout(0,1));
+				panel.setLayout(new BoxLayout(panel,BoxLayout.PAGE_AXIS));
+				
+				for(String dictionaryKey:DictionaryConfiguration.getDictionaryNameList()){
+					panel.add(createCustomGlycanBuilderResourcePanel(dictionaryKey,DictionaryConfiguration.getDefaultDictionaryFile(dictionaryKey)));
+				}
+				
+				panel.setSize(new Dimension(targetPanel.getWidth(),100));
+				
+				JScrollPane scrollPanel = new JScrollPane(panel);
+				scrollPanel.setSize(targetPanel.getSize());
+				targetPanel.add(scrollPanel);
+			}
+		});
+		
+		applicationMenu.addMenuEntry(settingsItem);
+	}
+	
+	private JPanel createCustomGlycanBuilderResourcePanel(final String configKey,final String resource){
+		JPanel panel=new JPanel();
+		panel.setLayout(new GridLayout(1,3));
+		
+		JLabel label=new JLabel(resource);
+		panel.add(label);
+		
+		final JTextField fileInputBox=new JTextField(getWorkspace().getDictionaryConfig().getDictionaryFile(configKey));
+		fileInputBox.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				theWorkspace.getDictionaryConfig().setDictionaryFile(configKey, fileInputBox.getText());
+			}
+		});
+		
+		JButton fileChooserButton=new JButton("Open");
+		
+		final JFileChooser fileChooser=new JFileChooser();
+		
+		final GlycoWorkbench self=this;
+		
+		fileChooserButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				int returnValue=fileChooser.showDialog(self, "Create");
+				
+				if(returnValue==JFileChooser.APPROVE_OPTION){
+					String selectedFileName=fileChooser.getSelectedFile().getPath();
+					
+					if(new File(selectedFileName).exists()){
+						int value=JOptionPane.showConfirmDialog(self, "Use selected file without overwriting?", "File exists warning", JOptionPane.YES_NO_CANCEL_OPTION);
+						if(value==JOptionPane.NO_OPTION){
+							value=JOptionPane.showConfirmDialog(self, "Overwrite existing file?", "File exists warning", JOptionPane.YES_NO_CANCEL_OPTION);
+							if(value!=JOptionPane.YES_OPTION){
+								return;
+							}
+						}else if(value==JOptionPane.CANCEL_OPTION){
+							return;
+						}
+					}
+					
+					try{
+						BufferedReader is;
+						if(resource.startsWith("http")){
+							URLConnection conn=new URL(resource).openConnection();
+							is=new BufferedReader(new InputStreamReader(conn.getInputStream()));
+						}else{
+							// open file
+							java.net.URL file_url = BuilderWorkspace.getResource(resource);
+							if( file_url==null )
+								throw new FileNotFoundException(resource);
+							is = new BufferedReader(new InputStreamReader(file_url.openStream()));
+						}
+						
+						FileWriter writer=new FileWriter(selectedFileName);
+						
+						String line;
+						while((line=is.readLine())!=null){
+							writer.write(line+"\n");
+						}
+						
+						writer.flush();
+						writer.close();
+					}catch(Exception ex){
+						LogUtils.report(ex);
+					}
+					
+					theWorkspace.getDictionaryConfig().setDictionaryFile(configKey, selectedFileName);
+				}
+			}
+		});
+		
+		panel.add(fileInputBox);
+		panel.add(fileChooserButton);
+		
+		return panel;
+	}
+	
 
 	private JCheckBox exportRedEndCheckBox;
 	private JCheckBox exportMassesCheckBox;
