@@ -1290,7 +1290,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 					//dialog.pack();
 
 				}
-			},CommandButtonKind.ACTION_AND_POPUP_MAIN_POPUP);
+			},CommandButtonKind.ACTION_ONLY);
 		
 		applicationMenu.addMenuEntry(settingsItem);
 	}
@@ -1304,6 +1304,16 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		
 		
 		final JTextField fileInputBox=new JTextField(getWorkspace().getDictionaryConfig().getDictionaryFile(configKey));
+		
+		
+		fileInputBox.setPreferredSize(new Dimension(200,25));
+		fileInputBox.setCaretPosition(0);
+		
+		JButton fileChooserButton=new JButton("Create custom");
+		JButton fileOpenButton=new JButton("Open");
+		JButton restoreButton=new JButton("Restore");
+		final JButton editButton=new JButton("Edit");
+		
 		fileInputBox.getDocument().addDocumentListener(new DocumentListener(){
 
 			@Override
@@ -1323,16 +1333,9 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 			
 			public void update(){
 				theWorkspace.getDictionaryConfig().setDictionaryFile(configKey, fileInputBox.getText());
+				editButton.setEnabled(!theWorkspace.getDictionaryConfig().isDefault(configKey));
 			}
 		});
-		
-		fileInputBox.setPreferredSize(new Dimension(200,25));
-		fileInputBox.setCaretPosition(0);
-		
-		JButton fileChooserButton=new JButton("Create custom");
-		JButton fileOpenButton=new JButton("Open");
-		JButton restoreButton=new JButton("Restore");
-		final JButton editButton=new JButton("Edit");
 		
 		final JFileChooser fileChooser=new JFileChooser();
 		
@@ -1408,7 +1411,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 				
 				fileInputBox.setText(defaultDictionary);
 				theWorkspace.getDictionaryConfig().setDictionaryFile(configKey, defaultDictionary);
-				editButton.setEnabled(true);
+				editButton.setEnabled(!theWorkspace.getDictionaryConfig().isDefault(configKey));
 			}
 		});
 		
