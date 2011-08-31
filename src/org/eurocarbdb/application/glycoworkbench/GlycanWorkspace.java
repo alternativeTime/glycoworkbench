@@ -785,5 +785,8 @@ public class GlycanWorkspace extends BuilderWorkspace implements
 		
 		th.endElement("", "", "GlycanWorkspace");
 	}
-
+	
+	public Configuration getConfiguration(){
+		return theConfiguration;
+	}
 }
