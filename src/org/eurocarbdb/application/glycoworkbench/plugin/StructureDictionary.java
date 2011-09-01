@@ -40,6 +40,7 @@ public class StructureDictionary extends BaseDocument {
 	
 	private boolean isWggds=false;
 	private String uri;
+	private boolean liveSearch=false;
 	
 	// ---- init
 
@@ -271,9 +272,11 @@ public class StructureDictionary extends BaseDocument {
 			// write to tmp file
 			File tmpfile = File.createTempFile("gwb", null);
 			write(new FileOutputStream(tmpfile));
+			
+		//	LogUtils.report(new Exception("Hello: "+_filename+"|"+tmpfile.getPath()));
 
 			// copy to dest file and delete tmp file
-			FileUtils.copy(tmpfile, new File(filename));
+			FileUtils.copy(tmpfile, new File(_filename));
 			tmpfile.delete();
 
 			on_file_system = true;
@@ -338,7 +341,17 @@ public class StructureDictionary extends BaseDocument {
 		dictionary_name = XMLUtils.getAttribute(d_node, "name");
 		if (dictionary_name == null)
 			dictionary_name = "";
+		
+		String uri=XMLUtils.getAttribute(d_node, "uri");
+		if(uri!=null){
+			setUri(uri);
+		}
 
+		String liveSearch=XMLUtils.getAttribute(d_node, "liveSearch");
+		if(liveSearch!=null){
+			this.liveSearch=Boolean.parseBoolean(liveSearch);
+		}
+		
 		// read options
 		if (scorer != null) {
 			Node s_node = XMLUtils.findChild(d_node, scorer.getScorerType());
@@ -367,6 +380,9 @@ public class StructureDictionary extends BaseDocument {
 
 		// add name
 		d_node.setAttribute("name", dictionary_name);
+		
+		d_node.setAttribute("uri", uri);
+		d_node.setAttribute("liveSearch", Boolean.toString(liveSearch));
 
 		// add scorer
 		if (theScorer != null)
@@ -426,6 +442,17 @@ public class StructureDictionary extends BaseDocument {
 			super.initContent(namespaceURI, localName, qName, atts);
 
 			theDocument.dictionary_name = stringAttribute(atts, "name", "");
+			theDocument.uri = stringAttribute(atts, "uri", "");
+			
+			if(!theDocument.uri.equals("")){
+				theDocument.isWggds=true;
+			}
+			
+			String liveSearch = stringAttribute(atts, "liveSearch", "");
+			
+			if(!liveSearch.equals("")){
+				theDocument.liveSearch=Boolean.parseBoolean(liveSearch);
+			}
 		}
 
 		protected Object finalizeContent(String namespaceURI, String localName,
@@ -442,5 +469,13 @@ public class StructureDictionary extends BaseDocument {
 
 			return (object = theDocument);
 		}
+	}
+
+	public void setLiveSearch(boolean liveSearch) {
+		this.liveSearch=liveSearch;
+	}
+
+	public boolean isLiveSearch() {
+		return liveSearch;
 	}
 }

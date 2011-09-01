@@ -141,6 +141,7 @@ public class FragmentEditorPanel extends JPanel implements ActionListener, BaseD
 
     theActionManager.add("copy",GlycoWorkbench.getDefaultThemeManager().getResizableIcon(STOCK_ICON.COPY, Plugin.DEFAULT_ICON_SIZE),"Copy",KeyEvent.VK_C, "",this);
     theActionManager.add("transfer",FileUtils.defaultThemeManager.getImageIcon("transfer"),"Copy fragments into canvas",KeyEvent.VK_V, "",this);
+    
 
     }
 
@@ -310,7 +311,7 @@ public class FragmentEditorPanel extends JPanel implements ActionListener, BaseD
 
     //---------------------------
     // events
-
+    
     public void documentInit(BaseDocument.DocumentChangeEvent e) {    
     if( e.getSource()==theWorkspace ) 
         setDocument(theWorkspace.getStructures());    

@@ -29,7 +29,10 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -41,12 +44,17 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.print.PrinterJob;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -55,6 +63,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
@@ -67,22 +77,30 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 
 import org.apache.tools.ant.launch.Locator;
 import org.eurocarbdb.application.glycanbuilder.ActionManager;
 import org.eurocarbdb.application.glycanbuilder.BaseDocument;
+import org.eurocarbdb.application.glycanbuilder.BuilderWorkspace;
 import org.eurocarbdb.application.glycanbuilder.Configuration;
 import org.eurocarbdb.application.glycanbuilder.Context;
 import org.eurocarbdb.application.glycanbuilder.ContextAwareContainer;
 import org.eurocarbdb.application.glycanbuilder.CoreDictionary;
 import org.eurocarbdb.application.glycanbuilder.CoreType;
+import org.eurocarbdb.application.glycanbuilder.DictionaryConfiguration;
 import org.eurocarbdb.application.glycanbuilder.ExtensionFileFilter;
+import org.eurocarbdb.application.glycanbuilder.FileConstants;
 import org.eurocarbdb.application.glycanbuilder.FileHistory;
 import org.eurocarbdb.application.glycanbuilder.FileUtils;
 import org.eurocarbdb.application.glycanbuilder.GlycanAction;
@@ -96,6 +114,7 @@ import org.eurocarbdb.application.glycanbuilder.LogUtils;
 import org.eurocarbdb.application.glycanbuilder.Monitor;
 import org.eurocarbdb.application.glycanbuilder.MouseUtils;
 import org.eurocarbdb.application.glycanbuilder.NotationChangeListener;
+import org.eurocarbdb.application.glycanbuilder.ResidueDictionary;
 import org.eurocarbdb.application.glycanbuilder.STOCK_ICON;
 import org.eurocarbdb.application.glycanbuilder.SVGUtils;
 import org.eurocarbdb.application.glycanbuilder.ThemeManager;
@@ -390,6 +409,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		initImportMenu();
 		initAboutAppMenuItem();
 		initOthersMenu();
+		initSettingsMenu();
 
 		createFileBand();
 
@@ -1197,67 +1217,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 					}
 				}, CommandButtonKind.ACTION_ONLY);
 
-		// final GlycoWorkbench self = this;
-
-		// saveItem
-		// .setRolloverCallback(new
-		// RibbonApplicationMenuEntryPrimary.PrimaryRolloverCallback() {
-		// @Override
-		// public void menuEntryActivated(JPanel targetPanel) {
-		// targetPanel.removeAll();
-		// ICON_SIZE iconSize = ICON_SIZE.L3;
-		// JCommandButtonPanel openTypes = new JCommandButtonPanel(
-		// CommandButtonDisplayState.MEDIUM);
-		//
-		// for (String superclass : CoreDictionary
-		// .getSuperclasses()) {
-		// Collection<CoreType> core_types = CoreDictionary
-		// .getCores(superclass);
-		// if (core_types.size() > 0) {
-		// openTypes.addButtonGroup(superclass);
-		// for (CoreType core_type : core_types) {
-		// JCommandButtonAction button = new JCommandButtonAction(
-		// core_type.getName(),
-		// ImageWrapperResizableIcon
-		// .getIcon(
-		// theCanvas
-		// .getGlycanRenderer()
-		// .getImage(
-		// Glycan
-		// .fromString(core_type
-		// .getStructure()),
-		// false,
-		// false,
-		// false),
-		// new Dimension(
-		// iconSize
-		// .getSize(),
-		// iconSize
-		// .getSize())));
-		// button
-		// .setHorizontalAlignment(SwingUtilities.LEFT);
-		// button.setActionCommand("new="
-		// + core_type.getName());
-		// button.addActionListener(self);
-		// openTypes.addButtonToLastGroup(button);
-		// }
-		// }
-		// }
-		//
-		// openTypes.setMaxButtonColumns(2);
-		// openTypes.setMaxButtonRows(2);
-		//
-		// JScrollPane scrollPane = new JScrollPane(openTypes);
-		// scrollPane.setSize(targetPanel.getSize());
-		//
-		// targetPanel.setLayout(new BorderLayout());
-		// targetPanel.add(scrollPane, BorderLayout.CENTER);
-		//
-		// }
-		// });
-
 		applicationMenu.addMenuEntry(saveItem);
-
 	}
 
 	public void initOthersMenu() {
@@ -1301,6 +1261,516 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		this.applicationMenu.addMenuEntry(quitItem);
 
 	}
+	
+	public void initSettingsMenu() {
+		final GlycoWorkbench self=this;
+		
+		final Map<String,DictionaryResourceRowItems> dictionaryToRowItems=new HashMap<String,DictionaryResourceRowItems>();
+		
+		RibbonApplicationMenuEntryPrimary settingsItem = new RibbonApplicationMenuEntryPrimary(
+						themeManager.getResizableIcon("export", ICON_SIZE.L7)
+			.getResizableIcon(), "Settings", new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent e){
+					final JDialog dialog=new JDialog(self);
+					dialog.setTitle("Settings");
+
+					JPanel panel=new JPanel();
+					panel.setLayout(new GridBagLayout());
+					
+					JButton customizeAll=new JButton("Customize all");
+					customizeAll.addActionListener(new ActionListener(){
+						@Override
+						public void actionPerformed(ActionEvent arg0) {
+							JOptionPane.showMessageDialog(dialog, "Select directory to save custom dictionaries into");
+							JFileChooser fileChooser=new JFileChooser();
+							fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+							fileChooser.setAcceptAllFileFilterUsed(false);
+							int returnVal=fileChooser.showDialog(self, "Populate");
+							
+							if(returnVal==JFileChooser.APPROVE_OPTION){
+								File directory=fileChooser.getSelectedFile();
+								if(directory.exists()==false){
+									if(directory.mkdir()==false){
+										JOptionPane.showMessageDialog(dialog, "Unable to create directory "+directory.getPath());
+										return;
+									}
+								}
+								
+								for(String dictionaryName:DictionaryConfiguration.getDictionaryNameList()){
+									File file=new File(DictionaryConfiguration.getDefaultDictionaryFile(dictionaryName));
+									
+									try {
+										String dictionary=DictionaryConfiguration.getResourceAsString(DictionaryConfiguration.getDefaultDictionaryFile(dictionaryName));
+										
+										String newFileName=directory.getPath()+"/"+file.getName();
+										FileWriter writer=new FileWriter(newFileName);
+										
+										writer.write(dictionary);
+										
+										writer.flush();
+										writer.close();
+										
+										
+										theWorkspace.getDictionaryConfig().setDictionaryFile(dictionaryName,newFileName);
+										DictionaryResourceRowItems items=dictionaryToRowItems.get(dictionaryName);
+										items.textField.setText(newFileName);
+										items.textField.setCaretPosition(0);
+										items.editButton.setEnabled(!theWorkspace.getDictionaryConfig().isDefault(dictionaryName));
+									} catch (Exception e) {
+										LogUtils.report(e);
+									}
+								}
+							}
+						}
+					});
+					
+					int row=0;
+					
+					{
+						JLabel label=new JLabel("Dictionaries and definition files");
+						Font font=new Font(label.getFont().getFamily(),Font.BOLD,(int)(label.getFont().getSize()*1.5));
+						label.setFont(font);
+
+						GridBagConstraints c = new GridBagConstraints();
+						c.gridx=0;
+						c.gridy=row++;
+						c.anchor=GridBagConstraints.LINE_START;
+						c.weightx=0.5;
+						c.weighty=0.5;
+						c.gridwidth=2;
+
+						panel.add(label,c);
+					}
+
+					{
+						GridBagConstraints c = new GridBagConstraints();
+						c.gridx=0;
+						c.gridy=row++;
+						c.anchor=GridBagConstraints.LINE_START;
+						c.weightx=0.5;
+						c.weighty=0.5;
+						c.gridwidth=3;
+						c.fill=GridBagConstraints.HORIZONTAL;
+
+						panel.add(new JSeparator(JSeparator.HORIZONTAL),c);
+					}
+					
+					{
+						JLabel customizeAllLabel=new JLabel("Copy default dictionaries to a local directory for customization");
+
+						GridBagConstraints c = new GridBagConstraints();
+						c.gridx=0;
+						c.gridy=row;
+						c.anchor=GridBagConstraints.LINE_START;
+						c.weightx=0.5;
+						c.weighty=0.5;
+						c.gridwidth=2;
+
+						panel.add(customizeAllLabel,c);
+					}
+					
+					GridBagConstraints c2 = new GridBagConstraints();
+					c2.gridx=2;
+					c2.gridy=row++;
+					c2.anchor=GridBagConstraints.LINE_START;
+					c2.weightx=0.5;
+					c2.weighty=0.5;
+					
+					panel.add(customizeAll,c2);
+					
+					row++;
+					
+					{
+						JLabel customizeAllLabel=new JLabel("Set base URL for resources");
+
+						GridBagConstraints c = new GridBagConstraints();
+						c.gridx=0;
+						c.gridy=row;
+						c.anchor=GridBagConstraints.LINE_START;
+						c.weightx=0.5;
+						c.weighty=0.5;
+						c.gridwidth=2;
+
+						panel.add(customizeAllLabel,c);
+					}
+					
+					{
+						JButton setUrlButton=new JButton("Enter base URL");
+						setUrlButton.addActionListener(new ActionListener(){
+							@Override
+							public void actionPerformed(ActionEvent arg0) {
+								String urlString=JOptionPane.showInputDialog(dialog,"Enter base URL");
+								if(urlString!=null){
+									try{
+										URL url=new URL(urlString);
+
+										for(String dictionaryName:DictionaryConfiguration.getDictionaryNameList()){
+											File file=new File(DictionaryConfiguration.getDefaultDictionaryFile(dictionaryName));
+
+											try {
+												String newFileName=url.toString();
+												if(newFileName.endsWith("/")==false)
+													newFileName+="/";
+												newFileName=newFileName+file.getName();
+
+												theWorkspace.getDictionaryConfig().setDictionaryFile(dictionaryName,newFileName);
+												DictionaryResourceRowItems items=dictionaryToRowItems.get(dictionaryName);
+												items.textField.setText(newFileName);
+												items.textField.setCaretPosition(0);
+												items.editButton.setEnabled(!theWorkspace.getDictionaryConfig().isDefault(dictionaryName));
+											} catch (Exception e) {
+												LogUtils.report(e);
+											}
+										}
+
+									}catch(MalformedURLException e){
+										JOptionPane.showMessageDialog(self, "Invalid url entered");
+									}
+								}
+							}
+						});
+						
+						GridBagConstraints c = new GridBagConstraints();
+						c.gridx=2;
+						c.gridy=row++;
+						c.anchor=GridBagConstraints.LINE_START;
+						c.weightx=0.5;
+						c.weighty=0.5;
+					
+						customizeAll.setPreferredSize(setUrlButton.getPreferredSize());
+						
+						panel.add(setUrlButton,c);
+						
+						
+					}
+					
+					{
+						JLabel label=new JLabel("Reset resources to default paths");
+
+						GridBagConstraints c = new GridBagConstraints();
+						c.gridx=0;
+						c.gridy=row;
+						c.anchor=GridBagConstraints.LINE_START;
+						c.weightx=0.5;
+						c.weighty=0.5;
+						c.gridwidth=2;
+
+						panel.add(label,c);
+					}
+					
+					{
+						JButton resetAll=new JButton("Reset all");
+						resetAll.addActionListener(new ActionListener(){
+							@Override
+							public void actionPerformed(ActionEvent arg0) {
+								for(String dictionaryName:DictionaryConfiguration.getDictionaryNameList()){
+									File file=new File(DictionaryConfiguration.getDefaultDictionaryFile(dictionaryName));
+
+									try {
+										String newFileName=file.getPath();
+
+										theWorkspace.getDictionaryConfig().setDictionaryFile(dictionaryName,newFileName);
+										DictionaryResourceRowItems items=dictionaryToRowItems.get(dictionaryName);
+										items.textField.setText(newFileName);
+										items.textField.setCaretPosition(0);
+										items.editButton.setEnabled(!theWorkspace.getDictionaryConfig().isDefault(dictionaryName));
+									} catch (Exception e) {
+										LogUtils.report(e);
+									}
+								}
+							}
+						});
+						
+						GridBagConstraints c = new GridBagConstraints();
+						c.gridx=2;
+						c.gridy=row++;
+						c.anchor=GridBagConstraints.LINE_START;
+						c.weightx=0.5;
+						c.weighty=0.5;
+					
+						resetAll.setPreferredSize(customizeAll.getPreferredSize());
+						
+						panel.add(resetAll,c);
+					}
+					
+					
+					
+					for(String dictionaryKey:DictionaryConfiguration.getDictionaryNameList()){
+						dictionaryToRowItems.put(dictionaryKey, createCustomGlycanBuilderResourcePanel(dictionaryKey,DictionaryConfiguration.getDefaultDictionaryFile(dictionaryKey),panel,row++));
+					}
+					
+					JScrollPane scrollPanel = new JScrollPane(panel);
+					scrollPanel.setSize(100,100);
+					scrollPanel.setMaximumSize(new Dimension(100,100));
+					
+					dialog.add(scrollPanel);
+					dialog.setVisible(true);
+					dialog.setModal(true);
+					dialog.setSize(900, 500);
+					
+					//dialog.pack();
+
+				}
+			},CommandButtonKind.ACTION_ONLY);
+		
+		applicationMenu.addMenuEntry(settingsItem);
+	}
+	
+	public class DictionaryResourceRowItems {
+		JTextField textField;
+		JButton editButton;
+		
+		public DictionaryResourceRowItems(JTextField textField, JButton editButton){
+			this.textField=textField;
+			this.editButton=editButton;
+		}
+	}
+	
+	private DictionaryResourceRowItems createCustomGlycanBuilderResourcePanel(final String configKey,final String resource,JPanel parent,int row){
+		//JPanel panel=new JPanel();
+		//panel.setLayout(new GridLayout(1,3));
+		//panel.setLayout(new GridBagLayout());
+		
+		JLabel label=new JLabel(configKey);
+		
+		
+		final JTextField fileInputBox=new JTextField(getWorkspace().getDictionaryConfig().getDictionaryFile(configKey));
+		
+		
+		fileInputBox.setPreferredSize(new Dimension(200,25));
+		fileInputBox.setCaretPosition(0);
+		
+		JButton fileChooserButton=new JButton("Create custom");
+		JButton fileOpenButton=new JButton("Open");
+		JButton restoreButton=new JButton("Restore");
+		final JButton editButton=new JButton("Edit");
+		
+		fileInputBox.getDocument().addDocumentListener(new DocumentListener(){
+
+			@Override
+			public void insertUpdate(DocumentEvent e){
+				update();
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e){
+				update();
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e){
+				update();
+			}
+			
+			public void update(){
+				theWorkspace.getDictionaryConfig().setDictionaryFile(configKey, fileInputBox.getText());
+				editButton.setEnabled(!theWorkspace.getDictionaryConfig().isDefault(configKey));
+			}
+		});
+		
+		final JFileChooser fileChooser=new JFileChooser();
+		
+		final GlycoWorkbench self=this;
+		
+		fileChooserButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				int returnValue=fileChooser.showDialog(self, "Save");
+				
+				if(returnValue==JFileChooser.APPROVE_OPTION){
+					String selectedFileName=fileChooser.getSelectedFile().getPath();
+					
+					if(new File(selectedFileName).exists()){
+						int value=JOptionPane.showConfirmDialog(self, "Overwrite existing file?", "File exists warning", JOptionPane.YES_NO_CANCEL_OPTION);
+						if(value!=JOptionPane.YES_OPTION){
+							return;
+						}
+					}
+					
+					try{
+						BufferedReader is;
+						if(resource.startsWith("http")){
+							URLConnection conn=new URL(resource).openConnection();
+							is=new BufferedReader(new InputStreamReader(conn.getInputStream()));
+						}else{
+							// open file
+							java.net.URL file_url = BuilderWorkspace.getResource(resource);
+							if( file_url==null )
+								throw new FileNotFoundException(resource);
+							is = new BufferedReader(new InputStreamReader(file_url.openStream()));
+						}
+						
+						FileWriter writer=new FileWriter(selectedFileName);
+						
+						String line;
+						while((line=is.readLine())!=null){
+							writer.write(line+"\n");
+						}
+						
+						writer.flush();
+						writer.close();
+					}catch(Exception ex){
+						LogUtils.report(ex);
+					}
+					
+					fileInputBox.setText(selectedFileName);
+					theWorkspace.getDictionaryConfig().setDictionaryFile(configKey, selectedFileName);
+					editButton.setEnabled(!theWorkspace.getDictionaryConfig().isDefault(configKey));
+				}
+			}
+		});
+		
+		fileOpenButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				int returnValue=fileChooser.showDialog(self, "Open");
+				
+				if(returnValue==JFileChooser.APPROVE_OPTION){
+					String selectedFileName=fileChooser.getSelectedFile().getPath();
+					
+					fileInputBox.setText(selectedFileName);
+					theWorkspace.getDictionaryConfig().setDictionaryFile(configKey, selectedFileName);
+					editButton.setEnabled(!theWorkspace.getDictionaryConfig().isDefault(configKey));
+				}
+			}
+		});
+		
+		restoreButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				String defaultDictionary=DictionaryConfiguration.getDefaultDictionaryFile(configKey);
+				
+				fileInputBox.setText(defaultDictionary);
+				theWorkspace.getDictionaryConfig().setDictionaryFile(configKey, defaultDictionary);
+				editButton.setEnabled(!theWorkspace.getDictionaryConfig().isDefault(configKey));
+			}
+		});
+		
+		editButton.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				try{
+					String contents=theWorkspace.getDictionaryConfig().getDictionaryResourceAsString(configKey);
+					
+					final JFrame dialog=new JFrame();
+					dialog.setTitle("Editor: "+theWorkspace.getDictionaryConfig().getDictionaryFile(configKey));
+//					JPanel panel=new JPanel();
+//					panel.setLayout(new GridBagLayout());
+					
+					final JTextArea contentPanel=new JTextArea();
+					contentPanel.setText(contents);
+					
+					JButton saveButton=new JButton("Save");
+					
+					saveButton.addActionListener(new ActionListener(){
+						@Override
+						public void actionPerformed(ActionEvent e){
+							if(theWorkspace.getDictionaryConfig().isRemoteResource(configKey)){
+								JOptionPane.showMessageDialog(self, "Current resource is remote\nYou will now be prompted to save the resource locally");
+								
+								JFileChooser fileChooser=new JFileChooser();
+							
+								int returnValue=fileChooser.showDialog(self, "Save");
+								
+								if(returnValue==JFileChooser.APPROVE_OPTION){
+									String selectedFileName=fileChooser.getSelectedFile().getPath();
+									
+									if(new File(selectedFileName).exists()){
+										returnValue=JOptionPane.showConfirmDialog(dialog, "File exists overwrite?");
+										if(returnValue!=JOptionPane.YES_OPTION){
+											return;
+										}
+									}
+									
+									theWorkspace.getDictionaryConfig().setDictionaryFile(configKey, selectedFileName);
+								}else{
+									return;
+								}
+							}
+							
+							try{
+								FileWriter fileWriter=new FileWriter(new File(theWorkspace.getDictionaryConfig().getDictionaryFile(configKey)));
+								fileWriter.write(contentPanel.getText());
+								fileWriter.flush();
+								fileWriter.close();
+							}catch(IOException e1){
+								LogUtils.report(e1);
+							}
+						}
+					});
+					
+//					GridBagConstraints c = new GridBagConstraints();
+//					c.gridx=0;
+//					c.gridy=0;
+//					c.anchor=GridBagConstraints.CENTER;
+//					c.weightx=0.5;
+//					c.weighty=0.5;
+//					panel.add(contentPanel,c);
+					
+//					GridBagConstraints c1 = new GridBagConstraints();
+//					c1.gridx=0;
+//					c1.gridy=1;
+//					c1.anchor=GridBagConstraints.CENTER;
+//					c1.weightx=0.5;
+//					c1.weighty=0.5;
+					//panel.add(saveButton,c1);
+					
+					JScrollPane scrollPanel = new JScrollPane(contentPanel);
+					
+					JPanel panel1=new JPanel();
+					panel1.setLayout(new BorderLayout());
+					panel1.add(scrollPanel,BorderLayout.CENTER);
+					panel1.add(saveButton,BorderLayout.SOUTH);
+					
+					dialog.add(panel1);
+					dialog.setVisible(true);
+					dialog.setSize(900, 500);
+				}catch(Exception e1){
+					LogUtils.report(e1);
+				}
+			}
+		});
+		
+		JPanel buttonPanel=new JPanel();
+		
+		buttonPanel.add(fileChooserButton);
+		buttonPanel.add(fileOpenButton);
+		buttonPanel.add(restoreButton);
+		buttonPanel.add(editButton);
+		
+		editButton.setEnabled(!theWorkspace.getDictionaryConfig().isDefault(configKey));
+		
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx=0;
+		c.gridy=row;
+		c.anchor=GridBagConstraints.LINE_START;
+		c.weightx=0.5;
+		c.weighty=0.5;
+		
+		parent.add(label,c);
+		
+		GridBagConstraints c1 = new GridBagConstraints();
+		c1.gridx=1;
+		c1.gridy=row;
+		c1.anchor=GridBagConstraints.LINE_START;
+		c1.weightx=0.5;
+		c1.weighty=0.5;
+		//c1.fill=GridBagConstraints.HORIZONTAL;
+		parent.add(fileInputBox,c1);
+		
+		GridBagConstraints c2 = new GridBagConstraints();
+		c2.gridx=2;
+		c2.gridy=row;
+		c2.weightx=0.5;
+		c2.weighty=0.5;
+		c2.anchor=GridBagConstraints.LINE_START;
+		
+		parent.add(buttonPanel,c2);
+		
+		return new DictionaryResourceRowItems(fileInputBox,editButton);
+	}
+	
 
 	private JCheckBox exportRedEndCheckBox;
 	private JCheckBox exportMassesCheckBox;
