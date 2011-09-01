@@ -665,6 +665,7 @@ public class PeakList extends BaseDocument implements SAXUtils.SAXWriter {
 			fireDocumentInit();
 			return true;
 		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
