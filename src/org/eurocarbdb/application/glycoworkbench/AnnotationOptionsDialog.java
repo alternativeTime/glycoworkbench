@@ -133,7 +133,8 @@ public class AnnotationOptionsDialog extends EscapeDialog implements
 		field_xfragments.setSelected(theFragmentOptions.ADD_XFRAGMENTS);
 		field_yfragments.setSelected(theFragmentOptions.ADD_YFRAGMENTS);
 		field_zfragments.setSelected(theFragmentOptions.ADD_ZFRAGMENTS);
-
+		field_iterate_ion_combinations.setSelected(theFragmentOptions.ITERATE_ION_COMBINATIONS);
+		
 		field_internal_fragments
 				.setSelected(theFragmentOptions.INTERNAL_FRAGMENTS);
 
@@ -178,6 +179,7 @@ public class AnnotationOptionsDialog extends EscapeDialog implements
 
 		tp.addComponent(field_no_cleavages);
 		tp.addComponent(field_no_crossrings);
+		tp.addComponent(field_internal_fragments);
 
 		tp.addComponent(field_negative_mode);
 		tp.addComponent(field_max_no_h_ions);
@@ -235,6 +237,7 @@ public class AnnotationOptionsDialog extends EscapeDialog implements
 		field_xfragments.setEnabled(annotate_fragments);
 		field_yfragments.setEnabled(annotate_fragments);
 		field_zfragments.setEnabled(annotate_fragments);
+		field_iterate_ion_combinations.setEnabled(annotate_fragments);
 
 		field_internal_fragments.setEnabled(annotate_fragments);
 
@@ -270,6 +273,7 @@ public class AnnotationOptionsDialog extends EscapeDialog implements
 		theFragmentOptions.ADD_XFRAGMENTS = field_xfragments.isSelected();
 		theFragmentOptions.ADD_YFRAGMENTS = field_yfragments.isSelected();
 		theFragmentOptions.ADD_ZFRAGMENTS = field_zfragments.isSelected();
+		theFragmentOptions.ITERATE_ION_COMBINATIONS = field_iterate_ion_combinations.isSelected();
 
 		theFragmentOptions.INTERNAL_FRAGMENTS = field_internal_fragments
 				.isSelected();
@@ -376,6 +380,7 @@ public class AnnotationOptionsDialog extends EscapeDialog implements
 		field_cfragments = new javax.swing.JCheckBox();
 		field_yfragments = new javax.swing.JCheckBox();
 		field_zfragments = new javax.swing.JCheckBox();
+		field_iterate_ion_combinations = new javax.swing.JCheckBox();
 		jLabel1 = new javax.swing.JLabel();
 		jLabel2 = new javax.swing.JLabel();
 		button_ok = new javax.swing.JButton();
@@ -520,6 +525,8 @@ public class AnnotationOptionsDialog extends EscapeDialog implements
 				.createEmptyBorder(0, 0, 0, 0));
 		field_internal_fragments.setMargin(new java.awt.Insets(0, 0, 0, 0));
 
+		field_iterate_ion_combinations.setText("Iterate ion combinations");
+		
 		org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(
 				this.getContentPane());
 		this.getContentPane().setLayout(layout);
@@ -626,7 +633,7 @@ public class AnnotationOptionsDialog extends EscapeDialog implements
 																																				field_no_cleavages,
 																																				org.jdesktop.layout.GroupLayout.DEFAULT_SIZE,
 																																				50,
-																																				Short.MAX_VALUE))))
+																																				Short.MAX_VALUE))))	
 																						.add(
 																								jLabel5)
 																						.add(
@@ -771,7 +778,8 @@ public class AnnotationOptionsDialog extends EscapeDialog implements
 																																												org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
 																																						.add(
 																																								org.jdesktop.layout.GroupLayout.LEADING,
-																																								field_derive_from_parent)))))))
+																																								field_derive_from_parent)
+																																						.add(org.jdesktop.layout.GroupLayout.LEADING,field_iterate_ion_combinations)))))))
 														.add(
 																layout
 																		.createSequentialGroup()
@@ -986,6 +994,7 @@ public class AnnotationOptionsDialog extends EscapeDialog implements
 																org.jdesktop.layout.GroupLayout.PREFERRED_SIZE,
 																27,
 																org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
+																.add(field_iterate_ion_combinations)
 										.addPreferredGap(
 												org.jdesktop.layout.LayoutStyle.RELATED)
 										.add(
@@ -1039,6 +1048,7 @@ public class AnnotationOptionsDialog extends EscapeDialog implements
 	private javax.swing.JCheckBox field_xfragments;
 	private javax.swing.JCheckBox field_yfragments;
 	private javax.swing.JCheckBox field_zfragments;
+	private javax.swing.JCheckBox field_iterate_ion_combinations;
 	private javax.swing.JCheckBox field_clearExistingAnnotations;
 	private javax.swing.JLabel jLabel1;
 	private javax.swing.JLabel jLabel14;

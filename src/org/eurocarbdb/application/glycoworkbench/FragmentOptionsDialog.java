@@ -64,6 +64,8 @@ public class FragmentOptionsDialog extends EscapeDialog implements java.awt.even
 
     field_no_cleavages.setValue(theFragmentOptions.MAX_NO_CLEAVAGES);
     field_no_crossrings.setValue(theFragmentOptions.MAX_NO_CROSSRINGS);
+    
+    field_iterate_ion_combinations.setSelected(theFragmentOptions.ITERATE_ION_COMBINATIONS);
     }
 
     private void setTraversal() {
@@ -79,6 +81,8 @@ public class FragmentOptionsDialog extends EscapeDialog implements java.awt.even
 
     tp.addComponent(field_no_cleavages);
     tp.addComponent(field_no_crossrings);
+    
+    tp.addComponent(field_iterate_ion_combinations);
 
     tp.addComponent(button_ok);
     tp.addComponent(button_cancel);
@@ -107,7 +111,10 @@ public class FragmentOptionsDialog extends EscapeDialog implements java.awt.even
     theFragmentOptions.INTERNAL_FRAGMENTS = field_internal_fragments.isSelected();
     
     theFragmentOptions.MAX_NO_CLEAVAGES = (Integer)field_no_cleavages.getValue();        
-    theFragmentOptions.MAX_NO_CROSSRINGS = (Integer)field_no_crossrings.getValue();        
+    theFragmentOptions.MAX_NO_CROSSRINGS = (Integer)field_no_crossrings.getValue();      
+    
+    theFragmentOptions.ITERATE_ION_COMBINATIONS = field_iterate_ion_combinations.isSelected();
+    
     }
 
     public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -147,6 +154,7 @@ public class FragmentOptionsDialog extends EscapeDialog implements java.awt.even
         field_no_crossrings = new javax.swing.JSpinner();
         field_no_cleavages = new javax.swing.JSpinner();
         field_internal_fragments = new javax.swing.JCheckBox();
+        field_iterate_ion_combinations = new javax.swing.JCheckBox();
 
         setTitle("Fragment options");
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -195,6 +203,8 @@ public class FragmentOptionsDialog extends EscapeDialog implements java.awt.even
         field_internal_fragments.setText("Internal fragments");
         field_internal_fragments.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         field_internal_fragments.setMargin(new java.awt.Insets(0, 0, 0, 0));
+        
+        field_iterate_ion_combinations.setText("Iterate ion combinations");
 
         org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this.getContentPane());
         this.getContentPane().setLayout(layout);
@@ -214,7 +224,8 @@ public class FragmentOptionsDialog extends EscapeDialog implements java.awt.even
                             .add(jLabel3)
                             .add(jLabel1)
                             .add(jLabel2)
-                            .add(jLabel4))
+                            .add(jLabel4)
+                            .add(field_iterate_ion_combinations))
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
                             .add(field_xfragments, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
@@ -264,6 +275,7 @@ public class FragmentOptionsDialog extends EscapeDialog implements java.awt.even
                     .add(jLabel4)
                     .add(field_no_crossrings, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(field_iterate_ion_combinations)
                 .add(jSeparator1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 15, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
@@ -297,6 +309,7 @@ public class FragmentOptionsDialog extends EscapeDialog implements java.awt.even
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JCheckBox field_iterate_ion_combinations;
     // End of variables declaration//GEN-END:variables
     
 }
