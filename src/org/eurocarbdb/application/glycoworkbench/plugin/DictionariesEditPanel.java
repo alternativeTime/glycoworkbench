@@ -200,10 +200,10 @@ public class DictionariesEditPanel extends TablePanel<ProfilerPlugin> implements
         theActionManager.get("nnext").setEnabled(false);
         theActionManager.get("last").setEnabled(false);
         }
-        theActionManager.get("cut").setEnabled(writeable && has_selection);
+        theActionManager.get("cut").setEnabled(has_selection);
         theActionManager.get("copy").setEnabled(has_selection);
-        theActionManager.get("paste").setEnabled(writeable);
-        theActionManager.get("delete").setEnabled(writeable && has_selection);
+        theActionManager.get("paste").setEnabled(true);
+        theActionManager.get("delete").setEnabled(has_selection);
 
         theActionManager.get("transfer").setEnabled(has_selection);
     }
@@ -490,8 +490,8 @@ public class DictionariesEditPanel extends TablePanel<ProfilerPlugin> implements
     }
 
     public void delete() {
-    if( !current_dictionary.isOnFileSystem() )
-        return;
+    //if( !current_dictionary.isOnFileSystem() )
+    //    return;
     if( theTable.getSelectedRows().length==0 )
         return;
 
@@ -524,7 +524,7 @@ public class DictionariesEditPanel extends TablePanel<ProfilerPlugin> implements
     }
 
     public void paste() {
-    if( current_dictionary==null || !current_dictionary.isOnFileSystem() )
+    if( current_dictionary==null)
         return;
 
     try {
