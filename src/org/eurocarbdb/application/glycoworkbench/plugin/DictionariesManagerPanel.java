@@ -446,7 +446,7 @@ public class DictionariesManagerPanel extends SortingTablePanel<ProfilerPlugin> 
 					}
 				}
 			}
-
+			dict.setHasBeenSynced(true);
 			dict.save();
 		} catch (Exception e) {
 			LogUtils.report(e);
