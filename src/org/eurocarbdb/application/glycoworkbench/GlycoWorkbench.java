@@ -47,6 +47,7 @@ import java.awt.print.PrinterJob;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -162,8 +163,8 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	public static boolean SUBSTANCE_ENABLED=false;
 	private static final long serialVersionUID = 0L;
 	private static ICON_SIZE defaultMenuIconSize = ICON_SIZE.L1;
-	private static ICON_SIZE barIconSize = ICON_SIZE.L2;
-
+//	private static ICON_SIZE barIconSize = ICON_SIZE.L2;
+//
 	private static String MAJOR_VERSION = "GWB_MAJOR";
 	private static String MINOR_VERSION = "GWB_MINOR";
 	private static String BUILD_NUMBER = "GWB_BUILD";
@@ -171,8 +172,11 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 //	 private static String MAJOR_VERSION="2";
 //	 private static String MINOR_VERSION="0";
-//	 private static String BUILD_NUMBER="50";
+//	 private static String BUILD_NUMBER="67";
 //	 private static String BUILD_STATE="ALPHA";
+	 
+	 public static String OLD_BUILD_NUMBER=BUILD_NUMBER;
+	 public static boolean IS_UPDATE_RUN=false;
 
 	// singletons
 	protected GlycanWorkspace theWorkspace;
@@ -221,7 +225,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	private DockableEvent bottomPanelDockableEvent;
 	private DockableEvent rightPanelDockableEvent;
 
-	public static File getConfigurationFile() throws IOException {
+	public static File getOldConfigurationFile() throws IOException {
 		String userHomeDirectory = System.getProperty("user.home");
 		String osName = System.getProperty("os.name");
 
@@ -253,22 +257,137 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 			configurationFile = new File(userHomeDirectory
 					+ "/glycoworkbench.xml");
 		}
-		System.out.println("Using configuration file: "
-				+ configurationFile.toString());
+
 		return configurationFile;
+	}
+	
+	public static File getConfigurationDirectory() throws IOException {
+		String userHomeDirectory=System.getProperty("user.home");
+		String osName=System.getProperty("os.name");
+
+		File configurationFile;
+		if(osName.equals("Linux")){
+			configurationFile=new File(userHomeDirectory+File.separator+".GlycoWorkbench");
+		}else if(osName.startsWith("Windows")){
+			String applicationDataDirectory=System.getenv("APPDATA");
+			
+			if(applicationDataDirectory==null){
+				applicationDataDirectory=userHomeDirectory+File.separator+"Application Data";
+			}
+			
+			configurationFile=new File(applicationDataDirectory+File.separator+"GlycoWorkBench");
+		} else {
+			configurationFile=new File(userHomeDirectory+File.separator+".GlycoWorkbench");
+		}
+		
+		if(!configurationFile.exists()){
+			if(!configurationFile.mkdir()){
+				throw new IOException("Could not create directory: "+configurationFile.toString());
+			}
+		}
+		
+		
+		
+		return configurationFile;
+	}
+	
+	public static File getConfigurationFile() throws IOException{
+		File configDirectory=GlycoWorkbench.getConfigurationDirectory();
+		File configurationFile=new File(configDirectory.getPath()+File.separator+"settings.xml");
+		return configurationFile;
+	}
+	
+	public static File getDictionaryConfigurationDirectory() throws IOException {
+		File configDirectory=GlycoWorkbench.getConfigurationDirectory();
+		File dictionaryConfigurationFile=new File(configDirectory.getPath()+File.separator+"customDictionaries");
+		
+		if(dictionaryConfigurationFile.exists()==false && dictionaryConfigurationFile.mkdir()==false)
+			throw new IOException("Could not create directory "+dictionaryConfigurationFile.getPath());
+		
+		return dictionaryConfigurationFile;
+	}
+	
+	public static void updateVersionFile() throws IOException{
+		File versionFile=GlycoWorkbench.getUpdateVersionFile();
+		
+		FileWriter writer=new FileWriter(versionFile);
+		writer.write(GlycoWorkbench.BUILD_NUMBER+"\n");
+		writer.flush();
+		writer.close();
+	}
+	
+	protected static File getUpdateVersionFile() throws IOException{
+		File configurationDirectory=GlycoWorkbench.getConfigurationDirectory();
+		
+		File versionFile=new File(configurationDirectory+File.separator+"last_run_version");
+		
+		return versionFile;
+	}
+	
+	private static void detectUpdateRequired() throws IOException{
+		File versionFile=GlycoWorkbench.getUpdateVersionFile();
+		
+		if(versionFile.exists()){
+			BufferedReader reader=new BufferedReader(new FileReader(versionFile));
+			GlycoWorkbench.OLD_BUILD_NUMBER=reader.readLine();
+			reader.close();
+			try{
+				int oldBuildNumber=Integer.parseInt(GlycoWorkbench.OLD_BUILD_NUMBER);
+				
+				if(Integer.parseInt(BUILD_NUMBER)>oldBuildNumber){
+					System.out.println("Updated version of GlycoWorkbench detected");
+					GlycoWorkbench.IS_UPDATE_RUN=true;
+				}
+			}catch(NumberFormatException ex){
+				
+			}
+		}
+	}
+	
+	public static boolean isUpdateRun(){
+		return GlycoWorkbench.IS_UPDATE_RUN;
+	}
+	
+	/**
+	 * Migrate a configuration file from an old location to a new one.
+	 * 
+	 * @throws Exception
+	 */
+	public static void migrateConfigurationFile() throws Exception {
+		File oldConfigurationFile=GlycoWorkbench.getOldConfigurationFile();
+		File newConfigurationFile=GlycoWorkbench.getConfigurationFile();
+		
+		if(newConfigurationFile.exists()==false && oldConfigurationFile.exists()==true){
+			System.out.println("Migrating configuration file from "+oldConfigurationFile.getPath()+" to "+newConfigurationFile.getPath());
+			
+			FileUtils.copy(oldConfigurationFile, newConfigurationFile);
+			oldConfigurationFile.delete();
+		}
 	}
 
 	private Updater updater;
 
 	public GlycoWorkbench() throws IOException {
-		try {
+		try{
 			updater = new Updater("http://download.glycoworkbench.org");
-			
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
+		}catch(Exception e){
 			e.printStackTrace();
 		}
 
+		try{
+			GlycoWorkbench.migrateConfigurationFile();
+		}catch(Exception e){
+			LogUtils.report(new Exception("Migrating your configuration file has failed (GlycoWorkbench will continue with the default configuration"));
+		}
+		
+		try{
+			detectUpdateRequired();
+		}catch(IOException e){
+			LogUtils.report(e);
+		}
+		
+		System.out.println("Using configuration file: "+GlycoWorkbench.getConfigurationFile());
+		
 		initGwb();
 	}
 
@@ -3058,6 +3177,8 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		 * checkDocumentChanges(theWorkspace.getPeakList()) &&
 		 * checkDocumentChanges(theWorkspace.getAnnotatedPeakList()) )
 		 */
+		GlycoWorkbench.updateVersionFile();
+		
 		System.err.println("On exit has been called");
 		if (checkDocumentChanges(theWorkspace) && checkWorkspaceChanges())
 			this.exit(0);
