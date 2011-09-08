@@ -23,10 +23,14 @@
 
 package org.eurocarbdb.application.glycoworkbench.plugin;
 
-import org.eurocarbdb.application.glycoworkbench.*;
 import org.eurocarbdb.application.glycanbuilder.*;
+import org.eurocarbdb.application.glycoworkbench.GlycoWorkbench;
+
 import java.util.*;
 import java.io.*;
+
+import javax.swing.JOptionPane;
+
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 import org.xml.sax.Attributes;
@@ -41,6 +45,12 @@ public class StructureDictionary extends BaseDocument {
 	private boolean isWggds=false;
 	private String uri;
 	private boolean liveSearch=false;
+	
+	private String sourceFile="";
+	
+	private boolean isGlycoWorkbenchResource=false; //is the resource classpath dervived
+	
+	private boolean hasBeenSynced=false;
 	
 	// ---- init
 
@@ -98,6 +108,10 @@ public class StructureDictionary extends BaseDocument {
 	public void initData() {
 		on_file_system = false;
 		theScorer = null;
+		dictionary = new TreeMap<String, StructureType>();
+	}
+	
+	public void clear(){
 		dictionary = new TreeMap<String, StructureType>();
 	}
 
@@ -268,12 +282,32 @@ public class StructureDictionary extends BaseDocument {
 	}
 
 	public boolean save(String _filename) {
+		if(on_file_system==false && isGlycoWorkbenchResource==true){
+			try{
+				File dictConfigDir=GlycoWorkbench.getDictionaryConfigurationDirectory();
+				File fileName=new File(dictConfigDir.getPath()+File.separator+new File(_filename).getName());
+				
+				FileUtils.copy(GlycanBuilder.class.getResource(_filename).openStream(),fileName);
+				
+				setSourceFile(_filename);
+				
+				_filename=fileName.getPath();
+				
+				on_file_system=true;
+				
+				isGlycoWorkbenchResource=false;
+			}catch(Exception e){
+				LogUtils.report(e);
+				return false;
+			}
+		}
+		
 		try {
 			// write to tmp file
 			File tmpfile = File.createTempFile("gwb", null);
 			write(new FileOutputStream(tmpfile));
-			
-		//	LogUtils.report(new Exception("Hello: "+_filename+"|"+tmpfile.getPath()));
+
+			//	LogUtils.report(new Exception("Hello: "+_filename+"|"+tmpfile.getPath()));
 
 			// copy to dest file and delete tmp file
 			FileUtils.copy(tmpfile, new File(_filename));
@@ -346,6 +380,8 @@ public class StructureDictionary extends BaseDocument {
 		if(uri!=null){
 			setUri(uri);
 		}
+		
+		setSourceFile(XMLUtils.getAttribute(d_node, "source_file"));
 
 		String liveSearch=XMLUtils.getAttribute(d_node, "liveSearch");
 		if(liveSearch!=null){
@@ -383,6 +419,7 @@ public class StructureDictionary extends BaseDocument {
 		
 		d_node.setAttribute("uri", uri);
 		d_node.setAttribute("liveSearch", Boolean.toString(liveSearch));
+		d_node.setAttribute("source_file", getSourceFile());
 
 		// add scorer
 		if (theScorer != null)
@@ -443,6 +480,7 @@ public class StructureDictionary extends BaseDocument {
 
 			theDocument.dictionary_name = stringAttribute(atts, "name", "");
 			theDocument.uri = stringAttribute(atts, "uri", "");
+			theDocument.sourceFile  = stringAttribute(atts, "source_file", "");
 			
 			if(!theDocument.uri.equals("")){
 				theDocument.isWggds=true;
@@ -477,5 +515,47 @@ public class StructureDictionary extends BaseDocument {
 
 	public boolean isLiveSearch() {
 		return liveSearch;
+	}
+	
+
+	public String getSourceFile(){
+		return sourceFile;
+	}
+
+	public StructureDictionary setSourceFile(String sourceFile){
+		this.sourceFile=sourceFile;
+		
+		return this;
+	}
+	
+	public boolean isGlycoWorkbenchResource(){
+		return isGlycoWorkbenchResource;
+	}
+
+	public StructureDictionary setGlycoWorkbenchResource(boolean isGlycoWorkbenchResource){
+		this.isGlycoWorkbenchResource=isGlycoWorkbenchResource;
+		
+		return this;
+	}
+
+	
+	public boolean hasBeenSynced(){
+		return hasBeenSynced;
+	}
+
+	public void setHasBeenSynced(boolean hasBeenSynced){
+		this.hasBeenSynced=hasBeenSynced;
+	}
+
+	public void restore() throws Exception{
+		clear();
+		String sourceFile=getSourceFile();
+		FileUtils.copy(GlycanBuilder.class.getResourceAsStream(sourceFile), getFile());
+		
+		load(getFileName(), true, theScorer);
+		
+		setHasBeenSynced(false);
+		setSourceFile(sourceFile);
+		save();
 	}
 }

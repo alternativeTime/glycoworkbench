@@ -146,24 +146,7 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 	}
 
 	public void deferredOnStartup() {
-		try {
-			addDictionary(new StructureDictionary("/conf/carbbankraw_dict.gwd",
-					false, null));
-			addDictionary(new StructureDictionary("/conf/cfg_dict.gwd", false,
-					null));
-			addDictionary(new StructureDictionary(
-					"/conf/glycosciences_dict.gwd", false, null));
-			addDictionary(new StructureDictionary("/conf/glycomedb_dict.gwd",
-					false, null));
-			
-//			StructureDictionary iggWggds=new StructureDictionary("IGG (WGGDS)");
-//			iggWggds.setUri("http://localhost:8080/Wggds-IGG/Temp/");
-//
-//			addDictionary(iggWggds);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 	}
 
 	public DictionariesManagerPanel getDictionariesManagerPanel() {
@@ -246,12 +229,54 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 			try {
 				for (String filename : theProfilerOptions.USER_DICTIONARIES_FILENAME) {
 					if (FileUtils.exists(filename)) {
-						StructureDictionary dict = new StructureDictionary(
-								filename, true, null);
+						StructureDictionary dict = new StructureDictionary(filename, true, null);
+						
+						System.out.print("Loading "+dict.getDictionaryName());
+						if(GlycoWorkbench.isUpdateRun()){
+							System.out.print(" => GlycoWorkbench update detected ");
+							if(dict.getSourceFile().equals("")){
+								System.out.println(" => not updating none builtin resource ");
+							}else{
+								if(dict.hasBeenSynced()){
+									System.out.println(" => not updating builtin resource, sync has been performed");
+								}else{
+									System.out.println(" => updating resource, to latest builtin version");
+									dict.restore();
+								}
+							}
+						}else{
+							System.out.println("");
+						}
+						
 						theUserDictionaries.put(dict.getDictionaryName(), dict);
 						theDictionaries.put(dict.getDictionaryName(), dict);
 					}
 				}
+				
+				if(getDictionary("CFG")==null){
+					System.out.println("Loading builtin CFG database");
+					addDictionary(new StructureDictionary("/conf/cfg_dict.gwd", false,
+									null).setGlycoWorkbenchResource(true));
+				}
+				
+				if(getDictionary("Carbbank")==null){
+					System.out.println("Loading builtin Carbbank database");
+					addDictionary(new StructureDictionary("/conf/carbbankraw_dict.gwd", false,
+									null).setGlycoWorkbenchResource(true));
+				}
+				
+				if(getDictionary("Glycosciences")==null){
+					System.out.println("Loading builtin Glycosciences database");
+					addDictionary(new StructureDictionary("/conf/glycosciences_dict.gwd", false,
+									null).setGlycoWorkbenchResource(true));
+				}
+				
+				if(getDictionary("GlycomeDB")==null){
+					System.out.println("Loading builtin GlycomeDB database");
+					addDictionary(new StructureDictionary("/conf/glycomedb_dict.gwd", false,
+									null).setGlycoWorkbenchResource(true));
+				}
+				
 				fireDictionariesInit();
 			} catch (Exception e) {
 				LogUtils.report(e);
