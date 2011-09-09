@@ -3250,7 +3250,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		try {
 			// System.err.println("Path: "+Locator.getClassSource(this.getClass()));
 			browser.openResource(new URL(
-					"http://wiki.glycoworkbench.org/index.php/Manual"), Locator
+					"http://wiki.glycoworkbench.org/index.php/Manual_Version_2.1"), Locator
 					.getClassSource(this.getClass()).getParentFile()
 					+ File.separator + "www" + File.separator + "manual.html",
 					false);
