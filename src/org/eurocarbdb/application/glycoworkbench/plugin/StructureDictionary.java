@@ -550,6 +550,7 @@ public class StructureDictionary extends BaseDocument {
 	public void restore() throws Exception{
 		clear();
 		String sourceFile=getSourceFile();
+		
 		FileUtils.copy(GlycanBuilder.class.getResourceAsStream(sourceFile), getFile());
 		
 		load(getFileName(), true, theScorer);
