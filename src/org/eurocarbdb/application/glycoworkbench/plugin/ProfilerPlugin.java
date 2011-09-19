@@ -29,6 +29,7 @@ import org.eurocarbdb.application.glycanbuilder.*;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
+import org.wggds.webservices.io.QueryResultProcessor;
 import org.wggds.webservices.io.WggdsResultUtilXml;
 import org.wggds.webservices.io.data.CompleteInformation;
 import org.wggds.webservices.io.data.OutputFormat;
@@ -949,7 +950,7 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 					Collection<StructureType> found = new Vector<StructureType>();
 					if(dlg.getDatabase().isWggds() && (dlg.getDatabase().size()==0 || (dlg.getDatabase().size()>1 && dlg.getDatabase().isLiveSearch()))){
 						try {
-							GlycanParser glydeParser=GlycanParserFactory.getParser(CarbohydrateSequenceEncoding.glyde.getId());
+							final GlycanParser glydeParser=GlycanParserFactory.getParser(CarbohydrateSequenceEncoding.glyde.getId());
 							
 							SubstructureQuery query=new SubstructureQuery();
 							query.setCompleteInformation(CompleteInformation.Complete);
@@ -959,14 +960,22 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 							query.setReducingEnd(dlg.getIncludeRedEnd());
 							query.setTerminal(dlg.getIncludeAllLeafs());
 							
-							List<QueryResult> queryResults=query.runQuery(dlg.getDatabase().getUri());
-							for(QueryResult queryResult:queryResults){
-								try{
-									found.add(new StructureType(glydeParser.readGlycan(queryResult.getSequence(), new MassOptions())));
-								}catch(Exception e){
-									e.printStackTrace();
+							final Collection<StructureType> foundInternal = new Vector<StructureType>();
+							QueryResultProcessor queryProc=new QueryResultProcessor(){
+								@Override
+								public void processQuery(QueryResult queryResult){
+									try{
+										foundInternal.add(new StructureType(glydeParser.readGlycan(queryResult.getSequence(), new MassOptions())));
+									}catch(Exception e){
+										e.printStackTrace();
+									}
 								}
-							}
+							};
+							
+							query.runQuery(dlg.getDatabase().getUri(), queryProc);
+							
+							found=foundInternal;
+							
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
