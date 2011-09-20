@@ -51,6 +51,7 @@ public class StructureDictionary extends BaseDocument {
 	private boolean isGlycoWorkbenchResource=false; //is the resource classpath dervived
 	
 	private boolean hasBeenSynced=false;
+	private boolean fireDocumentChanged=false;
 	
 	// ---- init
 
@@ -558,5 +559,20 @@ public class StructureDictionary extends BaseDocument {
 		setHasBeenSynced(false);
 		setSourceFile(sourceFile);
 		save();
+	}
+	
+	@Override
+	public void fireDocumentChanged(){
+		if(fireDocumentChanged){
+			super.fireDocumentChanged();
+		}
+	}
+
+	public boolean isFireDocumentChanged(){
+		return fireDocumentChanged;
+	}
+
+	public void setFireDocumentChanged(boolean fireDocumentChanged){
+		this.fireDocumentChanged=fireDocumentChanged;
 	}
 }

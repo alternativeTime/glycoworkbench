@@ -181,6 +181,8 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	// singletons
 	protected GlycanWorkspace theWorkspace;
 	static protected ThemeManager defaultThemeManager;
+	
+	public volatile boolean gwb_up=false;
 
 	public static ThemeManager getDefaultThemeManager() {
 		return defaultThemeManager;
@@ -829,11 +831,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 			}
 		}.start();
 		
-		SwingUtilities.invokeLater(new Runnable(){
-			public void run(){
-				createPopupMenu();
-			}
-		});
+		
 		
 		final GlycoWorkbench self=this;
 		new Thread() {
@@ -3480,7 +3478,11 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 					long start = System.currentTimeMillis();
 					final GlycoWorkbench gwb = new GlycoWorkbench();
 					long end = System.currentTimeMillis();
+					
+					gwb.createPopupMenu();
+					
 					System.err.println("Startup phase took "+(end - start) / 1000+" seconds");
+					
 					gwb.setVisible(true);
 
 					// Correct divider locations once the split pane has been
@@ -3492,23 +3494,13 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 						}
 					});
 
-					SwingUtilities.invokeLater(new Runnable() {
-						@Override
-						public void run() {
-							while (true) {
-								if (gwb.theSplitPane.isVisible()) {
-									gwb.applyApplicationIcon();
-									break;
-								}
-							}
-						}
-
-					});
-
 					gwb.runStartupTasksInBackground();
 					
-					
-
+					SwingUtilities.invokeLater(new Runnable(){
+						public void run(){
+							gwb.gwb_up=true;	
+						}
+					});
 				} catch (Exception e) {
 					LogUtils.setGraphicalReport(true);
 					LogUtils.report(e);
