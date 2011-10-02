@@ -128,11 +128,6 @@ public class DictionariesEditPanel extends TablePanel<ProfilerPlugin> implements
     public void setProfiler(ProfilerPlugin profiler) {
     theDocument = profiler;
     theDocument.addDictionariesChangeListener(this);
-    
-    if( theDocument.getDictionaries().size()>0 )
-        setDictionary(theDocument.getDictionaries().iterator().next());
-    else
-        setDictionary(null);
     }
 
     public void showDictionary(String name) {
@@ -140,6 +135,9 @@ public class DictionariesEditPanel extends TablePanel<ProfilerPlugin> implements
     }
 
     private void setDictionary(StructureDictionary dictionary) {
+    	if(theApplication.gwb_up==false)
+    		return;
+    	
     if( dictionary!=current_dictionary ) {
         // prevent concurrent modification on listeners list
         if( current_dictionary!=null )
@@ -150,7 +148,7 @@ public class DictionariesEditPanel extends TablePanel<ProfilerPlugin> implements
         if( current_dictionary!=null )
         current_dictionary.addDocumentChangeListener(this);    
     }
-     
+    
     current_page_start = 0;
     
     updateData();
@@ -384,6 +382,9 @@ public class DictionariesEditPanel extends TablePanel<ProfilerPlugin> implements
     }
 
     public void updateShownEntries() {
+    	if(current_dictionary==null)
+    		return;
+    	
     shown_entries = new Vector<DictionaryEntry>();        
     try {
         for( int i=current_page_start; i<current_page_start+ROWS && i<ordered_entries.size(); i++ )
@@ -413,7 +414,7 @@ public class DictionariesEditPanel extends TablePanel<ProfilerPlugin> implements
     }
     
     public void updateStatus() {
-    if( theDictionaryStatus!=null ) {
+    if( theDictionaryStatus!=null && current_dictionary!=null) {
         String title = current_page_start + "/" + ordered_entries.size();
         theDictionaryStatus.setText(title);
     }
@@ -673,6 +674,11 @@ public class DictionariesEditPanel extends TablePanel<ProfilerPlugin> implements
     setDictionary(theDocument.getDictionary(to_sel));
     ignore_selector = false;
     }    
-   
-  
+    
+    public void enableProfiler(){
+    	if( theDocument.getDictionaries().size()>0 )
+            setDictionary(theDocument.getDictionaries().iterator().next());
+        else
+           setDictionary(null);
+    }
 }

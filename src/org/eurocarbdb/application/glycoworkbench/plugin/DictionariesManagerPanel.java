@@ -27,10 +27,14 @@ import org.eurocarbdb.MolecularFramework.io.CarbohydrateSequenceEncoding;
 import org.eurocarbdb.application.glycanbuilder.*;
 
 import org.eurocarbdb.application.glycoworkbench.*;
+import org.wggds.webservices.io.QueryResultProcessor;
 import org.wggds.webservices.io.data.BiologicalContext;
 import org.wggds.webservices.io.data.CompleteInformation;
 import org.wggds.webservices.io.data.OutputFormat;
-import org.wggds.webservices.io.data.QueryResult;
+import org.wggds.webservices.io.data.QueryResultHeader;
+import org.wggds.webservices.io.data.ServerSideError;
+import org.wggds.webservices.io.data.StructureResult;
+import org.wggds.webservices.io.query.AllStructuresQuery;
 import org.wggds.webservices.io.query.SubstructureQuery;
 
 import java.io.*;
@@ -418,39 +422,82 @@ public class DictionariesManagerPanel extends SortingTablePanel<ProfilerPlugin> 
 	}
 
 	public void wggdsSync(){
-		try{
-			StructureDictionary dict=getSelectedDictionary();
+		final StructureDictionary dict=getSelectedDictionary();
+		Thread thread=new Thread(){
+			public void run(){
+				try{
+					dict.clear();
 
-			dict.clear();
+					dict.setFireDocumentChanged(false);
 
-			SubstructureQuery query=new SubstructureQuery();
-			query.setCompleteInformation(CompleteInformation.Complete);
-			query.setFormat(OutputFormat.XML);
-			query.setSequence("");
+					AllStructuresQuery query=new AllStructuresQuery();
+					query.setCompleteInformation(CompleteInformation.Complete);
+					query.setFormat(OutputFormat.XML);
 
-			GlycanParser glydeParser=GlycanParserFactory.getParser(CarbohydrateSequenceEncoding.glyde.getId());
-			List<QueryResult> queryResults=query.runQuery(dict.getUri());
-			for(QueryResult queryResult:queryResults){
-				if(queryResult.getBiologicalSource()==null || queryResult.getBiologicalSource().size()==0){
-					try{
-						dict.add(new StructureType(glydeParser.readGlycan(queryResult.getSequence(), new MassOptions())));
-					}catch(Exception e){
-						e.printStackTrace();
-					}
-				}else{
-					for(BiologicalContext context:queryResult.getBiologicalSource()){
-						StructureType type=new StructureType(glydeParser.readGlycan(queryResult.getSequence(), new MassOptions()));
-						type.setSource(context.getTaxonomyName());
+					final GlycanParser glydeParser=GlycanParserFactory.getParser(CarbohydrateSequenceEncoding.glyde.getId());
 
-						dict.add(type);
-					}
+					QueryResultProcessor queryProc=new QueryResultProcessor(){
+						@Override
+						public void processStructureResult(StructureResult structureResult){
+							if(structureResult.getBiologicalSource()==null || structureResult.getBiologicalSource().size()==0){
+								try{
+									dict.add(new StructureType(glydeParser.readGlycan(structureResult.getSequence(), new MassOptions())));
+								}catch(Exception e){
+									//e.printStackTrace();
+								}
+							}else{
+								for(BiologicalContext context:structureResult.getBiologicalSource()){
+									try{
+										StructureType type=new StructureType(glydeParser.readGlycan(structureResult.getSequence(), new MassOptions()));
+										type.setSource(context.getTaxonomyName());
+
+										dict.add(type);
+									}catch(final Exception ex){
+										SwingUtilities.invokeLater(new Runnable(){
+											public void run(){
+												LogUtils.report(ex);
+											}
+										});
+									}
+								}
+							}
+
+						}
+
+						@Override
+						public void processResultHeader(QueryResultHeader queryResultHeader){
+
+						}
+
+						@Override
+						public void processError(final ServerSideError error){
+							SwingUtilities.invokeLater(new Runnable(){
+								public void run(){
+									LogUtils.report(new Exception("WGGDS upstream server error\nError code: "+error.getErrorId().getId()+"\n>Message\n"+error.getMessage()));
+								}
+							});
+						}
+					};
+
+					query.runQuery(dict.getUri(), queryProc);
+
+					dict.setHasBeenSynced(true);
+					dict.save();
+				} catch (Exception e) {
+					LogUtils.report(e);
+				}finally{
+					dict.setFireDocumentChanged(true);
+					SwingUtilities.invokeLater(new Runnable(){
+						public void run(){
+							dict.fireDocumentChanged();
+						}
+					});
+
 				}
 			}
-			dict.setHasBeenSynced(true);
-			dict.save();
-		} catch (Exception e) {
-			LogUtils.report(e);
-		}
+		};
+		
+		thread.start();
 	}
 
 	public void dictionariesChanged(ProfilerPlugin.DictionariesChangeEvent e) {
