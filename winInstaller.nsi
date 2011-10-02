@@ -55,7 +55,7 @@ SetCompressor lzma
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "Setup.exe"
-InstallDir "$PROGRAMFILES\GlycoWorkbench 2.0"
+InstallDir "$PROGRAMFILES\GlycoWorkbench 2"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
 ShowUnInstDetails show
@@ -111,9 +111,9 @@ Section "GWB" SEC01
   SetOutPath "$INSTDIR"
   File "dist-zip\gwb\GlycoWorkbench.bmp"
   File "dist-zip\gwb\GlycoWorkbench.exe"
-  CreateDirectory "$SMPROGRAMS\GlycoWorkbench 2.0"
-  CreateShortCut "$SMPROGRAMS\GlycoWorkbench 2.0\GlycoWorkbench 2.0.lnk" "$INSTDIR\GlycoWorkbench.exe"
-  CreateShortCut "$DESKTOP\GlycoWorkbench 2.0.lnk" "$INSTDIR\GlycoWorkbench.exe"
+  CreateDirectory "$SMPROGRAMS\GlycoWorkbench 2"
+  CreateShortCut "$SMPROGRAMS\GlycoWorkbench 2\GlycoWorkbench 2.lnk" "$INSTDIR\GlycoWorkbench.exe"
+  CreateShortCut "$DESKTOP\GlycoWorkbench 2.lnk" "$INSTDIR\GlycoWorkbench.exe"
   File "dist-zip\gwb\GlycoWorkbench.ico"
   File "dist-zip\gwb\GlycoWorkbench.ini"
   File "dist-zip\gwb\GlycoWorkbench.png"
@@ -576,8 +576,8 @@ SectionEnd
 Section -AdditionalIcons
   SetOutPath $INSTDIR
   WriteIniStr "$INSTDIR\${PRODUCT_NAME}.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
-  CreateShortCut "$SMPROGRAMS\GlycoWorkbench 2.0\Website.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
-  CreateShortCut "$SMPROGRAMS\GlycoWorkbench 2.0\Uninstall.lnk" "$INSTDIR\uninst.exe"
+  CreateShortCut "$SMPROGRAMS\GlycoWorkbench 2\Website.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
+  CreateShortCut "$SMPROGRAMS\GlycoWorkbench 2\Uninstall.lnk" "$INSTDIR\uninst.exe"
 SectionEnd
 
 Section -Post
@@ -1094,12 +1094,12 @@ Section Uninstall
   Delete "$INSTDIR\examples\GAGs\dp10.gwp"
   Delete "$INSTDIR\eurocarb-glycoworkbench-1.0rc.jar"
 
-  Delete "$SMPROGRAMS\GlycoWorkbench 2.0\Uninstall.lnk"
-  Delete "$SMPROGRAMS\GlycoWorkbench 2.0\Website.lnk"
-  Delete "$DESKTOP\GlycoWorkbench 2.0.lnk"
-  Delete "$SMPROGRAMS\GlycoWorkbench 2.0\GlycoWorkbench 2.0.lnk"
+  Delete "$SMPROGRAMS\GlycoWorkbench 2\Uninstall.lnk"
+  Delete "$SMPROGRAMS\GlycoWorkbench 2\Website.lnk"
+  Delete "$DESKTOP\GlycoWorkbench 2.lnk"
+  Delete "$SMPROGRAMS\GlycoWorkbench 2\GlycoWorkbench 2.lnk"
 
-  RMDir "$SMPROGRAMS\GlycoWorkbench 2.0"
+  RMDir "$SMPROGRAMS\GlycoWorkbench 2"
   RMDir "$INSTDIR\www\images"
   RMDir "$INSTDIR\www"
   RMDir "$INSTDIR\lib"

@@ -25,8 +25,8 @@ my $packagesDir='packages';
 `rm $packagesDir -rf`;
 
 my $majorVersion=2;
-my $minorVersion=0;
-my $state="alpha";
+my $minorVersion=1;
+my $state="stable";
 my $topLevelDir="$serverDir/$majorVersion/$minorVersion";
 my $buildDir="$serverDir/build";
 
