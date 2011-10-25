@@ -29,10 +29,13 @@ import org.eurocarbdb.application.glycanbuilder.*;
 import org.pushingpixels.flamingo.api.common.icon.ResizableIcon;
 import org.pushingpixels.flamingo.api.ribbon.JRibbonBand;
 import org.pushingpixels.flamingo.api.ribbon.RibbonTask;
+import org.wggds.webservices.io.QueryResultProcessor;
 import org.wggds.webservices.io.WggdsResultUtilXml;
 import org.wggds.webservices.io.data.CompleteInformation;
 import org.wggds.webservices.io.data.OutputFormat;
-import org.wggds.webservices.io.data.QueryResult;
+import org.wggds.webservices.io.data.QueryResultHeader;
+import org.wggds.webservices.io.data.ServerSideError;
+import org.wggds.webservices.io.data.StructureResult;
 import org.wggds.webservices.io.query.SubstructureQuery;
 
 import java.io.BufferedReader;
@@ -46,9 +49,12 @@ import java.net.URLEncoder;
 import java.util.*;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import java.awt.event.*;
 
+//http://localhost:8080/Wggds-Web-Service-IO/ExampleWggdsServer/
 public class ProfilerPlugin implements Plugin, ActionListener,
 		BaseDocument.DocumentChangeListener, QuickStartup {
 
@@ -129,6 +135,19 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 			theDictionariesPane.add("Structures", theDictionariesEditPanel);
 			theDictionariesSearchPanel = new DictionariesSearchPanel(this);
 			theDictionariesPane.add("Search", theDictionariesSearchPanel);
+			
+			theDictionariesPane.addChangeListener(new ChangeListener() {
+			    // This method is called whenever the selected tab changes
+			    public void stateChanged(ChangeEvent evt) {
+			        JTabbedPane pane = (JTabbedPane)evt.getSource();
+
+			        // Get current tab
+			        int sel = pane.getSelectedIndex();
+			        if(sel==1){
+			        	theDictionariesEditPanel.enableProfiler();
+			        }
+			    }
+			});
 
 			// set options
 
@@ -225,62 +244,89 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 	public void init() {
 		if (theWorkspace != null) {
 			theProfilerOptions.retrieve(theWorkspace.getConfiguration());
+			
+			Thread thread=new Thread(){
+				public void run(){
+					try{
+						for (String filename : theProfilerOptions.USER_DICTIONARIES_FILENAME) {
+							if (FileUtils.exists(filename)) {
+								StructureDictionary dict = new StructureDictionary(filename, true, null);
 
-			try {
-				for (String filename : theProfilerOptions.USER_DICTIONARIES_FILENAME) {
-					if (FileUtils.exists(filename)) {
-						StructureDictionary dict = new StructureDictionary(filename, true, null);
-						
-						System.out.print("Loading "+dict.getDictionaryName());
-						if(GlycoWorkbench.isUpdateRun()){
-							System.out.print(" => GlycoWorkbench update detected ");
-							if(dict.getSourceFile().equals("")){
-								System.out.println(" => not updating none builtin resource ");
-							}else{
-								if(dict.hasBeenSynced()){
-									System.out.println(" => not updating builtin resource, sync has been performed");
+								System.out.print("Loading "+dict.getDictionaryName());
+								if(GlycoWorkbench.isUpdateRun()){
+									System.out.print(" => GlycoWorkbench update detected ");
+									if(dict.getSourceFile().equals("")){
+										System.out.println(" => not updating none builtin resource ");
+									}else{
+										if(dict.hasBeenSynced()){
+											System.out.println(" => not updating builtin resource, sync has been performed");
+										}else{
+											System.out.println(" => updating resource, to latest builtin version");
+											dict.restore();
+										}
+									}
 								}else{
-									System.out.println(" => updating resource, to latest builtin version");
-									dict.restore();
+									System.out.println("");
 								}
+
+								theUserDictionaries.put(dict.getDictionaryName(), dict);
+								theDictionaries.put(dict.getDictionaryName(), dict);
 							}
-						}else{
-							System.out.println("");
+						}
+
+						if(getDictionary("CFG")==null){
+							System.out.println("Loading builtin CFG database");
+							addDictionary(new StructureDictionary("/conf/cfg_dict.gwd", false,
+											null).setGlycoWorkbenchResource(true));
+						}
+
+						if(getDictionary("Carbbank")==null){
+							System.out.println("Loading builtin Carbbank database");
+							addDictionary(new StructureDictionary("/conf/carbbankraw_dict.gwd", false,
+											null).setGlycoWorkbenchResource(true));
+						}
+
+						if(getDictionary("Glycosciences")==null){
+							System.out.println("Loading builtin Glycosciences database");
+							addDictionary(new StructureDictionary("/conf/glycosciences_dict.gwd", false,
+											null).setGlycoWorkbenchResource(true));
+						}
+
+						if(getDictionary("GlycomeDB")==null){
+							System.out.println("Loading builtin GlycomeDB database");
+							addDictionary(new StructureDictionary("/conf/glycomedb_dict.gwd", false,
+											null).setGlycoWorkbenchResource(true));
 						}
 						
-						theUserDictionaries.put(dict.getDictionaryName(), dict);
-						theDictionaries.put(dict.getDictionaryName(), dict);
+						SwingUtilities.invokeLater(new Runnable(){
+							public void run(){
+								for(StructureDictionary structureDictionary:theDictionaries.values()){
+									structureDictionary.setFireDocumentChanged(true);
+									structureDictionary.fireDocumentChanged();
+								}
+							}
+						});
+					}catch(final Exception ex){
+						SwingUtilities.invokeLater(new Runnable(){
+							public void run(){
+								LogUtils.report(ex);
+							}
+						});
+					}finally{
+						SwingUtilities.invokeLater(new Runnable(){
+							public void run(){
+								try {
+									fireDictionariesInit();
+								} catch (Exception e) {
+									LogUtils.report(e);
+								}
+							}
+						});
 					}
 				}
-				
-				if(getDictionary("CFG")==null){
-					System.out.println("Loading builtin CFG database");
-					addDictionary(new StructureDictionary("/conf/cfg_dict.gwd", false,
-									null).setGlycoWorkbenchResource(true));
-				}
-				
-				if(getDictionary("Carbbank")==null){
-					System.out.println("Loading builtin Carbbank database");
-					addDictionary(new StructureDictionary("/conf/carbbankraw_dict.gwd", false,
-									null).setGlycoWorkbenchResource(true));
-				}
-				
-				if(getDictionary("Glycosciences")==null){
-					System.out.println("Loading builtin Glycosciences database");
-					addDictionary(new StructureDictionary("/conf/glycosciences_dict.gwd", false,
-									null).setGlycoWorkbenchResource(true));
-				}
-				
-				if(getDictionary("GlycomeDB")==null){
-					System.out.println("Loading builtin GlycomeDB database");
-					addDictionary(new StructureDictionary("/conf/glycomedb_dict.gwd", false,
-									null).setGlycoWorkbenchResource(true));
-				}
-				
-				fireDictionariesInit();
-			} catch (Exception e) {
-				LogUtils.report(e);
-			}
+			};
+			
+			thread.start();
 		}
 	}
 
@@ -517,8 +563,10 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 		if (view.equals("Databases"))
 			theDictionariesPane
 					.setSelectedComponent(theDictionariesManagerPanel);
-		else if (view.equals("Structures"))
+		else if (view.equals("Structures")){
+			theDictionariesEditPanel.enableProfiler();
 			theDictionariesPane.setSelectedComponent(theDictionariesEditPanel);
+		}
 		else if (view.equals("Search"))
 			theDictionariesPane
 					.setSelectedComponent(theDictionariesSearchPanel);
@@ -949,7 +997,7 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 					Collection<StructureType> found = new Vector<StructureType>();
 					if(dlg.getDatabase().isWggds() && (dlg.getDatabase().size()==0 || (dlg.getDatabase().size()>1 && dlg.getDatabase().isLiveSearch()))){
 						try {
-							GlycanParser glydeParser=GlycanParserFactory.getParser(CarbohydrateSequenceEncoding.glyde.getId());
+							final GlycanParser glydeParser=GlycanParserFactory.getParser(CarbohydrateSequenceEncoding.glyde.getId());
 							
 							SubstructureQuery query=new SubstructureQuery();
 							query.setCompleteInformation(CompleteInformation.Complete);
@@ -959,14 +1007,34 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 							query.setReducingEnd(dlg.getIncludeRedEnd());
 							query.setTerminal(dlg.getIncludeAllLeafs());
 							
-							List<QueryResult> queryResults=query.runQuery(dlg.getDatabase().getUri());
-							for(QueryResult queryResult:queryResults){
-								try{
-									found.add(new StructureType(glydeParser.readGlycan(queryResult.getSequence(), new MassOptions())));
-								}catch(Exception e){
-									e.printStackTrace();
+							final Collection<StructureType> foundInternal = new Vector<StructureType>();
+							QueryResultProcessor queryProc=new QueryResultProcessor(){
+								@Override
+								public void processStructureResult(StructureResult structureResult){
+									try{
+										foundInternal.add(new StructureType(glydeParser.readGlycan(structureResult.getSequence(), new MassOptions())));
+									}catch(Exception e){
+										//e.printStackTrace();
+									}
+									
 								}
-							}
+
+								@Override
+								public void processResultHeader(QueryResultHeader queryResultHeader){
+									// TODO Auto-generated method stub
+									
+								}
+								
+								@Override
+								public void processError(ServerSideError error){
+									LogUtils.report(new Exception("WGGDS upstream server error\nError code: "+error.getErrorId().getId()+"\n>Message\n"+error.getMessage()));
+								}
+							};
+							
+							query.runQuery(dlg.getDatabase().getUri(), queryProc);
+							
+							found=foundInternal;
+							
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
