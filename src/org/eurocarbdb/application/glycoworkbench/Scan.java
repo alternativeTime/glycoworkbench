@@ -482,11 +482,9 @@ public class Scan implements BaseDocument.DocumentChangeListener {
 					.getAnnotations(new Peak(this.getPrecursorMZ(), .0),ann_opts.getMassAccuracy(),MassUnit.valueOfCompat(ann_opts.getMassAccuracyUnit()));
 			if (peakAnnotations != null) {
 
-				for (Vector<Annotation> structureToAnnotations : peakAnnotations
-						.getAnnotations()) {
+				for (Vector<Annotation> structureToAnnotations : peakAnnotations.getAnnotations()) {
 					for (Annotation annotation : structureToAnnotations) {
-						this.getStructures().addStructure(
-								annotation.getFragmentEntry().fragment);
+						this.getStructures().addStructure(annotation.getFragmentEntry().fragment.clone(false));
 					}
 
 					if (structureToAnnotations.size() > 0) {
