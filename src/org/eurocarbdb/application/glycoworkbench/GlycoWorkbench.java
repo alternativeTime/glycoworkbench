@@ -64,7 +64,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
@@ -101,7 +100,6 @@ import org.eurocarbdb.application.glycanbuilder.CoreDictionary;
 import org.eurocarbdb.application.glycanbuilder.CoreType;
 import org.eurocarbdb.application.glycanbuilder.DictionaryConfiguration;
 import org.eurocarbdb.application.glycanbuilder.ExtensionFileFilter;
-import org.eurocarbdb.application.glycanbuilder.FileConstants;
 import org.eurocarbdb.application.glycanbuilder.FileHistory;
 import org.eurocarbdb.application.glycanbuilder.FileUtils;
 import org.eurocarbdb.application.glycanbuilder.GlycanAction;
@@ -115,7 +113,6 @@ import org.eurocarbdb.application.glycanbuilder.LogUtils;
 import org.eurocarbdb.application.glycanbuilder.Monitor;
 import org.eurocarbdb.application.glycanbuilder.MouseUtils;
 import org.eurocarbdb.application.glycanbuilder.NotationChangeListener;
-import org.eurocarbdb.application.glycanbuilder.ResidueDictionary;
 import org.eurocarbdb.application.glycanbuilder.STOCK_ICON;
 import org.eurocarbdb.application.glycanbuilder.SVGUtils;
 import org.eurocarbdb.application.glycanbuilder.ThemeManager;
@@ -152,6 +149,7 @@ import org.pushingpixels.flamingo.api.ribbon.resize.CoreRibbonResizePolicies;
 import org.pushingpixels.flamingo.api.ribbon.resize.IconRibbonBandResizePolicy;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
+
 import chrriis.dj.nativeswing.swtimpl.NativeInterface;
 
 public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
