@@ -35,7 +35,7 @@
 	<property name="winrun4j.dir" value="${static_import.dir}/winrun4j/" />
 	<property name="winrun4j.exe.32" value="${winrun4j.dir}/bin/WinRun4J.exe" />
 	<property name="winrun4j.exe.64" value="${winrun4j.dir}/bin/WinRun4J64.exe" />
-	<property name="winrun4j.url" value="http://downloads.sourceforge.net/project/winrun4j/winrun4j/0.3.3/winrun4J-0.3.3.zip?use_mirror=kent" />
+	<property name="winrun4j.url" value="http://www.mirrorservice.org/sites/download.sourceforge.net/pub/sourceforge/w/project/wi/winrun4j/winrun4j/0.4.3/winrun4J-0.4.3.zip" />
 
 	<!-- ==PACKAGE LOCATIONS== -->
 	<property name="gwb.packages.dir" value="${basedir}/packages" />
