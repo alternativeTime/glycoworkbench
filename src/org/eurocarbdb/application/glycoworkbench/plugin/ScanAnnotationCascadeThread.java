@@ -30,7 +30,6 @@ import org.eurocarbdb.application.glycoworkbench.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 public class ScanAnnotationCascadeThread extends Thread {
@@ -56,56 +55,56 @@ public class ScanAnnotationCascadeThread extends Thread {
 		annotateScans(parentScans);
 	}
 	
-	public void pruneAnnotations(final Vector<Scan> parentScans){
-		SwingUtilities.invokeLater(new Runnable(){
-			@Override
-			public void run(){
-				List<List<Scan>> scanLevels=getLevelOrderedScanList(parentScans);
-				for(int i=scanLevels.size()-1;i>-1;i--){
-					List<Scan> scans=scanLevels.get(i);
-					for(Scan scan:scans){
-						pruneScan(scan);
-					}
-				}
-			}
-		});
-	}
-	
-	public void pruneScan(Scan scan){
-		if(scan.getParent()!=null){
-			if(scan.getChildren().size()==0){ 
-				//leaf scan
-				
-				scan.getAnnotatedPeakList().getPeakAnnotationCollections()
-				
-			}else{
-				//intermediate level scan
-			}
-		}else{
-			//level one scan with no children
-		}
-	}
-	
-	private List<List<Scan>> getLevelOrderedScanList(Vector<Scan> scans){		
-		List<List<Scan>> scanLevels=new ArrayList<List<Scan>>();		
-		for(Scan scan:scans){
-			getLevelOrderedScanList(0, scanLevels, scan);
-		}
-		
-		return scanLevels;
-	}
-	
-	private void getLevelOrderedScanList(int depth, List<List<Scan>> scanLevels, Scan scan){
-		if(scanLevels.size()<depth+1){
-			scanLevels.add(new ArrayList<Scan>());
-		}
-		
-		scanLevels.get(depth).add(scan);
-		
-		for(Scan childScan:scan.getChildren()){
-			getLevelOrderedScanList(depth+1,scanLevels,childScan);
-		}
-	}
+//	public void pruneAnnotations(final Vector<Scan> parentScans){
+//		SwingUtilities.invokeLater(new Runnable(){
+//			@Override
+//			public void run(){
+//				List<List<Scan>> scanLevels=getLevelOrderedScanList(parentScans);
+//				for(int i=scanLevels.size()-1;i>-1;i--){
+//					List<Scan> scans=scanLevels.get(i);
+//					for(Scan scan:scans){
+//						pruneScan(scan);
+//					}
+//				}
+//			}
+//		});
+//	}
+//	
+//	public void pruneScan(Scan scan){
+//		if(scan.getParent()!=null){
+//			if(scan.getChildren().size()==0){ 
+//				//leaf scan
+//				
+//				scan.getAnnotatedPeakList().getPeakAnnotationCollections()
+//				
+//			}else{
+//				//intermediate level scan
+//			}
+//		}else{
+//			//level one scan with no children
+//		}
+//	}
+//	
+//	private List<List<Scan>> getLevelOrderedScanList(Vector<Scan> scans){		
+//		List<List<Scan>> scanLevels=new ArrayList<List<Scan>>();		
+//		for(Scan scan:scans){
+//			getLevelOrderedScanList(0, scanLevels, scan);
+//		}
+//		
+//		return scanLevels;
+//	}
+//	
+//	private void getLevelOrderedScanList(int depth, List<List<Scan>> scanLevels, Scan scan){
+//		if(scanLevels.size()<depth+1){
+//			scanLevels.add(new ArrayList<Scan>());
+//		}
+//		
+//		scanLevels.get(depth).add(scan);
+//		
+//		for(Scan childScan:scan.getChildren()){
+//			getLevelOrderedScanList(depth+1,scanLevels,childScan);
+//		}
+//	}
 
 	private void annotateScans(Vector<Scan> scans) {
 		for (Scan scan : scans) {
