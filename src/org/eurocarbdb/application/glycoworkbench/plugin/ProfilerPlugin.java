@@ -1014,7 +1014,7 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 									try{
 										foundInternal.add(new StructureType(glydeParser.readGlycan(structureResult.getSequence(), new MassOptions())));
 									}catch(Exception e){
-										e.printStackTrace();
+										//e.printStackTrace();
 									}
 									
 								}
