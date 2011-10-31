@@ -142,10 +142,12 @@
 				<echo>Found WinRun4j, remove ${winrun4j.exe.32} to force it to be fetched again</echo>
 			</then>
 			<else>
+				<mkdir dir="${project.dir}/temp"/>
 				<get dest="${project.temp.dir}/winrun4j.zip" src="${winrun4j.url}" />
 				<delete dir="${static_import.dir}" />
 				<mkdir dir="${static_import.dir}" />
 				<unzip src="${project.temp.dir}/winrun4j.zip" dest="${static_import.dir}" />
+				<delete dir="${project.dir}/temp"/>
 			</else>
 		</if>
 	</target>
