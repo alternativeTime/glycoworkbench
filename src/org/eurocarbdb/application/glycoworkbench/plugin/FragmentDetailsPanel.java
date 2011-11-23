@@ -501,8 +501,24 @@ public class FragmentDetailsPanel extends SortingTablePanel<FragmentDocument> im
     		fragmentList=fragmentCollection.getFragments();
     	}
     	
+    	Random rand=new Random();
+    	
+    	HashSet<Double> mzValues=new HashSet<Double>();
+    	
     	for(FragmentEntry fragmentEntry:fragmentList){
-    		peakList.add(new Peak(fragmentEntry.getMZ(),1));
+    		mzValues.add(fragmentEntry.getMZ());
+    		
+    	}
+    	
+    	for(Double mzValue:mzValues){
+    		int range=rand.nextInt(2);
+    		if(range==0){
+    			range=20;
+    		}else{
+    			range=300;
+    		}
+    		
+    		peakList.add(new Peak(mzValue,rand.nextInt(range)));
     	}
     }
 }
