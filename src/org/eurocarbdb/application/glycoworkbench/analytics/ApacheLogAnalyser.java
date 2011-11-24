@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -51,6 +52,8 @@ public class ApacheLogAnalyser {
 	private boolean excludeHostsContainingAdsl=false;
 
 	private TLDLibrary tldLibrary;
+
+	private HostNameConstraint hostNameConstraint;
 	
 	public ApacheLogAnalyser(File logDirectory){
 		this.logDirectory=logDirectory;
@@ -198,6 +201,7 @@ public class ApacheLogAnalyser {
 								&& (enableBotExcluder==false || notABot(host))
 									&& (excludeIpAddresses==false || ipOnly.matcher(host).matches()==false)
 										&& (excludeHostsContainingAdsl==false || adslPattern.matcher(host).find()==false)
+										  && (hostNameConstraint==null || hostNameConstraint.isAllowed(host))
 						){
 							results.addEntry(uri, host, date);
 						}else{
@@ -256,15 +260,24 @@ public class ApacheLogAnalyser {
 		private Map<String,Map<String,MutableInteger>> uriToHostToCount=new HashMap<>();
 		private Map<String, List<String>> uriToDownloadDates=new HashMap<>();
 		private Map<String, MutableInteger> uriToDownloadCount=new HashMap<>();
+		
 		private HashSet<String> uniqueHosts=new HashSet<String>();
 		
+		private Date earlestDate=new Date(System.currentTimeMillis()*1000);
+		
 		public void addEntry(String uri, String host, String date){
+			if(uriToDownloadCount.containsKey(uri)==false){
+				uriToDownloadCount.put(uri, new MutableInteger());
+			}
+			
 			if(uriToHostToCount.containsKey(uri)==false){
 				uriToHostToCount.put(uri, new HashMap<String,MutableInteger>());
 			}
 			
 			if(uriToHostToCount.get(uri).containsKey(host)==false){
 				uriToHostToCount.get(uri).put(host, new MutableInteger());
+				
+				uriToDownloadCount.get(uri).mutI++;
 			}
 			
 			uriToHostToCount.get(uri).get(host).mutI++;
@@ -274,13 +287,7 @@ public class ApacheLogAnalyser {
 			}
 			
 			uriToDownloadDates.get(uri).add(date);
-			
-			if(uriToDownloadCount.containsKey(uri)==false){
-				uriToDownloadCount.put(uri, new MutableInteger());
-			}
-			
-			uriToDownloadCount.get(uri).mutI++;
-			
+
 			uniqueHosts.add(host);
 		}
 		
@@ -292,6 +299,17 @@ public class ApacheLogAnalyser {
 		
 		public void printUniqueHostCount(){
 			System.out.println("Unique hosts="+uniqueHosts.size());
+		}
+		
+		public void printHostsMatching(Pattern pattern){
+			List<String> hostList=new ArrayList<>(uniqueHosts);
+			Collections.sort(hostList);
+			
+			for(String host:hostList){
+				if(pattern.matcher(host).find()){
+					System.out.println(host);
+				}
+			}
 		}
 		
 		public void printHosts(){
@@ -352,6 +370,11 @@ public class ApacheLogAnalyser {
 			}
 			
 			return new ArrayList<String>(domainNames);
+		}
+		
+		public void printUniqueDomainNameCount(){
+			List<String> domainNames=extractDomainNames();
+			System.out.println("Unique domains: "+domainNames.size());
 		}
 		
 		public void printDomainNames(){
@@ -483,7 +506,60 @@ public class ApacheLogAnalyser {
 		}
 	}
 	
-	public static void main(String args[]) throws UnableToDecompressLogFileException, UnableToReadLogFileException, UnableToReadErrorLogFileException, UnableToReadTLDLibraryFileException, URISyntaxException{
+	public void loadHostNameConstraintFile(File constraintFile) throws UnableToReadHostNameConstraintFileException{
+		hostNameConstraint=new HostNameConstraint(constraintFile);
+	}
+	
+	public class HostNameConstraint{
+		private File constraintFile;
+		
+		private Map<String,String> domainNameToName=new HashMap<String,String>();
+		private List<Pattern> domainNamePatterns=new ArrayList<>();
+		
+		public HostNameConstraint(File constraintFile) throws UnableToReadHostNameConstraintFileException{
+			setConstraintFile(constraintFile);
+		}
+		
+		public void setConstraintFile(File constraintFile) throws UnableToReadHostNameConstraintFileException{
+			this.constraintFile=constraintFile;
+			
+			loadConstraintFile();
+		}
+		
+		private void loadConstraintFile() throws UnableToReadHostNameConstraintFileException{
+			try(
+					BufferedReader reader=new BufferedReader(new FileReader(this.constraintFile));
+			){
+				reader.readLine();//skip header
+				
+				String line;
+				while((line=reader.readLine())!=null){
+					String cols[]=line.split(",");
+					
+					String domainName=cols[0];
+					String name=cols[1];
+					
+					domainNameToName.put(domainName, name);
+					
+					domainNamePatterns.add(Pattern.compile(Pattern.quote(domainName)+"$", Pattern.CASE_INSENSITIVE));
+				}
+			}catch(IOException ex){
+				throw new UnableToReadHostNameConstraintFileException();
+			}
+		}
+		
+		public boolean isAllowed(String hostname){
+			for(Pattern pattern:domainNamePatterns){
+				if(pattern.matcher(hostname).find()){
+					return true;
+				}
+			}
+			
+			return false;
+		}
+	}
+	
+	public static void defaultRun() throws UnableToDecompressLogFileException, UnableToReadLogFileException, UnableToReadErrorLogFileException, UnableToReadTLDLibraryFileException, URISyntaxException{
 		ApacheLogAnalyser analyser=new ApacheLogAnalyser(new File("/users/david/gwb_logs/"));
 		
 		analyser.excludeClientsInErrorLog(4);
@@ -513,5 +589,104 @@ public class ApacheLogAnalyser {
 		results.printHosts();
 		
 		results.printDomainNames();
+	}
+	
+	public static void defaultAllBarBots() throws UnableToDecompressLogFileException, UnableToReadLogFileException, UnableToReadErrorLogFileException, UnableToReadTLDLibraryFileException, URISyntaxException{
+		ApacheLogAnalyser analyser=new ApacheLogAnalyser(new File("/users/david/gwb_logs/"));
+		
+		analyser.excludeClientsInErrorLog(4);
+		analyser.botExcluder(true);
+		//analyser.excludeIpAddresses(true);
+		//analyser.excludeHostsContainingAdsl(true);
+		
+		analyser.loadTldLibrary(new File(ApacheLogAnalyser.class.getResource("tlds.csv").toURI())).printTldLibrary();
+
+		List<String> trackUris=new ArrayList<>();
+		trackUris.add("/current_version/windows/GlycoWorkbenchWin_x86-64.exe");
+		trackUris.add("/current_version/windows/GlycoWorkbenchWin_x86.exe"); 
+		trackUris.add("/current_version/windows/GlycoWorkbenchWin_x86-64.zip");
+		trackUris.add("/current_version/windows/GlycoWorkbenchWin_x86.zip");
+		
+		trackUris.add("/current_version/linux/GlycoWorkbenchLin_x86.zip");
+		trackUris.add("/current_version/linux/GlycoWorkbenchLin_x86-64.zip");
+		
+		trackUris.add("/current_version/macosx/GlycoWorkbenchMac_Carbon_32.zip");
+		trackUris.add("/current_version/macosx/GlycoWorkbenchMac_Cocoa_32.zip");
+		trackUris.add("/current_version/macosx/GlycoWorkbenchMac_Cocoa_x86-64.zip");
+		
+		URIResults results=analyser.retrieveGetStastitics(trackUris);
+		results.printURIToDownloadCountToStdout();
+		results.printUniqueHostCount();
+		results.printUniqueDomainNameCount();
+	}
+	
+	public static void defaultConstrainedRun() throws UnableToDecompressLogFileException, UnableToReadLogFileException, UnableToReadErrorLogFileException, UnableToReadTLDLibraryFileException, URISyntaxException, UnableToReadHostNameConstraintFileException{
+		ApacheLogAnalyser analyser=new ApacheLogAnalyser(new File("/users/david/gwb_logs/"));
+		
+		analyser.excludeClientsInErrorLog(4);
+		analyser.botExcluder(true);
+		analyser.excludeIpAddresses(true);
+		analyser.excludeHostsContainingAdsl(true);
+		
+		analyser.loadTldLibrary(new File(ApacheLogAnalyser.class.getResource("tlds.csv").toURI())).printTldLibrary();
+
+		analyser.loadHostNameConstraintFile(new File("/users/david/gwb_host_constrain_list.txt"));
+		
+		List<String> trackUris=new ArrayList<>();
+		trackUris.add("/current_version/windows/GlycoWorkbenchWin_x86-64.exe");
+		trackUris.add("/current_version/windows/GlycoWorkbenchWin_x86.exe"); 
+		trackUris.add("/current_version/windows/GlycoWorkbenchWin_x86-64.zip");
+		trackUris.add("/current_version/windows/GlycoWorkbenchWin_x86.zip");
+		
+		trackUris.add("/current_version/linux/GlycoWorkbenchLin_x86.zip");
+		trackUris.add("/current_version/linux/GlycoWorkbenchLin_x86-64.zip");
+		
+		trackUris.add("/current_version/macosx/GlycoWorkbenchMac_Carbon_32.zip");
+		trackUris.add("/current_version/macosx/GlycoWorkbenchMac_Cocoa_32.zip");
+		trackUris.add("/current_version/macosx/GlycoWorkbenchMac_Cocoa_x86-64.zip");
+		
+		URIResults results=analyser.retrieveGetStastitics(trackUris);
+		results.printURIToDownloadCountToStdout();
+		results.printUniqueHostCount();
+		results.printUniqueDomainNameCount();
+	}
+	
+	public static void defaultMatch() throws UnableToDecompressLogFileException, UnableToReadLogFileException, UnableToReadErrorLogFileException, UnableToReadTLDLibraryFileException, URISyntaxException, UnableToReadHostNameConstraintFileException{
+		ApacheLogAnalyser analyser=new ApacheLogAnalyser(new File("/users/david/gwb_logs/"));
+		
+		analyser.excludeClientsInErrorLog(4);
+		analyser.botExcluder(true);
+		analyser.excludeIpAddresses(true);
+		analyser.excludeHostsContainingAdsl(true);
+		
+		analyser.loadTldLibrary(new File(ApacheLogAnalyser.class.getResource("tlds.csv").toURI())).printTldLibrary();
+
+		analyser.loadHostNameConstraintFile(new File("/users/david/gwb_host_constrain_list.txt"));
+		
+		List<String> trackUris=new ArrayList<>();
+		trackUris.add("/current_version/windows/GlycoWorkbenchWin_x86-64.exe");
+		trackUris.add("/current_version/windows/GlycoWorkbenchWin_x86.exe"); 
+		trackUris.add("/current_version/windows/GlycoWorkbenchWin_x86-64.zip");
+		trackUris.add("/current_version/windows/GlycoWorkbenchWin_x86.zip");
+		
+		trackUris.add("/current_version/linux/GlycoWorkbenchLin_x86.zip");
+		trackUris.add("/current_version/linux/GlycoWorkbenchLin_x86-64.zip");
+		
+		trackUris.add("/current_version/macosx/GlycoWorkbenchMac_Carbon_32.zip");
+		trackUris.add("/current_version/macosx/GlycoWorkbenchMac_Cocoa_32.zip");
+		trackUris.add("/current_version/macosx/GlycoWorkbenchMac_Cocoa_x86-64.zip");
+		
+		URIResults results=analyser.retrieveGetStastitics(trackUris);
+		results.printURIToDownloadCountToStdout();
+		results.printUniqueHostCount();
+		results.printHostsMatching(Pattern.compile("ox\\.ac\\.uk$"));
+	}
+	
+	public static void main(String args[]) throws UnableToDecompressLogFileException, UnableToReadLogFileException, UnableToReadErrorLogFileException, UnableToReadTLDLibraryFileException, URISyntaxException, UnableToReadHostNameConstraintFileException{
+//		defaultRun();
+//		defaultConstrainedRun();
+		//defaultAllBarBots();
+		
+		defaultMatch();
 	}
 }
