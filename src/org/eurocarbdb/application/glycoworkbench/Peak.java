@@ -25,7 +25,6 @@ import org.eurocarbdb.application.glycanbuilder.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-import org.omegahat.Environment.ObjectDataStructures.numeric;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
