@@ -112,7 +112,7 @@ public class ApacheLogAnalyser {
 	
 	public List<File> getLogList() throws UnableToDecompressLogFileException {
 		if(logList==null){
-			logList=new ArrayList<>();
+			logList=new ArrayList<File>();
 			for(String file:logDirectory.list()){
 				file=logDirectory.getPath()+"/"+file;
 				if(compressedExtensionPattern.matcher(file).find()){
