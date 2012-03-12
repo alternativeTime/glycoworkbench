@@ -2749,9 +2749,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 				: false;
 	}
 
-	public boolean tryOpen(String filename, boolean merge,
-			FileFilter selectedFilter) {
-
+	public boolean tryOpen(String filename, boolean merge, FileFilter selectedFilter) {
 		try {
 			if (!checkExisting(filename))
 				return false;
