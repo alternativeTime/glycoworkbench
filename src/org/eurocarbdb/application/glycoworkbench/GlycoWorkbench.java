@@ -3360,16 +3360,37 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 				@Override
 				public void loadingProgressChanged(WebBrowserEvent event) {
-					JWebBrowser browser=event.getWebBrowser();
+					final JWebBrowser browser=event.getWebBrowser();
+
 					if(location!=null && location.startsWith(helpLocation)){
+						
 						int loadingProgress=browser.getLoadingProgress();
 
 						if(loadingProgress==100){
-							browser.executeJavascript("document.getElementById(\"mw-head\").style.display=\"none\";");
-							browser.executeJavascript("document.getElementById(\"mw-panel\").style.display=\"none\";");
-							browser.executeJavascript("document.getElementById(\"mw-page-base\").style.display=\"none\";");
-							browser.executeJavascript("document.getElementById(\"mw-head-base\").style.marginLeft=\"0\";");
-							browser.executeJavascript("document.getElementById(\"content\").style.marginLeft=\"0\";");
+
+							Thread fixUpThread=new Thread(){
+								public void run(){
+									for(int i=0;i<4;i++){
+										SwingUtilities.invokeLater(new Runnable(){
+											public void run(){	
+												browser.executeJavascript("document.getElementById(\"mw-head\").style.display=\"none\";");
+												browser.executeJavascript("document.getElementById(\"mw-panel\").style.display=\"none\";");
+												browser.executeJavascript("document.getElementById(\"mw-page-base\").style.display=\"none\";");
+												browser.executeJavascript("document.getElementById(\"mw-head-base\").style.marginLeft=\"0\";");
+												browser.executeJavascript("document.getElementById(\"content\").style.marginLeft=\"0\";");
+											}
+										});	
+										try{	
+											Thread.sleep(100);
+										}catch(InterruptedException ex){
+											Thread.currentThread().interrupt();
+											break;
+										}
+									}
+								}
+							};
+
+							fixUpThread.start();					
 
 							if(System.getProperty("os.name").equals("Linux")){
 								browser.setVisible(true);
@@ -3390,7 +3411,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 				@Override
 				public void locationChanging(WebBrowserNavigationEvent event) {
-					
+					location=event.getNewResourceLocation();	
 				}
 
 				@Override
