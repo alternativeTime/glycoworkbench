@@ -3360,18 +3360,18 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 				@Override
 				public void loadingProgressChanged(WebBrowserEvent event) {
-					if(System.getProperty("os.name").equals("Linux")){
-						JWebBrowser browser=event.getWebBrowser();
-						if(location!=null && location.startsWith(helpLocation)){
-							int loadingProgress=browser.getLoadingProgress();
+					JWebBrowser browser=event.getWebBrowser();
+					if(location!=null && location.startsWith(helpLocation)){
+						int loadingProgress=browser.getLoadingProgress();
 
-							if(loadingProgress==100){
-								browser.executeJavascript("document.getElementById(\"mw-head\").style.display=\"none\";");
-								browser.executeJavascript("document.getElementById(\"mw-panel\").style.display=\"none\";");
-								browser.executeJavascript("document.getElementById(\"mw-page-base\").style.display=\"none\";");
-								browser.executeJavascript("document.getElementById(\"mw-head-base\").style.marginLeft=\"0\";");
-								browser.executeJavascript("document.getElementById(\"content\").style.marginLeft=\"0\";");
+						if(loadingProgress==100){
+							browser.executeJavascript("document.getElementById(\"mw-head\").style.display=\"none\";");
+							browser.executeJavascript("document.getElementById(\"mw-panel\").style.display=\"none\";");
+							browser.executeJavascript("document.getElementById(\"mw-page-base\").style.display=\"none\";");
+							browser.executeJavascript("document.getElementById(\"mw-head-base\").style.marginLeft=\"0\";");
+							browser.executeJavascript("document.getElementById(\"content\").style.marginLeft=\"0\";");
 
+							if(System.getProperty("os.name").equals("Linux")){
 								browser.setVisible(true);
 							}
 						}
