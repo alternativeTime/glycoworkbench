@@ -478,19 +478,30 @@ public class Scan implements BaseDocument.DocumentChangeListener {
 		if (parentScan != null) {
 			this.getStructures().clear();
 			
-			PeakAnnotationMultiple peakAnnotations = annotatedPeakList
-					.getAnnotations(new Peak(this.getPrecursorMZ(), .0),ann_opts.getMassAccuracy(),MassUnit.valueOfCompat(ann_opts.getMassAccuracyUnit()));
-			
-			if (peakAnnotations != null) {
+			List<PeakAnnotationMultiple> peakAnnotationsList = annotatedPeakList
+					.getAnnotationList(new Peak(this.getPrecursorMZ(), .0),ann_opts.getMassAccuracy(),MassUnit.valueOfCompat(ann_opts.getMassAccuracyUnit()));
 
-				for (Vector<Annotation> structureToAnnotations : peakAnnotations.getAnnotations()) {
-					for (Annotation annotation : structureToAnnotations) {
-						this.getStructures().addStructure(annotation.getFragmentEntry().fragment.clone(false));
+			if (peakAnnotationsList != null) {
+				HashMap<String,Glycan> structures=new HashMap<String,Glycan>();
+				for(PeakAnnotationMultiple peakAnnotations:peakAnnotationsList){
+					for (Vector<Annotation> structureToAnnotations : peakAnnotations.getAnnotations()) {
+						
+						for (Annotation annotation : structureToAnnotations) {
+							Glycan fragment=annotation.getFragmentEntry().fragment;
+							String gws=fragment.toStringOrdered(true);
+							if(structures.containsKey(gws)==false){
+								structures.put(gws,fragment);
+							}	
+						}
 					}
-
-					if (structureToAnnotations.size() > 0) {
-						matchFound = true;
-					}
+				}
+				
+				for(Glycan glycan:structures.values()){
+					this.getStructures().addStructure(glycan.clone(false));
+				}
+				
+				if(structures.size()>0){
+					matchFound = true;
 				}
 			}
 		} else {

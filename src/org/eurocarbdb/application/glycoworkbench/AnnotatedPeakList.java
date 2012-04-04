@@ -253,6 +253,33 @@ public class AnnotatedPeakList extends BaseDocument implements
 		}
 		return -1;
 	}
+	
+	/**
+	 * Return the index of the peak object in the list of labeled peaks that
+	 * have been annotated
+	 * 
+	 * @see PeakAnnotationMultiple
+	 */
+	public List<Integer> indexOfList(Peak p, double accuracy, MassUnit unit) {
+		if (p == null)
+			return null;
+
+		List<Integer> list=new ArrayList<Integer>();
+		for (int i = 0; i < peak_annotations_multiple.size(); i++) {
+			PeakAnnotationMultiple pam = peak_annotations_multiple.elementAt(i);
+//			if (pam.getPeak().compareTo(p) > 0)
+//				return -1;
+
+			if (pam.getPeak().mzEquals(p,unit,accuracy))
+				list.add(i);
+		}
+		
+		if(list.size()>0){
+			return list;
+		}else{
+			return null;
+		}
+	}
 
 	/**
 	 * Return the index of peak with the specified mass/charge value in the list
@@ -1013,6 +1040,24 @@ public class AnnotatedPeakList extends BaseDocument implements
 		int comparison = indexOf(p,mz_accuracy,unit);
 		if (comparison != -1) {
 			return peak_annotations_multiple.elementAt(comparison);
+		} else {
+			return null;
+		}
+	}
+	
+	/**
+	 * Return all annotations for a specified peak and from all structures
+	 */
+	public List<PeakAnnotationMultiple> getAnnotationList(Peak p, double mz_accuracy, MassUnit unit) {
+		List<Integer> indexList= indexOfList(p,mz_accuracy,unit);
+		
+		List<PeakAnnotationMultiple> list=new ArrayList<PeakAnnotationMultiple>();
+		if (indexList != null) {
+			for(Integer index:indexList){
+				list.add(peak_annotations_multiple.elementAt(index));
+			}
+			
+			return list;
 		} else {
 			return null;
 		}
