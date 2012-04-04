@@ -891,7 +891,6 @@ public class ProfilerPlugin implements Plugin, ActionListener,
 	}
 
 	private boolean runAnnotation() {
-
 		theThread.start();
 
 		// launch progress dialog

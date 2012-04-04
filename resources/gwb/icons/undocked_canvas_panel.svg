@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg3546"
+   version="1.1"
+   inkscape:version="0.48.1 r9760"
+   width="48"
+   height="48"
+   sodipodi:docname="undocked_canvas_panel.svg"
+   inkscape:export-filename="/home/daviddamerell/Documents/Source.GIT/UCDB/application/GlycoWorkbench/resources/gwb/icons/undocked_left_panel.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <metadata
+     id="metadata3552">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs3550">
+    <defs
+       id="defs1">
+      <clipPath
+         clipPathUnits="userSpaceOnUse"
+         id="clipPath1">
+        <path
+           inkscape:connector-curvature="0"
+           d="m 186,82 22,0 0,22 -22,0 0,-22 z"
+           id="path11339" />
+      </clipPath>
+      <clipPath
+         clipPathUnits="userSpaceOnUse"
+         id="clipPath2">
+        <path
+           inkscape:connector-curvature="0"
+           style="fill-rule:evenodd"
+           d="m 197,52 -11,-22 22,0 z"
+           id="path11342" />
+      </clipPath>
+      <clipPath
+         clipPathUnits="userSpaceOnUse"
+         id="clipPath3">
+        <path
+           inkscape:connector-curvature="0"
+           d="m 134,82 22,0 0,22 -22,0 0,-22 z"
+           id="path11345" />
+      </clipPath>
+      <clipPath
+         clipPathUnits="userSpaceOnUse"
+         id="clipPath4">
+        <path
+           inkscape:connector-curvature="0"
+           d="m 104,93 c 0,6.0751 -4.9249,11 -11,11 -6.0751,0 -11,-4.9249 -11,-11 0,-6.0751 4.9249,-11 11,-11 6.0751,0 11,4.9249 11,11 z"
+           id="path11348" />
+      </clipPath>
+      <clipPath
+         clipPathUnits="userSpaceOnUse"
+         id="clipPath5">
+        <path
+           inkscape:connector-curvature="0"
+           d="m 52,119 c 0,6.0751 -4.9249,11 -11,11 -6.0751,0 -11,-4.9249 -11,-11 0,-6.0751 4.9249,-11 11,-11 6.0751,0 11,4.9249 11,11 z"
+           id="path11351" />
+      </clipPath>
+      <clipPath
+         clipPathUnits="userSpaceOnUse"
+         id="clipPath6">
+        <path
+           inkscape:connector-curvature="0"
+           d="m 52,67 c 0,6.0751 -4.9249,11 -11,11 -6.0751,0 -11,-4.9249 -11,-11 0,-6.0751 4.9249,-11 11,-11 6.0751,0 11,4.9249 11,11 z"
+           id="path11354" />
+      </clipPath>
+    </defs>
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1358"
+     inkscape:window-height="692"
+     id="namedview3548"
+     showgrid="false"
+     inkscape:zoom="4.125"
+     inkscape:cx="-17.852733"
+     inkscape:cy="0.73575744"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg3546" />
+  <rect
+     style="fill:#000000;fill-opacity:1;stroke:#ff0000;stroke-width:0.89004916;stroke-opacity:1"
+     id="rect12766"
+     width="23.045456"
+     height="43.151516"
+     x="0.24242425"
+     y="2.6666667" />
+  <image
+     y="11.030303"
+     x="22.06061"
+     id="image10819"
+     xlink:href="data:image/png;base64,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 Gb8MAAAAAElFTkSuQmCC "
+     height="25.939394"
+     width="25.939394" />
+  <g
+     id="g11655"
+     transform="translate(0,1.075474)">
+    <g
+       transform="matrix(0.20040744,0,0,0.20040744,0.54545455,16.146932)"
+       id="g11360"
+       ID="l-1:1,2">
+      <polygon
+         id="polygon11362"
+         points="197,41 197,93 "
+         style="fill:none" />
+    </g>
+    <g
+       id="g11712"
+       transform="matrix(-0.01224549,-0.99992502,0.99992502,-0.01224549,-23.665318,47.724104)">
+      <g
+         ID="l-1:1,3"
+         id="g11364"
+         transform="matrix(0.20040744,0,0,0.20040744,0.54545455,16.146932)">
+        <polygon
+           style="fill:none"
+           points="145,93 197,93 "
+           id="polygon11366" />
+      </g>
+      <g
+         ID="r-1:1"
+         style="fill:#ffffff;stroke:#ffffff"
+         id="g11368"
+         transform="matrix(0.20040744,0,0,0.20040744,0.54545455,16.146932)">
+        <rect
+           x="186"
+           y="82"
+           width="22"
+           style="stroke:none"
+           height="22"
+           id="rect11370"
+           clip-path="url(#clipPath1)" />
+        <rect
+           x="186"
+           y="82"
+           width="22"
+           style="fill:#0000fa;stroke:none"
+           height="22"
+           id="rect11372"
+           clip-path="url(#clipPath1)" />
+        <rect
+           x="186"
+           y="82"
+           width="22"
+           style="fill:none;stroke:#000000"
+           height="22"
+           id="rect11374"
+           clip-path="url(#clipPath1)" />
+        <rect
+           x="186"
+           y="82"
+           width="22"
+           style="fill:none;stroke:#000000"
+           height="22"
+           id="rect11376" />
+      </g>
+      <g
+         ID="l-1:3,4"
+         id="g11388"
+         transform="matrix(0.20040744,0,0,0.20040744,0.54545455,16.146932)">
+        <polygon
+           style="fill:none"
+           points="93,93 145,93 "
+           id="polygon11390" />
+      </g>
+      <g
+         ID="r-1:3"
+         style="fill:#ffffff;stroke:#ffffff"
+         id="g11392"
+         transform="matrix(0.20040744,0,0,0.20040744,0.54545455,16.146932)">
+        <rect
+           x="134"
+           y="82"
+           width="22"
+           style="stroke:none"
+           height="22"
+           id="rect11394"
+           clip-path="url(#clipPath3)" />
+        <rect
+           x="134"
+           y="82"
+           width="22"
+           style="fill:#0000fa;stroke:none"
+           height="22"
+           id="rect11396"
+           clip-path="url(#clipPath3)" />
+        <rect
+           x="134"
+           y="82"
+           width="22"
+           style="fill:none;stroke:#000000"
+           height="22"
+           id="rect11398"
+           clip-path="url(#clipPath3)" />
+        <rect
+           x="134"
+           y="82"
+           width="22"
+           style="fill:none;stroke:#000000"
+           height="22"
+           id="rect11400" />
+      </g>
+      <g
+         ID="l-1:4,5"
+         id="g11402"
+         transform="matrix(0.20040744,0,0,0.20040744,0.54545455,16.146932)">
+        <polygon
+           style="fill:none"
+           points="41,119 93,93 "
+           id="polygon11404" />
+      </g>
+      <g
+         ID="l-1:4,6"
+         id="g11406"
+         transform="matrix(0.20040744,0,0,0.20040744,0.54545455,16.146932)">
+        <polygon
+           style="fill:none"
+           points="41,67 93,93 "
+           id="polygon11408" />
+      </g>
+      <g
+         ID="r-1:4"
+         style="fill:#ffffff;stroke:#ffffff"
+         id="g11410"
+         transform="matrix(0.20040744,0,0,0.20040744,0.54545455,16.146932)">
+        <circle
+           d="m 104,93 c 0,6.075132 -4.924868,11 -11,11 -6.075132,0 -11,-4.924868 -11,-11 0,-6.075132 4.924868,-11 11,-11 6.075132,0 11,4.924868 11,11 z"
+           sodipodi:ry="11"
+           sodipodi:rx="11"
+           sodipodi:cy="93"
+           sodipodi:cx="93"
+           r="11"
+           style="stroke:none"
+           cx="93"
+           cy="93"
+           id="circle11412"
+           clip-path="url(#clipPath4)" />
+        <rect
+           x="82"
+           y="82"
+           width="22"
+           style="fill:#00c832;stroke:none"
+           height="22"
+           id="rect11414"
+           clip-path="url(#clipPath4)" />
+        <rect
+           x="82"
+           y="82"
+           width="22"
+           style="fill:none;stroke:#000000"
+           height="22"
+           id="rect11416"
+           clip-path="url(#clipPath4)" />
+        <circle
+           d="m 104,93 c 0,6.075132 -4.924868,11 -11,11 -6.075132,0 -11,-4.924868 -11,-11 0,-6.075132 4.924868,-11 11,-11 6.075132,0 11,4.924868 11,11 z"
+           sodipodi:ry="11"
+           sodipodi:rx="11"
+           sodipodi:cy="93"
+           sodipodi:cx="93"
+           r="11"
+           style="fill:none;stroke:#000000"
+           cx="93"
+           cy="93"
+           id="circle11418" />
+      </g>
+      <g
+         ID="r-1:5"
+         style="fill:#ffffff;stroke:#ffffff"
+         id="g11420"
+         transform="matrix(0.20040744,0,0,0.20040744,0.54545455,16.146932)">
+        <circle
+           d="m 52,119 c 0,6.07513 -4.924868,11 -11,11 -6.075132,0 -11,-4.92487 -11,-11 0,-6.07513 4.924868,-11 11,-11 6.075132,0 11,4.92487 11,11 z"
+           sodipodi:ry="11"
+           sodipodi:rx="11"
+           sodipodi:cy="119"
+           sodipodi:cx="41"
+           r="11"
+           style="stroke:none"
+           cx="41"
+           cy="119"
+           id="circle11422"
+           clip-path="url(#clipPath5)" />
+        <rect
+           x="30"
+           y="108"
+           width="22"
+           style="fill:#00c832;stroke:none"
+           height="22"
+           id="rect11424"
+           clip-path="url(#clipPath5)" />
+        <rect
+           x="30"
+           y="108"
+           width="22"
+           style="fill:none;stroke:#000000"
+           height="22"
+           id="rect11426"
+           clip-path="url(#clipPath5)" />
+        <circle
+           d="m 52,119 c 0,6.07513 -4.924868,11 -11,11 -6.075132,0 -11,-4.92487 -11,-11 0,-6.07513 4.924868,-11 11,-11 6.075132,0 11,4.92487 11,11 z"
+           sodipodi:ry="11"
+           sodipodi:rx="11"
+           sodipodi:cy="119"
+           sodipodi:cx="41"
+           r="11"
+           style="fill:none;stroke:#000000"
+           cx="41"
+           cy="119"
+           id="circle11428" />
+      </g>
+      <g
+         ID="r-1:6"
+         style="fill:#ffffff;stroke:#ffffff"
+         id="g11430"
+         transform="matrix(0.20040744,0,0,0.20040744,0.54545455,16.146932)">
+        <circle
+           d="m 52,67 c 0,6.075132 -4.924868,11 -11,11 -6.075132,0 -11,-4.924868 -11,-11 0,-6.075132 4.924868,-11 11,-11 6.075132,0 11,4.924868 11,11 z"
+           sodipodi:ry="11"
+           sodipodi:rx="11"
+           sodipodi:cy="67"
+           sodipodi:cx="41"
+           r="11"
+           style="stroke:none"
+           cx="41"
+           cy="67"
+           id="circle11432"
+           clip-path="url(#clipPath6)" />
+        <rect
+           x="30"
+           y="56"
+           width="22"
+           style="fill:#00c832;stroke:none"
+           height="22"
+           id="rect11434"
+           clip-path="url(#clipPath6)" />
+        <rect
+           x="30"
+           y="56"
+           width="22"
+           style="fill:none;stroke:#000000"
+           height="22"
+           id="rect11436"
+           clip-path="url(#clipPath6)" />
+        <circle
+           d="m 52,67 c 0,6.075132 -4.924868,11 -11,11 -6.075132,0 -11,-4.924868 -11,-11 0,-6.075132 4.924868,-11 11,-11 6.075132,0 11,4.924868 11,11 z"
+           sodipodi:ry="11"
+           sodipodi:rx="11"
+           sodipodi:cy="67"
+           sodipodi:cx="41"
+           r="11"
+           style="fill:none;stroke:#000000"
+           cx="41"
+           cy="67"
+           id="circle11438" />
+      </g>
+      <g
+         ID="li-1:4,5"
+         style="fill:#ffffff;stroke:#ffffff;font-family:Serif"
+         id="g11440"
+         transform="matrix(0.20040744,0,0,0.20040744,0.54545455,16.146932)" />
+      <g
+         ID="li-1:4,6"
+         style="fill:#ffffff;stroke:#ffffff;font-family:Serif"
+         id="g11450"
+         transform="matrix(0.20040744,0,0,0.20040744,0.54545455,16.146932)" />
+      <g
+         ID="li-1:3,4"
+         style="fill:#ffffff;stroke:#ffffff;font-family:Serif"
+         id="g11460"
+         transform="matrix(0.20040744,0,0,0.20040744,0.54545455,16.146932)" />
+      <g
+         ID="li-1:1,3"
+         style="fill:#ffffff;stroke:#ffffff;font-family:Serif"
+         id="g11480"
+         transform="matrix(0.20040744,0,0,0.20040744,0.54545455,16.146932)" />
+    </g>
+  </g>
+</svg>

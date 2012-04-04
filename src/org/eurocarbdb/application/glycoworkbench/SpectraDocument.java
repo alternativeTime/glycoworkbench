@@ -42,9 +42,13 @@ public class SpectraDocument extends BaseDocument implements SAXUtils.SAXWriter 
     private MMFCreator mmfc;
     protected Vector<ScanData> theScans = new Vector<ScanData>();
     protected Vector<PeakData> thePeaks = new Vector<PeakData>();
+    
+    protected Scan theScan;
 
-    public SpectraDocument() {
-    super(false);
+    public SpectraDocument(Scan scan) {
+    	super(false);
+    	
+    	theScan=scan;
     }
 
     private MMFCreator getMMFCreator() {
@@ -90,8 +94,17 @@ public class SpectraDocument extends BaseDocument implements SAXUtils.SAXWriter 
         if( !readSpectra(filename,warning) ) 
         return false;
 
+        if(filename.toUpperCase().endsWith(".T2D")){
+        	int level=theScan.isMsMs() ? 2 : 1;
+        	
+        	for(ScanData scanData:theScans){
+            	scanData.ms_level=level;
+            }
+        }
+        
         setFilename(filename);
         fireDocumentInit();
+
         return true;
     }
     catch(Exception e) {
