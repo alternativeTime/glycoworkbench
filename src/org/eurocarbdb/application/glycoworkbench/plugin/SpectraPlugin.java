@@ -37,6 +37,7 @@ import javax.swing.JOptionPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 
 public class SpectraPlugin implements Plugin, ActionListener {
 
@@ -54,8 +55,26 @@ public class SpectraPlugin implements Plugin, ActionListener {
 	}
 
 	public void init() {
-		if( theWorkspace!=null ) 
-			thePeakPicker.retrieve(theWorkspace.getConfiguration());    
+		if( theWorkspace!=null ){
+			try{
+				if(GlycoWorkbench.isFirstRun()){
+					System.out.println("WARNING: SpectraPlugin detected first run");
+					System.out.println("WARNING: Going to store configuration and then reload to work around an unknown bug in the PeakPicker config on first launch");
+					
+					thePeakPicker.retrieve(theWorkspace.getConfiguration());
+
+					theWorkspace.storeConfiguration(GlycoWorkbench.getConfigurationFile().getPath());
+					
+					thePeakPicker=new PeakPickerCWT();
+					
+					theWorkspace.getConfiguration().open(GlycoWorkbench.getConfigurationFile().getPath());
+				}
+			}catch(IOException ex){
+				LogUtils.report(ex);
+			}
+			
+			thePeakPicker.retrieve(theWorkspace.getConfiguration());
+		}
 	}
 
 	public void exit() {
