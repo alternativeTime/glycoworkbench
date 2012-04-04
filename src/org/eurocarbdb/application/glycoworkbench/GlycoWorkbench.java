@@ -3345,7 +3345,9 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 					+ File.separator + "www" + File.separator + "manual.html",
 					false);
 			
-			browser.webBrowser.setVisible(false);
+			//if(System.getProperty("os.name").equals("Linux")){
+				browser.webBrowser.setVisible(false);
+			//}
 			
 			browser.webBrowser.addWebBrowserListener(new WebBrowserListener(){
 				String location;
@@ -3358,20 +3360,22 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 				@Override
 				public void loadingProgressChanged(WebBrowserEvent event) {
-					JWebBrowser browser=event.getWebBrowser();
-					if(location!=null && location.startsWith(helpLocation)){
-						int loadingProgress=browser.getLoadingProgress();
+				//	if(System.getProperty("os.name").equals("Linux")){
+						JWebBrowser browser=event.getWebBrowser();
+						if(location!=null && location.startsWith(helpLocation)){
+							int loadingProgress=browser.getLoadingProgress();
 
-						if(loadingProgress==100){
-							browser.executeJavascript("document.getElementById(\"mw-head\").style.display=\"none\";");
-							browser.executeJavascript("document.getElementById(\"mw-panel\").style.display=\"none\";");
-							browser.executeJavascript("document.getElementById(\"mw-page-base\").style.display=\"none\";");
-							browser.executeJavascript("document.getElementById(\"mw-head-base\").style.marginLeft=\"0\";");
-							browser.executeJavascript("document.getElementById(\"content\").style.marginLeft=\"0\";");
-							
-							browser.setVisible(true);
+							if(loadingProgress==100){
+								browser.executeJavascript("document.getElementById(\"mw-head\").style.display=\"none\";");
+								browser.executeJavascript("document.getElementById(\"mw-panel\").style.display=\"none\";");
+								browser.executeJavascript("document.getElementById(\"mw-page-base\").style.display=\"none\";");
+								browser.executeJavascript("document.getElementById(\"mw-head-base\").style.marginLeft=\"0\";");
+								browser.executeJavascript("document.getElementById(\"content\").style.marginLeft=\"0\";");
+
+								browser.setVisible(true);
+							}
 						}
-					}
+					//}
 				}
 
 				@Override
@@ -3443,11 +3447,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 			@Override
 			public void windowClosing(WindowEvent e) {
-				System.out.println("Close requested");
 				
-				browser.webBrowserPanel.remove(browser.webBrowser);
-				
-				remove(browser.webBrowserPanel);
 			}
 
 			@Override
