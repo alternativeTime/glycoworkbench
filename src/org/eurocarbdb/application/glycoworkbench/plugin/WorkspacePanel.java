@@ -126,7 +126,6 @@ public class WorkspacePanel extends JPanel implements TreeModel,
 
 					if (!PAINT_BOX_ON_NONROOT_ITEMS) {
 						if (selected) {
-							System.err.println(backgroundSelectionColor);
 							master.setBackground(backgroundSelectionColor);
 						} else {
 							master.setBackground(backgroundNonSelectionColor);
@@ -347,7 +346,7 @@ public class WorkspacePanel extends JPanel implements TreeModel,
 
 		theActionManager.add("sync",
 				ThemeManager.getResizableEmptyIcon(Plugin.DEFAULT_ICON_SIZE),
-				"Sync", -1, "", this);
+				"Pull annotated structures from parent", -1, "", this);
 
 		theActionManager.add(
 				"properties",
@@ -713,7 +712,6 @@ public class WorkspacePanel extends JPanel implements TreeModel,
 	}
 
 	public boolean sync() {
-		System.err.println("Sync has been called");
 		if (hasSelectedScan()) {
 			Scan scan = getSelectedScan();
 			if (scan != null) {
@@ -745,7 +743,11 @@ public class WorkspacePanel extends JPanel implements TreeModel,
 
 	public void onAdd() {
 		Scan s = getSelectedObjectOrParentScan();
-		theWorkspace.addScan(s, new Scan(theWorkspace));
+		
+		Scan childScan=new Scan(theWorkspace);
+		childScan.setMsMs(true);
+		
+		theWorkspace.addScan(s, childScan);
 	}
 
 	public void onSelect() {

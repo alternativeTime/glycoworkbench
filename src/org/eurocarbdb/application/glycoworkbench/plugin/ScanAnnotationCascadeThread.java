@@ -54,57 +54,6 @@ public class ScanAnnotationCascadeThread extends Thread {
 	public void run() {
 		annotateScans(parentScans);
 	}
-	
-//	public void pruneAnnotations(final Vector<Scan> parentScans){
-//		SwingUtilities.invokeLater(new Runnable(){
-//			@Override
-//			public void run(){
-//				List<List<Scan>> scanLevels=getLevelOrderedScanList(parentScans);
-//				for(int i=scanLevels.size()-1;i>-1;i--){
-//					List<Scan> scans=scanLevels.get(i);
-//					for(Scan scan:scans){
-//						pruneScan(scan);
-//					}
-//				}
-//			}
-//		});
-//	}
-//	
-//	public void pruneScan(Scan scan){
-//		if(scan.getParent()!=null){
-//			if(scan.getChildren().size()==0){ 
-//				//leaf scan
-//				
-//				scan.getAnnotatedPeakList().getPeakAnnotationCollections()
-//				
-//			}else{
-//				//intermediate level scan
-//			}
-//		}else{
-//			//level one scan with no children
-//		}
-//	}
-//	
-//	private List<List<Scan>> getLevelOrderedScanList(Vector<Scan> scans){		
-//		List<List<Scan>> scanLevels=new ArrayList<List<Scan>>();		
-//		for(Scan scan:scans){
-//			getLevelOrderedScanList(0, scanLevels, scan);
-//		}
-//		
-//		return scanLevels;
-//	}
-//	
-//	private void getLevelOrderedScanList(int depth, List<List<Scan>> scanLevels, Scan scan){
-//		if(scanLevels.size()<depth+1){
-//			scanLevels.add(new ArrayList<Scan>());
-//		}
-//		
-//		scanLevels.get(depth).add(scan);
-//		
-//		for(Scan childScan:scan.getChildren()){
-//			getLevelOrderedScanList(depth+1,scanLevels,childScan);
-//		}
-//	}
 
 	private void annotateScans(Vector<Scan> scans) {
 		for (Scan scan : scans) {
@@ -117,11 +66,10 @@ public class ScanAnnotationCascadeThread extends Thread {
 	}
 
 	private void annotateScan(Scan scan) {
-		
 		if (scan.getParent() != null) {
 			final Scan final_scan=scan;
 			
-			//Do this on the event thread
+			//Do this on the event thread as it can change the UI
 			try {
 				SwingUtilities.invokeAndWait(new Runnable(){
 					public void run(){
@@ -129,25 +77,46 @@ public class ScanAnnotationCascadeThread extends Thread {
 					}
 				});
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LogUtils.report(e);
 			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LogUtils.report(e);
 			}
 		}
 		
 		if(scan.getStructures().size()==0){
 			
 		}else{
-			Fragmenter frag = new Fragmenter(this.opts);
-			AnnotationThread annotationThread = new AnnotationThread(scan
-					.getPeakList(), scan.getStructures().getStructures(), frag,
-					ann_opt);
-			annotationThread.run();
-			this.scanToAnnotatedPeaks.put(scan, annotationThread
-					.getAnnotatedPeaks());
-			scan.getAnnotatedPeakList().copy(annotationThread.getAnnotatedPeaks(),false);
+			//Do we need an option here to allow the user to request a fragmentation annotation run even when in MS mode?
+			//For now we are going to maintain the behavior of the cascade annotation as found in all released versions
+			//of GlycoWorkbench.  Which is to annotate MS spectra with the products of the in silico digestion algorithm 
+			//
+			//Depending on the ionisation energy you can produce glycan fragments during MS (essentially allowing for
+			//MS^3 on an MS^2 machine).
+			//Uncomment the code below if you ever want to implement an option to skip fragmentation for MS spectra.
+			
+//			if(scan.isMsMs()){
+				Fragmenter frag = new Fragmenter(this.opts);
+				AnnotationThread annotationThread = new AnnotationThread(scan
+						.getPeakList(), scan.getStructures().getStructures(), frag,
+						ann_opt);
+				annotationThread.run();
+				
+				this.scanToAnnotatedPeaks.put(scan, annotationThread
+						.getAnnotatedPeaks());
+				scan.getAnnotatedPeakList().copy(annotationThread.getAnnotatedPeaks(),false);
+//			}else{
+//				System.out.println("Running MS annotation");
+//				
+//				// match structures
+//				CollectionStructureGenerator generator = new CollectionStructureGenerator(scan.getStructures().getStructures());
+//				theThread = new ProfilerThread(scan.getPeakList(), new Glycan(), generator,new ProfilerOptions(), ann_opt);
+//				theThread.setAddUnmatchedPeaks(false);
+//				
+//				theThread.run();
+//				
+//				this.scanToAnnotatedPeaks.put(scan, theThread.getAnnotatedPeaks());
+//				scan.getAnnotatedPeakList().copy(theThread.getAnnotatedPeaks(),false);
+//			}
 		}
 	}
 

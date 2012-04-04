@@ -26,6 +26,7 @@ package org.eurocarbdb.application.glycoworkbench;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.Window;
 import java.awt.event.WindowEvent;
@@ -52,6 +53,7 @@ public class DockableEvent {
 	private Dimension lastSize;
 	private String title;
 	private static Point lastPlacedWindowPosition;
+	private Image theIcon;
 	
 	public static Point getLastPlacedWindowPosition() {
 		return lastPlacedWindowPosition;
@@ -64,10 +66,12 @@ public class DockableEvent {
 	private static List<JFrame> detachedFrames=new ArrayList<JFrame>();
 	private static List<AbstractAction> globalActions=new ArrayList<AbstractAction>();
 
-	public DockableEvent(Window _defaultDockedWindow,Container _defaultDockedContainer,String _title){
+	public DockableEvent(Window _defaultDockedWindow,Container _defaultDockedContainer,String _title, Image icon){
 		defaultDockedWindow=_defaultDockedWindow;
 		defaultDockedContainer=_defaultDockedContainer;
 		title=_title;
+		
+		theIcon=icon;
 	}
 	
 	public static List<JFrame> getDetachedFrames() {
@@ -172,6 +176,7 @@ public class DockableEvent {
 			});
 			
 			frame.setLayout(new BorderLayout());
+			frame.setIconImage(theIcon);
 			
 			initialise(frame,currentDockedContainer);
 			currentDockedWindow=frame;
@@ -192,7 +197,7 @@ public class DockableEvent {
 			}
 			frame.setTitle(title);
 			frame.setVisible(true);
-			frame.setIconImages(defaultDockedWindow.getIconImages());
+		//	frame.setIconImages(defaultDockedWindow.getIconImages());
 			
 			detachedFrames.add(frame);
 			DockableEvent.initiliseGlobalKeyBindings(frame);

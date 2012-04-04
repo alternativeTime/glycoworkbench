@@ -245,8 +245,8 @@ public class AnnotatedPeakList extends BaseDocument implements
 
 		for (int i = 0; i < peak_annotations_multiple.size(); i++) {
 			PeakAnnotationMultiple pam = peak_annotations_multiple.elementAt(i);
-			if (pam.getPeak().compareTo(p) > 0)
-				return -1;
+//			if (pam.getPeak().compareTo(p) > 0)
+//				return -1;
 
 			if (pam.getPeak().mzEquals(p,unit,accuracy))
 				return i;
@@ -1003,7 +1003,7 @@ public class AnnotatedPeakList extends BaseDocument implements
 	}
 
 	public PeakAnnotationMultiple getAnnotations(Peak p) {
-		return getAnnotations(p, 0.0001 ,MassUnit.PPM);
+		return getAnnotations(p, 2 ,MassUnit.Da);
 	}
 	
 	/**

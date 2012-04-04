@@ -35,14 +35,18 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.print.PrinterJob;
 import java.io.BufferedReader;
 import java.io.File;
@@ -150,13 +154,22 @@ import org.pushingpixels.flamingo.api.ribbon.resize.IconRibbonBandResizePolicy;
 import org.pushingpixels.flamingo.api.ribbon.resize.RibbonBandResizePolicy;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 
+import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
+
 import chrriis.dj.nativeswing.swtimpl.NativeInterface;
+import chrriis.dj.nativeswing.swtimpl.components.JWebBrowser;
+import chrriis.dj.nativeswing.swtimpl.components.WebBrowserCommandEvent;
+import chrriis.dj.nativeswing.swtimpl.components.WebBrowserEvent;
+import chrriis.dj.nativeswing.swtimpl.components.WebBrowserListener;
+import chrriis.dj.nativeswing.swtimpl.components.WebBrowserNavigationEvent;
+import chrriis.dj.nativeswing.swtimpl.components.WebBrowserWindowOpeningEvent;
+import chrriis.dj.nativeswing.swtimpl.components.WebBrowserWindowWillOpenEvent;
 
 public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		BaseDocument.DocumentChangeListener,
 		GlycanCanvas.SelectionChangeListener, FileHistory.Listener,
 		MouseListener, GlycanWorkspace.Listener, ContextAwareContainer,
-		NotationChangeListener, UIActionListener, Updatable {
+		NotationChangeListener, UIActionListener, Updatable, ComponentListener {
 
 	public static boolean SUBSTANCE_ENABLED=false;
 	private static final long serialVersionUID = 0L;
@@ -368,6 +381,8 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	private Updater updater;
 
 	public GlycoWorkbench() throws IOException {
+		addComponentListener(this);
+		
 		try{
 			updater = new Updater("http://download.glycoworkbench.org");
 		}catch(Exception e){
@@ -397,6 +412,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	private boolean rightPanelDetached = false;
 
 	private void updateDividerLocations() {
+		
 		if ((!glycanCanvasDetached || !spectrumPanelDetached || !leftPanelDetached)
 				&& !rightPanelDetached) {
 			theSplitPane.setDividerLocation(theLastSplitPaneDividerLocation);
@@ -414,7 +430,6 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		} else if (!glycanCanvasDetached) {
 			theTopSplitPane.setDividerLocation(.0);
 		} else if (!leftPanelDetached) {
-			System.err.println("Setting divider location to 1");
 			theTopSplitPane.setDividerLocation(1.);
 		}
 
@@ -439,6 +454,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		ribbonManager = new RibbonManager(this.getRibbon());
+		getRibbon().setMinimized(true);
 
 		try {
 			themeManager = new ThemeManager(null, this.getClass());
@@ -468,7 +484,58 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 		FileUtils.setThemeManager(themeManager);
 		
+		RichTooltip tip=new RichTooltip("App Menu","Click to reveal");
+		//tip.setFooterImage(themeManager.getResizableIcon(STOCK_ICON.COPY, ICON_SIZE.L1).imageIcon.getImage());
+		getRibbon().setApplicationMenuRichTooltip(tip);
+		setApplicationIcon(themeManager.getResizableIcon("apply", ICON_SIZE.L1).resizableIcon);
 
+		ActionListener typeListener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Object source = e.getSource();
+				if (source instanceof JCommandButton) {
+					JCommandButton button = (JCommandButton) source;
+					String type = button.getText();
+					if (type.equals("implode")) {
+						implode();
+					} else if (type.equals("explode")) {
+						explode();
+					} else if (type.equals("saveall")) {
+						onSave(theWorkspace);
+					} else if (type.equals("saveas")) {
+						onSaveAs(theWorkspace);
+					} else if (type.equals("open")) {
+						onOpenDocument(theWorkspace.getAllDocuments(), false);
+					}
+				}
+			}
+		};
+		
+		JCommandButtonAction saveAction=new JCommandButtonAction("saveall", themeManager.getResizableIcon(STOCK_ICON.DOCUMENT_SAVE, ICON_SIZE.L1).resizableIcon);
+		saveAction.setActionCommand("saveall");
+		saveAction.addActionListener(typeListener);
+		getRibbon().addTaskbarComponent(saveAction);
+		
+		JCommandButtonAction saveasAction=new JCommandButtonAction("saveas", themeManager.getResizableIcon(STOCK_ICON.DOCUMENT_SAVE_AS, ICON_SIZE.L1).resizableIcon);
+		saveasAction.setActionCommand("saveas");
+		saveasAction.addActionListener(typeListener);
+		getRibbon().addTaskbarComponent(saveasAction);
+		
+		JCommandButtonAction openAction=new JCommandButtonAction("open", themeManager.getResizableIcon(STOCK_ICON.DOCUMENT_OPEN, ICON_SIZE.L1).resizableIcon);
+		openAction.setActionCommand("open");
+		openAction.addActionListener(typeListener);
+		getRibbon().addTaskbarComponent(openAction);
+		
+		JCommandButtonAction explodeAction=new JCommandButtonAction("explode", themeManager.getResizableIcon("explode", ICON_SIZE.L1).resizableIcon);
+		explodeAction.setActionCommand("explode");
+		explodeAction.addActionListener(typeListener);
+		getRibbon().addTaskbarComponent(explodeAction);
+		
+		JCommandButtonAction implodeAction=new JCommandButtonAction("implode", themeManager.getResizableIcon("implode", ICON_SIZE.L1).resizableIcon);
+		implodeAction.setActionCommand("implode");
+		implodeAction.addActionListener(typeListener);
+		getRibbon().addTaskbarComponent(implodeAction);
+		
 		theActionManager2 = new ActionManager();
 		createActions();
 
@@ -565,6 +632,9 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		theTopSplitPane.setOneTouchExpandable(true);
 		theLeftSplitPane.setTopComponent(theTopSplitPane);
 
+		//canvasPanel=new JPanel();
+		//canvasPanel.setLayout(new BorderLayout());
+		
 		canvasPanel = new JSplitPaneCustom(JSplitPane.VERTICAL_SPLIT);
 		canvasPanel.setLayout(new BorderLayout());
 
@@ -581,7 +651,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 				BorderLayout.CENTER);
 
 		glycanCanvasDockableEvent = new DockableEvent(this, canvasPanel,
-				"Glycan canvas") {
+				"Glycan canvas", themeManager.getResizableIcon("undocked_canvas_panel", ICON_SIZE.L1).imageIcon.getImage()) {
 			protected void initialise(Container moveToContainer,
 					Container currentDockedContainer) {
 				if (currentDockedContainer != null) {
@@ -600,9 +670,9 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 					glycanCanvasDetached = false;
 				}
-
-				moveToContainer.add(canvasScrollPane, BorderLayout.CENTER);
 				moveToContainer.add(toolBarPanel, BorderLayout.NORTH);
+				moveToContainer.add(canvasScrollPane, BorderLayout.CENTER);
+				
 				moveToContainer.add(toolBarPanelLinkage, BorderLayout.SOUTH);
 
 				hideAll();
@@ -632,7 +702,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		leftPanel.add(thePluginManager.getLeftComponent());
 
 		leftPanelDockableEvent = new DockableEvent(this, leftPanel,
-				"Project explorer") {
+				"Project explorer", themeManager.getResizableIcon("undocked_left_panel", ICON_SIZE.L1).imageIcon.getImage()) {
 			protected void initialise(Container moveToContainer,
 					Container currentDockedContainer) {
 				if (currentDockedContainer != null) {
@@ -685,7 +755,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		bottomPanel.add(thePluginManager.getBottomComponent());
 
 		bottomPanelDockableEvent = new DockableEvent(this, bottomPanel,
-				"Spectrum viewer") {
+				"Spectrum viewer", themeManager.getResizableIcon("undocked_spectra_panel", ICON_SIZE.L1).imageIcon.getImage()) {
 			protected void initialise(Container moveToContainer,
 					Container currentDockedContainer) {
 				if (currentDockedContainer != null) {
@@ -734,7 +804,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		rightPanel.add(thePluginManager.getRightComponent());
 
 		rightPanelDockableEvent = new DockableEvent(this, rightPanel,
-				"Annotation tools") {
+				"Annotation tools", themeManager.getResizableIcon("undocked_right_panel", ICON_SIZE.L1).imageIcon.getImage()) {
 			protected void initialise(Container moveToContainer,
 					Container currentDockedContainer) {
 				if (currentDockedContainer != null) {
@@ -2179,6 +2249,14 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		theActionManager2.add("open", themeManager.getResizableIcon(
 				STOCK_ICON.DOCUMENT_OPEN, defaultMenuIconSize),
 				"Open document...", KeyEvent.VK_O, "ctrl O", this); // done,ribbon
+		
+		theActionManager2.add("openstruct", themeManager.getResizableIcon(
+				STOCK_ICON.DOCUMENT_OPEN, defaultMenuIconSize),
+				"Open document...", KeyEvent.VK_O, "ctrl O", this); // done,ribbon
+		
+		theActionManager2.add("openintostruct", themeManager.getResizableIcon(
+				STOCK_ICON.DOCUMENT_OPEN_ADDITIONAL, defaultMenuIconSize),
+				"Open additional document...", KeyEvent.VK_I, "ctrl I", this);// done,ribbon
 		// app bar
 		theActionManager2.add("openinto", themeManager.getResizableIcon(
 				STOCK_ICON.DOCUMENT_OPEN_ADDITIONAL, defaultMenuIconSize),
@@ -2451,7 +2529,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		band2.setResizePolicies(resizePolicies);
 
 		band2.addCommandButton(
-				theActionManager2.get("open").getJCommandButton(ICON_SIZE.L3,
+				theActionManager2.get("openstruct").getJCommandButton(ICON_SIZE.L3,
 						"Open", this, new RichTooltip("Open", "")),
 				RibbonElementPriority.TOP);
 		band2.addCommandButton(
@@ -2872,6 +2950,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 	public boolean onOpen(String filename, BaseDocument doc, boolean merge,
 			boolean mergeScan) {
+		
 		if (doc == null)
 			return false;
 
@@ -2879,14 +2958,24 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 			if (doc.getFileFormats().size() == 0)
 				return false;
-
+			
 			// imposto la dialog per l'apertura del file
 			JFileChooser fileChooser = new JFileChooser();
-			for (javax.swing.filechooser.FileFilter ff : doc.getFileFormats())
+			
+			Collection<FileFilter> filters=doc.getFileFormats();
+			
+			FileFilter lastFilter=null;
+			for (javax.swing.filechooser.FileFilter ff : filters){
 				fileChooser.addChoosableFileFilter(ff);
+				
+				lastFilter=ff;
+			}
+			
 			fileChooser.setCurrentDirectory(theWorkspace.getFileHistory()
 					.getRecentFolder());
 
+			fileChooser.setFileFilter(lastFilter);
+			
 			// visualizzo la dialog
 			if (fileChooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION)
 				return false;
@@ -2933,7 +3022,6 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 			theWorkspace.setCurrentScan(s);
 
 		} else if (merge && doc.getName().equals("Spectra")) {
-			// add new scan
 			Scan s = new Scan(theWorkspace);
 			if (!s.getSpectra().open(filename, merge, true)) {
 				restoreInteractions();
@@ -2943,8 +3031,6 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 			theWorkspace.setCurrentScan(s);
 
 		} else if (merge && doc.getName().equals("PeakList")) {
-			// add new scan
-			System.err.println("Opening peak list");
 
 			Scan s = null;
 
@@ -3033,8 +3119,16 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 			return false;
 
 		JFileChooser fileChooser = new JFileChooser();
-		for (javax.swing.filechooser.FileFilter ff : doc.getFileFormats())
+		
+		FileFilter lastFileFilter=null;
+		for (javax.swing.filechooser.FileFilter ff : doc.getFileFormats()){
 			fileChooser.addChoosableFileFilter(ff);
+			
+			lastFileFilter=ff;
+		}
+		
+		fileChooser.setFileFilter(lastFileFilter);
+		
 		fileChooser.setCurrentDirectory(theWorkspace.getFileHistory()
 				.getRecentFolder());
 
@@ -3173,7 +3267,6 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		 */
 		GlycoWorkbench.updateVersionFile();
 		
-		System.err.println("On exit has been called");
 		if (checkDocumentChanges(theWorkspace) && checkWorkspaceChanges())
 			this.exit(0);
 	}
@@ -3181,13 +3274,13 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	boolean restart = false;
 	String skin;
 	protected static Object lock = new Object();
-	private JSplitPane canvasPanel;
+	private JSplitPaneCustom canvasPanel;
 	private JScrollPane canvasScrollPane;
 	private JPanel panelghg;
 	private JPanel toolBarPanel;
 	private JPanel toolBarPanelLinkage;
 	private DockableEvent glycanCanvasDockableEvent;
-	private double theLastSplitPaneDividerLocation = 0.6;
+	private double theLastSplitPaneDividerLocation = 0.7;
 	private double theLastTopSplitPaneDividerLocation = 0.4;
 	private double theLastLeftSplitPaneDividerLocation = 0.5;
 
@@ -3240,14 +3333,87 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		// dlg.setModal(false);
 
 		JFrame frame = new JFrame();
-		WebBrowser browser = new WebBrowser();
+		frame.setIconImage(themeManager.getResizableIcon(STOCK_ICON.HELP_CONTENTS, ICON_SIZE.L1).imageIcon.getImage());
+		
+		final WebBrowser browser = new WebBrowser();
 		try {
+			final String helpLocation="http://wiki.glycoworkbench.org/index.php/Manual_Version_2.1";
 			// System.err.println("Path: "+Locator.getClassSource(this.getClass()));
 			browser.openResource(new URL(
-					"http://wiki.glycoworkbench.org/index.php/Manual_Version_2.1"), Locator
+					helpLocation), Locator
 					.getClassSource(this.getClass()).getParentFile()
 					+ File.separator + "www" + File.separator + "manual.html",
 					false);
+			
+			browser.webBrowser.setVisible(false);
+			
+			browser.webBrowser.addWebBrowserListener(new WebBrowserListener(){
+				String location;
+				
+				@Override
+				public void commandReceived(WebBrowserCommandEvent arg0) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				@Override
+				public void loadingProgressChanged(WebBrowserEvent event) {
+					JWebBrowser browser=event.getWebBrowser();
+					if(location!=null && location.startsWith(helpLocation)){
+						int loadingProgress=browser.getLoadingProgress();
+
+						if(loadingProgress==100){
+							browser.executeJavascript("document.getElementById(\"mw-head\").style.display=\"none\";");
+							browser.executeJavascript("document.getElementById(\"mw-panel\").style.display=\"none\";");
+							browser.executeJavascript("document.getElementById(\"mw-page-base\").style.display=\"none\";");
+							browser.executeJavascript("document.getElementById(\"mw-head-base\").style.marginLeft=\"0\";");
+							browser.executeJavascript("document.getElementById(\"content\").style.marginLeft=\"0\";");
+							
+							browser.setVisible(true);
+						}
+					}
+				}
+
+				@Override
+				public void locationChangeCanceled(WebBrowserNavigationEvent event) {
+					
+				}
+
+				@Override
+				public void locationChanged(WebBrowserNavigationEvent event) {
+					location=event.getNewResourceLocation();
+				}
+
+				@Override
+				public void locationChanging(WebBrowserNavigationEvent event) {
+					
+				}
+
+				@Override
+				public void statusChanged(WebBrowserEvent event) {
+					
+				}
+
+				@Override
+				public void titleChanged(WebBrowserEvent event) {
+					
+				}
+
+				@Override
+				public void windowClosing(WebBrowserEvent event) {
+					
+				}
+
+				@Override
+				public void windowOpening(WebBrowserWindowOpeningEvent event) {
+					
+				}
+
+				@Override
+				public void windowWillOpen(WebBrowserWindowWillOpenEvent event) {
+					
+				}
+			});
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			browser.setHTMLContent("<html>"
@@ -3263,11 +3429,50 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 			e.printStackTrace();
 		}
 
-		frame.setIconImages(getIconImages());
+		//frame.setIconImages(getIconImages());
 		frame.add(browser);
 		frame.setSize(500, 500);
 		frame.setTitle("Manual");
 		frame.setVisible(true);
+		
+		frame.addWindowListener(new WindowListener(){
+			@Override
+			public void windowOpened(WindowEvent e) {
+				
+			}
+
+			@Override
+			public void windowClosing(WindowEvent e) {
+				System.out.println("Close requested");
+				
+				browser.webBrowserPanel.remove(browser.webBrowser);
+				
+				remove(browser.webBrowserPanel);
+			}
+
+			@Override
+			public void windowClosed(WindowEvent e) {	
+				
+			}
+
+			@Override
+			public void windowIconified(WindowEvent e) {
+			}
+
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+			}
+
+			@Override
+			public void windowActivated(WindowEvent e) {
+				
+			}
+
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				
+			}
+		});
 	}
 
 	public void onAbout() {
@@ -3399,6 +3604,8 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 			onOpenDocument(theWorkspace.getAllDocuments(), true);
 		else if (action.equals("openstruct"))
 			onOpen(param, theWorkspace.getStructures(), false);
+		else if (action.equals("openstructinto"))	
+			onOpen(param, theWorkspace.getStructures(), true);
 		else if (action.equals("openfragments"))
 			onOpen(param, theWorkspace.getFragments(), false);
 		else if (action.equals("openpeaks"))
@@ -3563,6 +3770,9 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	private int beforeHeightTop;
 	private int beforeHeightBottom;
 	private JLabel status;
+	private Rectangle normalRec;
+	private Rectangle lastRec;
+	private int lastFrameState;
 
 	/**
 	 * Detach all detachable panels from the main GWB frame.
@@ -3603,8 +3813,21 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 			hideTopPanels();
 			hideAllLeftPanels();
-
-			this.setSize(new Dimension(ix, iy - jy + 10));
+			
+			//setExtendedState(getExtendedState() | Frame.);
+		
+			if(getExtendedState()==Frame.MAXIMIZED_BOTH){
+				lastRec=getBounds();
+				
+				lastFrameState=getExtendedState();
+				
+				this.setBounds(normalRec);
+				setExtendedState(Frame.NORMAL);
+				
+				this.setSize(new Dimension(normalRec.width, iy - jy + 10));
+			}else{
+				this.setSize(new Dimension(ix, iy - jy + 10));	
+			}
 		}
 	}
 
@@ -3648,6 +3871,13 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 			thread.start();
 
 			DockableEvent.setLastPlacedWindowPosition(new Point(0, 0));
+			
+			setBounds(lastRec);
+			setExtendedState(lastFrameState);
+			
+			if(lastFrameState==Frame.NORMAL){
+				normalRec=lastRec;
+			}
 		}
 	}
 
@@ -3682,5 +3912,31 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	public String getBuildNo() {
 		// TODO Auto-generated method stub
 		return GlycoWorkbench.BUILD_NUMBER;
+	}
+
+	protected void storeNormalBounds(){
+		if(getExtendedState()==Frame.NORMAL){
+			normalRec=getBounds();
+		}
+	}
+	
+	@Override
+	public void componentResized(ComponentEvent e) {
+		storeNormalBounds();
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		storeNormalBounds();
+	}
+
+	@Override
+	public void componentShown(ComponentEvent e) {
+		storeNormalBounds();
+	}
+
+	@Override
+	public void componentHidden(ComponentEvent e) {
+		storeNormalBounds();
 	}
 }

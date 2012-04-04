@@ -249,3 +249,7 @@ DEFAULT~png~deleteNew
 DEFAULT~png~massoptions
 DEFAULT~png~profiler
 DEFAULT~png~wggds_logo_260
+DEFAULT~png~undocked_right_panel
+DEFAULT~png~undocked_left_panel
+DEFAULT~png~undocked_canvas_panel
+DEFAULT~png~undocked_spectra_panel

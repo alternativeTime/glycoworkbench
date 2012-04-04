@@ -42,7 +42,7 @@ public class Scan implements BaseDocument.DocumentChangeListener {
 
 	protected String name = "Scan";
 	protected Double precursor_mz = null;
-	protected boolean is_msms = true;
+	private boolean is_msms = true;
 
 	protected GlycanDocument theStructures = null;
 	protected FragmentDocument theFragments = null;
@@ -59,7 +59,7 @@ public class Scan implements BaseDocument.DocumentChangeListener {
 	public Scan(GlycanWorkspace ws) {
 		theStructures = new GlycanDocument(ws);
 		theFragments = new FragmentDocument();
-		theSpectra = new SpectraDocument();
+		theSpectra = new SpectraDocument(this);
 		thePeakList = new PeakList();
 		theAnnotatedPeakList = new AnnotatedPeakList();
 		theNotes = new NotesDocument();
@@ -223,13 +223,13 @@ public class Scan implements BaseDocument.DocumentChangeListener {
 	public void documentInit(BaseDocument.DocumentChangeEvent e) {
 		if (e.getSource() == theSpectra)
 			is_msms = (theSpectra.getNoScans() > 0) ? (theSpectra
-					.getScanDataAt(0).getMSLevel() > 1) : false;
+					.getScanDataAt(0).getMSLevel() > 1) : is_msms;
 	}
 
 	public void documentChanged(BaseDocument.DocumentChangeEvent e) {
 		if (e.getSource() == theSpectra)
 			is_msms = (theSpectra.getNoScans() > 0) ? (theSpectra
-					.getScanDataAt(0).getMSLevel() > 1) : false;
+					.getScanDataAt(0).getMSLevel() > 1) : is_msms;
 	}
 
 	// serialization
@@ -368,7 +368,7 @@ public class Scan implements BaseDocument.DocumentChangeListener {
 				return new FragmentDocument.SAXHandler(new FragmentDocument(),
 						false);
 			if (qName.equals(SpectraDocument.SAXHandler.getNodeElementName()))
-				return new SpectraDocument.SAXHandler(new SpectraDocument(),
+				return new SpectraDocument.SAXHandler(new SpectraDocument(null),
 						false);
 			if (qName.equals(PeakList.SAXHandler.getNodeElementName()))
 				return new PeakList.SAXHandler(new PeakList(), false);
@@ -477,9 +477,10 @@ public class Scan implements BaseDocument.DocumentChangeListener {
 		Scan parentScan = this.getParent();
 		if (parentScan != null) {
 			this.getStructures().clear();
-		
+			
 			PeakAnnotationMultiple peakAnnotations = annotatedPeakList
 					.getAnnotations(new Peak(this.getPrecursorMZ(), .0),ann_opts.getMassAccuracy(),MassUnit.valueOfCompat(ann_opts.getMassAccuracyUnit()));
+			
 			if (peakAnnotations != null) {
 
 				for (Vector<Annotation> structureToAnnotations : peakAnnotations.getAnnotations()) {
