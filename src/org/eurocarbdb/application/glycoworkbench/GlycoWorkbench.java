@@ -3345,9 +3345,9 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 					+ File.separator + "www" + File.separator + "manual.html",
 					false);
 			
-			//if(System.getProperty("os.name").equals("Linux")){
+			if(System.getProperty("os.name").equals("Linux")){
 				browser.webBrowser.setVisible(false);
-			//}
+			}
 			
 			browser.webBrowser.addWebBrowserListener(new WebBrowserListener(){
 				String location;
@@ -3360,7 +3360,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 				@Override
 				public void loadingProgressChanged(WebBrowserEvent event) {
-				//	if(System.getProperty("os.name").equals("Linux")){
+					if(System.getProperty("os.name").equals("Linux")){
 						JWebBrowser browser=event.getWebBrowser();
 						if(location!=null && location.startsWith(helpLocation)){
 							int loadingProgress=browser.getLoadingProgress();
@@ -3375,7 +3375,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 								browser.setVisible(true);
 							}
 						}
-					//}
+					}
 				}
 
 				@Override
