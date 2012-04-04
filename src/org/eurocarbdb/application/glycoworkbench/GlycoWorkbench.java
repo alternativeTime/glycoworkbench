@@ -224,9 +224,15 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 	// plugins
 	protected PluginManager thePluginManager;
 	protected ThemeManager themeManager;
+	
+	protected static boolean firstRun=false;
 
 	public ThemeManager getThemeManager() {
 		return themeManager;
+	}
+	
+	public static boolean isFirstRun(){
+		return firstRun;
 	}
 
 	// menus
@@ -387,6 +393,10 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 			updater = new Updater("http://download.glycoworkbench.org");
 		}catch(Exception e){
 			e.printStackTrace();
+		}
+		
+		if(getConfigurationFile().exists()==false){
+			firstRun=true;
 		}
 
 		try{
