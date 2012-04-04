@@ -2909,12 +2909,17 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		JFileChooser fileChooser = new JFileChooser();
 		fileChooser.setAcceptAllFileFilterUsed(false);
 
+		
 		HashMap<javax.swing.filechooser.FileFilter, BaseDocument> all_ff = new HashMap<javax.swing.filechooser.FileFilter, BaseDocument>();
 		for (BaseDocument doc : documents) {
 			javax.swing.filechooser.FileFilter ff = doc.getAllFileFormats();
 			fileChooser.addChoosableFileFilter(ff);
 			all_ff.put(ff, doc);
 		}
+		
+		FileFilter filter=documents.iterator().next().getFileFormats().iterator().next();
+		
+		fileChooser.setFileFilter(filter);
 
 		// open file chooser
 		fileChooser.setCurrentDirectory(theWorkspace.getFileHistory()
