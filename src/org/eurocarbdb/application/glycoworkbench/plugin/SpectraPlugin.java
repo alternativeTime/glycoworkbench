@@ -220,6 +220,13 @@ public class SpectraPlugin implements Plugin, ActionListener {
 		ScanData sd = theWorkspace.getSpectra().getScanDataAt(ind);
 		PeakData pd = theWorkspace.getSpectra().getPeakDataAt(ind);
 
+		//Another hack to get around the unknown bug in the PeakPicker
+		thePeakPicker.store(theWorkspace.getConfiguration());
+		
+		thePeakPicker=new PeakPickerCWT();
+		
+		thePeakPicker.retrieve(theWorkspace.getConfiguration());
+
 		// show options dialogs
 		PeakPickerOptionsDialog dlg = new PeakPickerOptionsDialog(theApplication,thePeakPicker);
 		dlg.setVisible(true);
