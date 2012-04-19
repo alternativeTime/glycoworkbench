@@ -177,9 +177,27 @@ public class Peak implements Comparable<Peak>, SAXUtils.SAXWriter {
 						.group(2)),Integer.valueOf(m.group(4)));
 			
 			m = pattern3.matcher(str);
-			if (m.matches())
-				return new Peak(Double.valueOf(m.group(1)), Double.valueOf(m
-						.group(2)),Integer.valueOf(m.group(3)));
+			if (m.matches()){
+				boolean col3IsCharge=false;
+				try{
+					Integer.valueOf(m.group(3));
+					col3IsCharge=true;
+				}catch(NumberFormatException e1){
+					try{
+						Double.valueOf(m.group(3));
+					}catch(NumberFormatException e2){
+						return null;
+					}
+				}
+				
+				if(col3IsCharge){
+					return new Peak(Double.valueOf(m.group(1)), Double.valueOf(m
+							.group(2)),Integer.valueOf(m.group(3)));
+				}else{
+					return new Peak(Double.valueOf(m.group(1)), Double.valueOf(m
+							.group(2)));
+				}
+			}
 			
 			m = pattern2.matcher(str);
 			if (m.matches())
@@ -190,6 +208,7 @@ public class Peak implements Comparable<Peak>, SAXUtils.SAXWriter {
 			if (m.matches())
 				return new Peak(Double.valueOf(m.group(1)), 1);
 		} catch (NumberFormatException nfe) {
+			//nfe.printStackTrace();
 		}
 
 		return null;
