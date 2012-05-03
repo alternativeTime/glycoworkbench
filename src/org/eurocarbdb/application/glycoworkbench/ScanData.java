@@ -297,18 +297,24 @@ public class ScanData implements SAXUtils.SAXWriter {
     }
 
     public String toString() {
-    String ret = "Scan " + num;
+	String ret = "Scan " + num;
         
-    if( ms_level==1 ) 
-        ret += ", MS";
-    else if( ms_level==2 ) 
-        ret += ", MS/MS";
-    else if( ms_level>2 ) 
-        ret += ", MS" + ms_level;
+	if( ms_level==1 ) 
+		ret += ", MS";
+	else if( ms_level==2 ) 
+	        ret += ", MS/MS";
+	else if( ms_level>2 ) 
+	        ret += ", MS" + ms_level;
 
-    if( ms_level>1 ) 
-        ret += ", precursor= " + new java.text.DecimalFormat("0.0000").format(precursor_mz) + " Da";    
-    return ret;
+	if(ms_level>1){
+	    	ret += ", precursor= ";
+    	
+    		if(precursor_mz!=null){
+    			ret+=new java.text.DecimalFormat("0.0000").format(precursor_mz) + " Da";
+    		}
+    	}    
+
+	return ret;
     }
 
     public static ScanData fromXML(Node sd_node) throws Exception {        
