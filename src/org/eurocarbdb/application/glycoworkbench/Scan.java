@@ -392,7 +392,7 @@ public class Scan implements BaseDocument.DocumentChangeListener {
 			ret.name = stringAttribute(atts, "name", ret.name);
 			ret.precursor_mz = doubleAttribute(atts, "precursor_mz",
 					ret.precursor_mz);
-			ret.is_msms = booleanAttribute(atts, "is_msm", ret.is_msms);
+			ret.is_msms = booleanAttribute(atts, "is_msms", ret.is_msms);
 			object = ret;
 		}
 
@@ -416,6 +416,8 @@ public class Scan implements BaseDocument.DocumentChangeListener {
 					ret.theAnnotatedPeakList);
 			ret.theNotes = (NotesDocument) getSubObject(
 					NotesDocument.SAXHandler.getNodeElementName(), ret.theNotes);
+
+			ret.theSpectra.setScan(ret); //not available until here, and for now SpectrumDocument needs a ref
 
 			for (Object o : getSubObjects(AnnotationReportDocument.SAXHandler
 					.getNodeElementName()))
