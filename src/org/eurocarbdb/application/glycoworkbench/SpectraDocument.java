@@ -51,6 +51,10 @@ public class SpectraDocument extends BaseDocument implements SAXUtils.SAXWriter 
     	theScan=scan;
     }
 
+    protected void setScan(Scan scan){
+	theScan=scan;
+    }
+
     private MMFCreator getMMFCreator() {
     try {
         if( mmfc==null )
