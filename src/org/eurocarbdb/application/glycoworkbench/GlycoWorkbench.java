@@ -1701,7 +1701,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 					
 					dialog.add(scrollPanel);
 					dialog.setVisible(true);
-					dialog.setModal(true);
+					dialog.setModal(false);
 					dialog.setSize(900, 500);
 					
 					//dialog.pack();
@@ -1848,7 +1848,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 				try{
 					String contents=theWorkspace.getDictionaryConfig().getDictionaryResourceAsString(configKey);
 					
-					final JFrame dialog=new JFrame();
+					final JDialog dialog=new JDialog(self);
 					dialog.setTitle("Editor: "+theWorkspace.getDictionaryConfig().getDictionaryFile(configKey));
 //					JPanel panel=new JPanel();
 //					panel.setLayout(new GridBagLayout());
