@@ -38,6 +38,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.AWTEvent;
+import java.awt.event.AWTEventListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
@@ -3696,6 +3698,48 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
+
+
+		java.awt.Toolkit.getDefaultToolkit().addAWTEventListener(
+			new AWTEventListener(){
+				public void eventDispatched(AWTEvent event){
+					KeyEvent keyEvent=(KeyEvent) event;
+					if(keyEvent.getID()==KeyEvent.KEY_PRESSED  || 
+						keyEvent.getID()==KeyEvent.KEY_RELEASED ||
+							keyEvent.getID()==KeyEvent.KEY_PRESSED
+						){
+						
+						if((keyEvent.getModifiersEx() & KeyEvent.META_DOWN_MASK)!=0 &&
+							!((keyEvent.getModifiersEx() & KeyEvent.CTRL_DOWN_MASK)!=0)
+						){
+							keyEvent.consume();
+							KeyEvent clonedEvent=new KeyEvent(keyEvent.getComponent(),
+								keyEvent.getID(),
+								keyEvent.getWhen(),
+								(keyEvent.getModifiersEx() & ~KeyEvent.META_DOWN_MASK) |
+									KeyEvent.CTRL_DOWN_MASK,
+								keyEvent.getKeyCode(), keyEvent.getKeyChar()
+							);
+						
+							java.awt.Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(clonedEvent);
+
+						}else if(keyEvent.getKeyCode()==KeyEvent.VK_BACK_SPACE){
+							keyEvent.consume();
+							KeyEvent clonedEvent=new KeyEvent(keyEvent.getComponent(),
+								keyEvent.getID(),
+								keyEvent.getWhen(),
+								0,
+								KeyEvent.VK_DELETE, keyEvent.getKeyChar()
+							);
+						
+							java.awt.Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(clonedEvent);
+
+						}
+					}
+				}
+			}, AWTEvent.KEY_EVENT_MASK
+		);
+
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
