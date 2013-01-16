@@ -105,7 +105,7 @@
 		<jar destfile="${java.dist.dir}/${project.glycoworkbench.jar}">
 			<fileset dir="${java.build.dir}" excludes="**/*.bak" />
 			<manifest>
-				<attribute name="Main-Class" value="org.eurocarbdb.application.glycoworkbench.GlycoWorkbench" />
+				<attribute name="Main-Class" value="org.eurocarbdb.application.glycoworkbench.GlycoWorkbenchSafeWrapper" />
 				<attribute name="Class-Path" value="${manifest.class.path}" />
 			</manifest>
 		</jar>
@@ -357,7 +357,7 @@
 		<jar destfile="${gwb.dist.zip.dir}/${project.glycoworkbench.jar}" basedir="${java.build.dir}">
 			<manifest>
 				<attribute name="Class-Path" value="${manifest.classpath} ${project.glycoworkbench.jar}" />
-				<attribute name="Main-Class" value="org.eurocarbdb.application.glycoworkbench.GlycoWorkbench" />
+				<attribute name="Main-Class" value="org.eurocarbdb.application.glycoworkbench.GlycoWorkbenchSafeWrapper" />
 				<attribute name="SplashScreen-Image" value="GlycoWorkbench.png" />
 			</manifest>
 			<fileset dir="${gwb.dist.zip.dir}" includes="GlycoWorkbench.png" />
@@ -416,7 +416,7 @@
 
 	<!-- ==run== (deprecated, without a good reason for it's existence-->
 	<target name="run" depends="build,copy-resources">
-		<java classname="org.eurocarbdb.application.glycoworkbench.GlycoWorkbench" fork="yes">
+		<java classname="org.eurocarbdb.application.glycoworkbench.GlycoWorkbenchSafeWrapper" fork="yes">
 			<classpath refid="project.classpath" />
 		</java>
 	</target>
