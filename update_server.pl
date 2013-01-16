@@ -18,7 +18,7 @@ if($ARGV[0] eq 'release'){
 
 `sh fix_carriage_return.sh`;
 
-my $serverDir='/opt/server/gwb.nixbioinf.org';
+my $serverDir='/opt/server/download.glycoworkbench.org';
 my $lastBuildNo="$serverDir/current_build_no";
 my $packagesDir='packages';
 

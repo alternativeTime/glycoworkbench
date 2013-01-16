@@ -3693,8 +3693,8 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		updateActions();
 	}
 
-	public static void main(String[] args) throws IOException {
-		NativeInterface.open();
+	public static void staticStartup(String[] args) throws IOException {
+		//NativeInterface.open();
 
 		JFrame.setDefaultLookAndFeelDecorated(true);
 		JDialog.setDefaultLookAndFeelDecorated(true);
@@ -3790,7 +3790,7 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 				}
 			}
 		});
-		NativeInterface.runEventPump();
+		//NativeInterface.runEventPump();
 		System.err.println("NORMAL STARTUP COMPLETE");
 	}
 
