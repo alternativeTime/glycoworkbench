@@ -245,7 +245,7 @@
 
 		<!-- x86 -->
 		<copy overwrite="true" file="${gwb.win.x86.exe}" tofile="${gwb.dist.zip.dir}/GlycoWorkbench.exe" />
-		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/win-swt_x86.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
+		<!--<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/win-swt_x86.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />-->
 		<zip destfile="${gwb.win.zip.x86}" basedir="${gwb.dist}" />
 		<antcall target="dist-win-installer">
 		</antcall>
@@ -253,7 +253,7 @@
 
 		<!-- x86-64 -->
 		<copy overwrite="true" file="${gwb.win.x86-64.exe}" tofile="${gwb.dist.zip.dir}/GlycoWorkbench.exe" />
-		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/win-swt_x86-64.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
+<!--		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/win-swt_x86-64.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />-->
 		<zip destfile="${gwb.win.zip.x86_64}" basedir="${gwb.dist}" />
 		<antcall target="dist-win-installer">
 		</antcall>
@@ -277,10 +277,10 @@
 
 	<!-- ==dist-lin== -->
 	<target name="dist-lin" depends="clean-packages,clean-dist-zip,dist-runnable" description="Build Linux distribution packages">
-		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/lin-swt_x86.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
+<!--		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/lin-swt_x86.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />-->
 		<zip destfile="${gwb.lin.zip.x86}" basedir="${gwb.dist}" />
 
-		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/lin-swt_x86-64.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
+<!--		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/lin-swt_x86-64.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />-->
 		<zip destfile="${gwb.lin.zip.x86-64}" basedir="${gwb.dist}" />
 	</target>
 
@@ -290,12 +290,12 @@
 		<copy overwrite="true" file="${gwb.mac.wrapper.32}" tofile="${gwb.dist.zip.dir}/GlycoWorkbench.jar" />
 
 		<!-- carbon-32-->
-		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/mac-carbon-swt_32.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
+<!--		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/mac-carbon-swt_32.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />-->
 		<copy overwrite="true" file="${gwb.exe.dir}/mac_32.sh" tofile="${gwb.dist.zip.dir}/start.sh" />
 		<zip destfile="${gwb.mac.carbon.32}" basedir="${gwb.dist}" />
 
 		<!-- cocoa-32 -->
-		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/mac-cocoa-swt_32.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
+<!--		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/mac-cocoa-swt_32.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />-->
 		<copy overwrite="true" file="${gwb.exe.dir}/mac_32.sh" tofile="${gwb.dist.zip.dir}/start.sh" />
 		<zip destfile="${gwb.mac.cocoa.32}" basedir="${gwb.dist}" />
 
@@ -303,7 +303,7 @@
 		<!-- cocoa-x86-64 -->
 		<copy overwrite="true" file="${gwb.mac.wrapper.64}" tofile="${gwb.dist.zip.dir}/GlycoWorkbench.jar" />
 
-		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/mac-cocoa-swt_x86-64.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
+<!--		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/mac-cocoa-swt_x86-64.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />-->
 		<copy overwrite="true" file="${gwb.exe.dir}/mac_64.sh" tofile="${gwb.dist.zip.dir}/start.sh" />
 		<zip destfile="${gwb.mac.cocoa.x86-64}" basedir="${gwb.dist}" />
 	</target>
@@ -342,7 +342,7 @@
 			<fileset dir="${gwb.dist.zip.dir}/lib/" includes="*.jar" />
 		</path>
 
-		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/win-swt_x86.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />
+<!--		<copy overwrite="true" file="${project.java.extlib.dir}/prefetched/win-swt_x86.jar" tofile="${gwb.dist.zip.dir}/lib/swt.jar" />-->
 
 		<pathconvert property="manifest.classpath" pathsep=" ">
 			<path refid="compile.classpath" />

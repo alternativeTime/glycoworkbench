@@ -158,14 +158,14 @@ import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 
 import com.sun.corba.se.spi.legacy.connection.GetEndPointInfoAgainException;
 
-import chrriis.dj.nativeswing.swtimpl.NativeInterface;
-import chrriis.dj.nativeswing.swtimpl.components.JWebBrowser;
-import chrriis.dj.nativeswing.swtimpl.components.WebBrowserCommandEvent;
-import chrriis.dj.nativeswing.swtimpl.components.WebBrowserEvent;
-import chrriis.dj.nativeswing.swtimpl.components.WebBrowserListener;
-import chrriis.dj.nativeswing.swtimpl.components.WebBrowserNavigationEvent;
-import chrriis.dj.nativeswing.swtimpl.components.WebBrowserWindowOpeningEvent;
-import chrriis.dj.nativeswing.swtimpl.components.WebBrowserWindowWillOpenEvent;
+//import chrriis.dj.nativeswing.swtimpl.NativeInterface;
+//import chrriis.dj.nativeswing.swtimpl.components.JWebBrowser;
+//import chrriis.dj.nativeswing.swtimpl.components.WebBrowserCommandEvent;
+//import chrriis.dj.nativeswing.swtimpl.components.WebBrowserEvent;
+//import chrriis.dj.nativeswing.swtimpl.components.WebBrowserListener;
+//import chrriis.dj.nativeswing.swtimpl.components.WebBrowserNavigationEvent;
+//import chrriis.dj.nativeswing.swtimpl.components.WebBrowserWindowOpeningEvent;
+//mport chrriis.dj.nativeswing.swtimpl.components.WebBrowserWindowWillOpenEvent;
 
 public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		BaseDocument.DocumentChangeListener,
@@ -913,100 +913,100 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		
 		
 		
-		final GlycoWorkbench self=this;
-		new Thread() {
-			public void run() {
-				checkForUpdates();
-				
-				final String upToDate;
-				if (updater == null) {
-					upToDate = "unable to contact update site";
-				} else if (updater.isUptoDate(self)) {
-					upToDate = "latest";
-				} else {
-					upToDate = "update available";
-				}
-
-				SwingUtilities.invokeLater(new Runnable(){
-					public void run(){
-						status.setText("Version: " + GlycoWorkbench.MAJOR_VERSION
-								+ "." + GlycoWorkbench.MINOR_VERSION + " "
-								+ GlycoWorkbench.BUILD_STATE + " ("
-								+ GlycoWorkbench.BUILD_NUMBER + ")" + "(" + upToDate
-								+ ")");
-					}
-				});
-				
-				if (upToDate.equals("update available")) {
-					status.setText("<html><u>" + status.getText()
-							+ "</u></html>");
-
-					
-						
-					status.addMouseListener(new MouseListener() {
-						@Override
-						public void mouseClicked(MouseEvent arg0) {
-							final JFrame browserFrame = new JFrame();
-							
-							final WebBrowser browser = new WebBrowser();
-							SwingUtilities.invokeLater(new Runnable(){
-								public void run(){
-									try{
-										browser.navigate(new URL(
-										"http://download.glycoworkbench.org/current_version/"));
-										browserFrame.setIconImages(getIconImages());
-										browserFrame.add(browser);
-										browserFrame.setSize(500, 500);
-										browserFrame.setTitle("Download update...");
-									} catch (IOException e) {
-										LogUtils.report(e);
-									} catch (URISyntaxException e) {
-										LogUtils.report(e);
-									}
-								}
-							});
-							
-							
-							browserFrame.setVisible(true);
-							status.setForeground(Color.GRAY);
-						}
-
-						@Override
-						public void mouseEntered(MouseEvent e) {
-							// TODO Auto-generated method stub
-							Component component = (Component) e.getSource();
-							Cursor cursor = Cursor
-									.getPredefinedCursor(Cursor.HAND_CURSOR);
-							setCursor(cursor);
-						}
-
-						@Override
-						public void mouseExited(MouseEvent e) {
-							// TODO Auto-generated method stub
-							Component component = (Component) e.getSource();
-							Cursor cursor = Cursor
-									.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
-							setCursor(cursor);
-						}
-
-						@Override
-						public void mousePressed(MouseEvent arg0) {
-							// TODO Auto-generated method stub
-
-						}
-
-						@Override
-						public void mouseReleased(MouseEvent arg0) {
-							// TODO Auto-generated method stub
-
-						}
-
-					});
-					
-				}
-			}
-		}.start();
-		
+//		final GlycoWorkbench self=this;
+//		new Thread() {
+//			public void run() {
+//				checkForUpdates();
+//				
+//				final String upToDate;
+//				if (updater == null) {
+//					upToDate = "unable to contact update site";
+//				} else if (updater.isUptoDate(self)) {
+//					upToDate = "latest";
+//				} else {
+//					upToDate = "update available";
+//				}
+//
+//				SwingUtilities.invokeLater(new Runnable(){
+//					public void run(){
+//						status.setText("Version: " + GlycoWorkbench.MAJOR_VERSION
+//								+ "." + GlycoWorkbench.MINOR_VERSION + " "
+//								+ GlycoWorkbench.BUILD_STATE + " ("
+//								+ GlycoWorkbench.BUILD_NUMBER + ")" + "(" + upToDate
+//								+ ")");
+//					}
+//				});
+//				
+//				if (upToDate.equals("update available")) {
+//					status.setText("<html><u>" + status.getText()
+//							+ "</u></html>");
+//
+//					
+//						
+//					status.addMouseListener(new MouseListener() {
+//						@Override
+//						public void mouseClicked(MouseEvent arg0) {
+//							final JFrame browserFrame = new JFrame();
+//							
+//							final WebBrowser browser = new WebBrowser();
+//							SwingUtilities.invokeLater(new Runnable(){
+//								public void run(){
+//									try{
+//										browser.navigate(new URL(
+//										"http://download.glycoworkbench.org/current_version/"));
+//										browserFrame.setIconImages(getIconImages())
+//										browserFrame.add(browser);
+//										browserFrame.setSize(500, 500);
+//										browserFrame.setTitle("Download update...");
+//									} catch (IOException e) {
+//										LogUtils.report(e);
+//									} catch (URISyntaxException e) {
+//										LogUtils.report(e);
+//									}
+//								}
+//							});
+//							
+//							
+//							browserFrame.setVisible(true);
+//							status.setForeground(Color.GRAY);
+//						}
+//
+//						@Override
+//						public void mouseEntered(MouseEvent e) {
+//							// TODO Auto-generated method stub
+//							Component component = (Component) e.getSource();
+//							Cursor cursor = Cursor
+//									.getPredefinedCursor(Cursor.HAND_CURSOR);
+//							setCursor(cursor);
+//						}
+//
+//						@Override
+//						public void mouseExited(MouseEvent e) {
+//							// TODO Auto-generated method stub
+//							Component component = (Component) e.getSource();
+//							Cursor cursor = Cursor
+//									.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+//							setCursor(cursor);
+//						}
+//
+//						@Override
+//						public void mousePressed(MouseEvent arg0) {
+//							// TODO Auto-generated method stub
+//
+//						}
+//
+//						@Override
+//						public void mouseReleased(MouseEvent arg0) {
+//							// TODO Auto-generated method stub
+//
+//						}
+//
+//					});
+//					
+//				}
+//			}
+//		}.start();
+//		
 		
 	}
 
@@ -3349,168 +3349,168 @@ public class GlycoWorkbench extends JRibbonFrame implements ActionListener,
 		// JDialog dlg=new JDialog(this,"Help",true);
 		// dlg.setModal(false);
 
-		JFrame frame = new JFrame();
-		frame.setIconImage(themeManager.getResizableIcon(STOCK_ICON.HELP_CONTENTS, ICON_SIZE.L1).imageIcon.getImage());
+		//JFrame frame = new JFrame();
+		//frame.setIconImage(themeManager.getResizableIcon(STOCK_ICON.HELP_CONTENTS, ICON_SIZE.L1).imageIcon.getImage());
 		
-		final WebBrowser browser = new WebBrowser();
-		try {
-			final String helpLocation="http://wiki.glycoworkbench.org/index.php/Manual_Version_2.1";
+		//final WebBrowser browser = new WebBrowser();
+		//try {
+		//	final String helpLocation="http://wiki.glycoworkbench.org/index.php/Manual_Version_2.1";
 			// System.err.println("Path: "+Locator.getClassSource(this.getClass()));
-			browser.openResource(new URL(
-					helpLocation), Locator
-					.getClassSource(this.getClass()).getParentFile()
-					+ File.separator + "www" + File.separator + "manual.html",
-					false);
-			
-			if(System.getProperty("os.name").equals("Linux")){
-				browser.webBrowser.setVisible(false);
-			}
-			
-			browser.webBrowser.addWebBrowserListener(new WebBrowserListener(){
-				String location;
-				
-				@Override
-				public void commandReceived(WebBrowserCommandEvent arg0) {
-					// TODO Auto-generated method stub
-					
-				}
-
-				@Override
-				public void loadingProgressChanged(WebBrowserEvent event) {
-					final JWebBrowser browser=event.getWebBrowser();
-
-					if(location!=null && location.startsWith(helpLocation)){
-						
-						int loadingProgress=browser.getLoadingProgress();
-
-						if(loadingProgress==100){
-
-							Thread fixUpThread=new Thread(){
-								public void run(){
-									for(int i=0;i<4;i++){
-										SwingUtilities.invokeLater(new Runnable(){
-											public void run(){	
-												browser.executeJavascript("document.getElementById(\"mw-head\").style.display=\"none\";");
-												browser.executeJavascript("document.getElementById(\"mw-panel\").style.display=\"none\";");
-												browser.executeJavascript("document.getElementById(\"mw-page-base\").style.display=\"none\";");
-												browser.executeJavascript("document.getElementById(\"mw-head-base\").style.marginLeft=\"0\";");
-												browser.executeJavascript("document.getElementById(\"content\").style.marginLeft=\"0\";");
-											}
-										});	
-										try{	
-											Thread.sleep(100);
-										}catch(InterruptedException ex){
-											Thread.currentThread().interrupt();
-											break;
-										}
-									}
-								}
-							};
-
-							fixUpThread.start();					
-
-							if(System.getProperty("os.name").equals("Linux")){
-								browser.setVisible(true);
-							}
-						}
-					}
-				}
-
-				@Override
-				public void locationChangeCanceled(WebBrowserNavigationEvent event) {
-					
-				}
-
-				@Override
-				public void locationChanged(WebBrowserNavigationEvent event) {
-					location=event.getNewResourceLocation();
-				}
-
-				@Override
-				public void locationChanging(WebBrowserNavigationEvent event) {
-					location=event.getNewResourceLocation();	
-				}
-
-				@Override
-				public void statusChanged(WebBrowserEvent event) {
-					
-				}
-
-				@Override
-				public void titleChanged(WebBrowserEvent event) {
-					
-				}
-
-				@Override
-				public void windowClosing(WebBrowserEvent event) {
-					
-				}
-
-				@Override
-				public void windowOpening(WebBrowserWindowOpeningEvent event) {
-					
-				}
-
-				@Override
-				public void windowWillOpen(WebBrowserWindowWillOpenEvent event) {
-					
-				}
-			});
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			browser.setHTMLContent("<html>"
-					+ "	<head>"
-					+ "		<title>Error reading manual</title>"
-					+ "	</head>"
-					+ "		<body>"
-					+ "			<h1>Unable to load local copy of the GWB manual</h1>"
-					+ "			<p>Please report this error to <mailto: info@glycoworkbench.org>info@glycoworkbench.org</mailto></p>"
-					+ "			<p>For further information, please see: <a href=\"www.glycoworkbench.org\">www.glycoworkbench.org</a>"
-					+ "			<p>Exception:" + e.getMessage() + "			</p>"
-					+ "		</body>" + "</html>");
-			e.printStackTrace();
-		}
-
-		//frame.setIconImages(getIconImages());
-		frame.add(browser);
-		frame.setSize(500, 500);
-		frame.setTitle("Manual");
-		frame.setVisible(true);
-		
-		frame.addWindowListener(new WindowListener(){
-			@Override
-			public void windowOpened(WindowEvent e) {
-				
-			}
-
-			@Override
-			public void windowClosing(WindowEvent e) {
-				
-			}
-
-			@Override
-			public void windowClosed(WindowEvent e) {	
-				
-			}
-
-			@Override
-			public void windowIconified(WindowEvent e) {
-			}
-
-			@Override
-			public void windowDeiconified(WindowEvent e) {
-			}
-
-			@Override
-			public void windowActivated(WindowEvent e) {
-				
-			}
-
-			@Override
-			public void windowDeactivated(WindowEvent e) {
-				
-			}
-		});
+		//	browser.openResource(new URL(
+		//			helpLocation), Locator
+		//			.getClassSource(this.getClass()).getParentFile()
+		//			+ File.separator + "www" + File.separator + "manual.html",
+		//			false);
+		//	
+		//	if(System.getProperty("os.name").equals("Linux")){
+		//		browser.webBrowser.setVisible(false);
+		//	}
+		//	
+		//	browser.webBrowser.addWebBrowserListener(new WebBrowserListener(){
+		//		String location;
+		//		
+		//		@Override
+		//		public void commandReceived(WebBrowserCommandEvent arg0) {
+		//			// TODO Auto-generated method stub
+		//			
+		//		}
+//
+		//		@Override
+//				public void loadingProgressChanged(WebBrowserEvent event) {
+		//			final JWebBrowser browser=event.getWebBrowser();
+//
+//					if(location!=null && location.startsWith(helpLocation)){
+//						
+//						int loadingProgress=browser.getLoadingProgress();
+//
+//						if(loadingProgress==100){
+//
+//							Thread fixUpThread=new Thread(){
+//								public void run(){
+//									for(int i=0;i<4;i++){
+//										SwingUtilities.invokeLater(new Runnable(){
+//											public void run(){	
+//												browser.executeJavascript("document.getElementById(\"mw-head\").style.display=\"none\";");
+//												browser.executeJavascript("document.getElementById(\"mw-panel\").style.display=\"none\";");
+//												browser.executeJavascript("document.getElementById(\"mw-page-base\").style.display=\"none\";");
+//												browser.executeJavascript("document.getElementById(\"mw-head-base\").style.marginLeft=\"0\";");
+//												browser.executeJavascript("document.getElementById(\"content\").style.marginLeft=\"0\";");
+//											}
+//										});	
+//										try{	
+//											Thread.sleep(100);
+//										}catch(InterruptedException ex){
+//											Thread.currentThread().interrupt();
+//											break;
+//										}
+//									}
+//								}
+//							};
+//
+//							fixUpThread.start();					
+//
+//							if(System.getProperty("os.name").equals("Linux")){
+//								browser.setVisible(true);
+//							}
+//						}
+//					}
+//				}
+//
+//				@Override
+//				public void locationChangeCanceled(WebBrowserNavigationEvent event) {
+//					
+//				}
+//
+//				@Override
+//				public void locationChanged(WebBrowserNavigationEvent event) {
+//					location=event.getNewResourceLocation();
+//				}
+//
+//				@Override
+//				public void locationChanging(WebBrowserNavigationEvent event) {
+//					location=event.getNewResourceLocation();	
+//				}
+//
+//				@Override
+//				public void statusChanged(WebBrowserEvent event) {
+//					
+//				}
+//
+//				@Override
+//				public void titleChanged(WebBrowserEvent event) {
+//					
+//				}
+//
+//				@Override
+//				public void windowClosing(WebBrowserEvent event) {
+//					
+//				}
+//
+//				@Override
+//				public void windowOpening(WebBrowserWindowOpeningEvent event) {
+//					
+//				}
+//
+//				@Override
+//				public void windowWillOpen(WebBrowserWindowWillOpenEvent event) {
+//					
+//				}
+//			});
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block
+//			browser.setHTMLContent("<html>"
+//					+ "	<head>"
+//					+ "		<title>Error reading manual</title>"
+//					+ "	</head>"
+//					+ "		<body>"
+//					+ "			<h1>Unable to load local copy of the GWB manual</h1>"
+//					+ "			<p>Please report this error to <mailto: info@glycoworkbench.org>info@glycoworkbench.org</mailto></p>"
+//					+ "			<p>For further information, please see: <a href=\"www.glycoworkbench.org\">www.glycoworkbench.org</a>"
+//					+ "			<p>Exception:" + e.getMessage() + "			</p>"
+//					+ "		</body>" + "</html>");
+//			e.printStackTrace();
+//		}
+//
+//		//frame.setIconImages(getIconImages());
+//		frame.add(browser);
+//		frame.setSize(500, 500);
+//		frame.setTitle("Manual");
+//		frame.setVisible(true);
+//		
+//		frame.addWindowListener(new WindowListener(){
+//			@Override
+//			public void windowOpened(WindowEvent e) {
+//				
+//			}
+//
+//			@Override
+//			public void windowClosing(WindowEvent e) {
+//				
+//			}
+//
+//			@Override
+//			public void windowClosed(WindowEvent e) {	
+//				
+//			}
+//
+//			@Override
+//			public void windowIconified(WindowEvent e) {
+//			}
+//
+//			@Override
+//			public void windowDeiconified(WindowEvent e) {
+//			}
+//
+//			@Override
+//			public void windowActivated(WindowEvent e) {
+//				
+//			}
+//
+//			@Override
+//			public void windowDeactivated(WindowEvent e) {
+//				
+//			}
+//		});
 	}
 
 	public void onAbout() {

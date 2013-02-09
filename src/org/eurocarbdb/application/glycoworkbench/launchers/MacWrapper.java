@@ -16,7 +16,7 @@ public class MacWrapper {
 	public void run(){
 		LogUtils.setGraphicalReport(true);
 		try {
-			final Process process=Runtime.getRuntime().exec("java -d"+bitVersion+" -XstartOnFirstThread -Xmx200M -jar eurocarb-glycoworkbench-1.0rc.jar");
+			final Process process=Runtime.getRuntime().exec("java -d"+bitVersion+"  -Xmx200M -jar eurocarb-glycoworkbench-1.0rc.jar");
 			
 			Thread thread=new Thread(){
 				public void run(){

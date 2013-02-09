@@ -24,7 +24,7 @@
 package org.eurocarbdb.application.glycoworkbench;
 
 
-import chrriis.dj.nativeswing.swtimpl.NativeInterface;
+//import chrriis.dj.nativeswing.swtimpl.NativeInterface;
 import javax.swing.SwingUtilities;
 import java.io.IOException;
 
@@ -32,7 +32,7 @@ import org.eurocarbdb.application.glycoworkbench.GlycoWorkbench;
 
 public class GlycoWorkbenchSafeWrapper{
 	public static void main(final String[] args) {
-		NativeInterface.open();
+//		NativeInterface.open();
 		SwingUtilities.invokeLater(new Runnable() {
     			public void run() {
 				System.out.println("Starting up GlycoWorkbench in EDT");	
@@ -43,7 +43,7 @@ public class GlycoWorkbenchSafeWrapper{
 				}
 			}
 		});
-	        NativeInterface.runEventPump();
+//	        NativeInterface.runEventPump();
 
 	}
 }
